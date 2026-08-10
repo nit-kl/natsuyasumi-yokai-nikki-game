@@ -1,0 +1,33 @@
+; Engine configuration file.
+; Edit through the Godot editor when possible.
+
+config_version=5
+
+[application]
+
+config/name="夏休み妖怪日記"
+config/description="田舎の町で過ごす、ひと夏の妖怪日記。"
+run/main_scene="res://scenes/bootstrap/main.tscn"
+
+[autoload]
+
+GameState="*res://scripts/core/game_state.gd"
+GameClock="*res://scripts/core/game_clock.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/size/window_width_override=1280
+window/size/window_height_override=720
+window/stretch/mode="canvas_items"
+
+[debug]
+
+file_logging/enable_file_logging=false
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/default_filters/use_nearest_mipmap_filter=false
