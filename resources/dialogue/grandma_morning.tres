@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="DialogueSequence" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/dialogue/dialogue_sequence.gd" id="1_sequence"]
+[ext_resource type="Script" path="res://scripts/dialogue/dialogue_line.gd" id="2_line"]
+
+[sub_resource type="Resource" id="DialogueLine_1"]
+script = ExtResource("2_line")
+speaker = "おばあちゃん"
+text = "おはよう。よく眠れたかい？"
+
+[sub_resource type="Resource" id="DialogueLine_2"]
+script = ExtResource("2_line")
+speaker = "おばあちゃん"
+text = "川へ行くなら、日が高いうちにお帰り。昨日の雨で水が増えているからね。"
+
+[sub_resource type="Resource" id="DialogueLine_3"]
+script = ExtResource("2_line")
+speaker = "ぼく"
+text = "うん。ちょっと見てくるだけ。"
+
+[resource]
+script = ExtResource("1_sequence")
+dialogue_id = &"grandma_morning"
+lines = Array[ExtResource("2_line")]([SubResource("DialogueLine_1"), SubResource("DialogueLine_2"), SubResource("DialogueLine_3")])

@@ -4,6 +4,7 @@ extends CanvasLayer
 @onready var status_label: Label = %StatusLabel
 @onready var pause_button: Button = %PauseButton
 @onready var time_scale_spin_box: SpinBox = %TimeScaleSpinBox
+@onready var save_status_label: Label = %SaveStatusLabel
 
 
 func _ready() -> void:
@@ -15,6 +16,10 @@ func _ready() -> void:
 	GameClock.time_changed.connect(_on_clock_changed)
 	GameClock.period_changed.connect(_on_period_changed)
 	GameState.current_day_changed.connect(_on_day_changed)
+	SaveManager.save_completed.connect(_on_save_completed)
+	SaveManager.load_completed.connect(_on_load_completed)
+	SaveManager.save_failed.connect(_on_save_failed)
+	SaveManager.load_failed.connect(_on_load_failed)
 	refresh_status()
 
 
@@ -61,11 +66,42 @@ func _on_time_scale_changed(value: float) -> void:
 
 func _on_reset_pressed() -> void:
 	GameState.start_new_game()
+	BugCatchingManager.reset_collection()
+	EventManager.reset_history()
 	GameClock.set_time(7, 0)
 	GameClock.set_paused(false)
 	GameClock.set_time_scale(1.0)
 	time_scale_spin_box.value = GameClock.time_scale
 	refresh_status()
+	save_status_label.text = "Runtime state reset"
+
+
+func _on_save_pressed() -> void:
+	save_status_label.text = "Saving..."
+	SaveManager.save_game()
+
+
+func _on_load_pressed() -> void:
+	save_status_label.text = "Loading..."
+	if SaveManager.load_game():
+		time_scale_spin_box.value = GameClock.time_scale
+		refresh_status()
+
+
+func _on_save_completed(_path: String) -> void:
+	save_status_label.text = "Saved: save_01.json"
+
+
+func _on_load_completed(_path: String) -> void:
+	save_status_label.text = "Loaded: save_01.json"
+
+
+func _on_save_failed(message: String) -> void:
+	save_status_label.text = "Save failed: %s" % message
+
+
+func _on_load_failed(message: String) -> void:
+	save_status_label.text = "Load failed: %s" % message
 
 
 func _on_clock_changed(_hour: int, _minute: int) -> void:
@@ -78,4 +114,3 @@ func _on_period_changed(_period: GameClock.DayPeriod) -> void:
 
 func _on_day_changed(_day: int) -> void:
 	refresh_status()
-

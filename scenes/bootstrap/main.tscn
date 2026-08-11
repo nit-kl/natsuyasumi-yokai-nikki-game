@@ -1,38 +1,53 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://cf104a7ul8tgh"]
 
-[ext_resource type="Script" path="res://scripts/bootstrap/main.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://v0ameg4qer0c" path="res://scripts/bootstrap/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://scenes/debug/debug_menu.tscn" id="2_debug"]
+[ext_resource type="PackedScene" path="res://scenes/world/vertical_slice_graybox.tscn" id="3_world"]
+[ext_resource type="PackedScene" path="res://scenes/ui/dialogue_ui.tscn" id="4_dialogue"]
+[ext_resource type="PackedScene" path="res://scenes/ui/bug_catching_hud.tscn" id="5_bug_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/event_notification.tscn" id="6_event_notification"]
+[ext_resource type="PackedScene" path="res://scenes/ui/day_flow_ui.tscn" id="7_day_flow"]
+[ext_resource type="PackedScene" path="res://scenes/ui/diary_ui.tscn" id="8_diary"]
 
-[node name="Main" type="Node"]
+[node name="Main" type="Node" unique_id=817921739]
 script = ExtResource("1_main")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="VerticalSliceGraybox" parent="." unique_id=1863458719 instance=ExtResource("3_world")]
+transform = Transform3D(0.9964016, 0.07282291, -0.043367047, -0.07105897, 0.9966326, 0.040915944, 0.046200637, -0.037687086, 0.99822104, -0.007994771, 2.3841858e-07, 0.00436759)
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1500488938]
 offset_right = 1280.0
 offset_bottom = 720.0
-color = Color(0.075, 0.16, 0.18, 1)
+mouse_filter = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 24
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
-offset_right = 1280.0
-offset_bottom = 720.0
-theme_override_constants/margin_left = 64
-theme_override_constants/margin_top = 64
-theme_override_constants/margin_right = 64
-theme_override_constants/margin_bottom = 64
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1788594463]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 8
 
-[node name="Title" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer" unique_id=357222237]
 layout_mode = 2
-theme_override_font_sizes/font_size = 36
-text = "夏休み妖怪日記"
+theme_override_font_sizes/font_size = 28
+text = "夏休み妖怪日記 — Route Graybox"
 
-[node name="Status" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="Status" type="Label" parent="MarginContainer/VBoxContainer" unique_id=786846351]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.7, 0.86, 0.81, 1)
-theme_override_font_sizes/font_size = 18
-text = "Foundation initialized\nPress F3 to open the Debug Menu"
+theme_override_colors/font_color = Color(0.85, 0.94, 0.88, 1)
+theme_override_font_sizes/font_size = 16
+text = "Goal: Leave Grandma's house and follow the road to the river
+WASD: Move / Mouse: Camera / Space: Jump / F3: Debug Menu"
 
-[node name="DebugMenu" parent="." instance=ExtResource("2_debug")]
+[node name="DebugMenu" parent="." unique_id=296810908 instance=ExtResource("2_debug")]
 
+[node name="DialogueUI" parent="." unique_id=107960029 instance=ExtResource("4_dialogue")]
+
+[node name="BugCatchingHUD" parent="." instance=ExtResource("5_bug_hud")]
+
+[node name="EventNotification" parent="." instance=ExtResource("6_event_notification")]
+
+[node name="DayFlowUI" parent="." instance=ExtResource("7_day_flow")]
+
+[node name="DiaryUI" parent="." instance=ExtResource("8_diary")]

@@ -1,0 +1,61 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/day_flow_ui.gd" id="1_ui"]
+
+[node name="DayFlowUI" type="CanvasLayer"]
+layer = 58
+script = ExtResource("1_ui")
+
+[node name="ObjectivePanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+offset_left = 32.0
+offset_top = 128.0
+offset_right = 440.0
+offset_bottom = 184.0
+
+[node name="ObjectiveLabel" type="Label" parent="ObjectivePanel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.72, 0.38, 1)
+text = "It's getting late. Return to Grandma's house."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SummaryPanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -170.0
+offset_right = 260.0
+offset_bottom = 170.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="SummaryPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SummaryPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="SummaryTitle" type="Label" parent="SummaryPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Day 1 Complete"
+horizontal_alignment = 1
+
+[node name="SummaryBody" type="Label" parent="SummaryPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 19
+text = "Returned at 16:30\nInsects caught: 0\nEvents remembered: 1\n\n[E / Space] Continue"
+horizontal_alignment = 1

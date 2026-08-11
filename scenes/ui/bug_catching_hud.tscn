@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/bug_catching_hud.gd" id="1_hud"]
+
+[node name="BugCatchingHUD" type="CanvasLayer"]
+layer = 40
+script = ExtResource("1_hud")
+
+[node name="Panel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -336.0
+offset_top = 32.0
+offset_right = -32.0
+offset_bottom = 92.0
+grow_horizontal = 0
+
+[node name="ResultLabel" type="Label" parent="Panel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.82, 0.34, 1)
+theme_override_font_sizes/font_size = 19
+text = "Caught Abura-zemi!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HideTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 2.5
+one_shot = true

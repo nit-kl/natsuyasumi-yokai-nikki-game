@@ -1,5 +1,10 @@
 ; Engine configuration file.
-; Edit through the Godot editor when possible.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
 
 config_version=5
 
@@ -8,11 +13,19 @@ config_version=5
 config/name="夏休み妖怪日記"
 config/description="田舎の町で過ごす、ひと夏の妖怪日記。"
 run/main_scene="res://scenes/bootstrap/main.tscn"
+config/features=PackedStringArray("4.7")
 
 [autoload]
 
 GameState="*res://scripts/core/game_state.gd"
 GameClock="*res://scripts/core/game_clock.gd"
+DialogueManager="*res://scripts/core/dialogue_manager.gd"
+BugCatchingManager="*res://scripts/minigames/bug_catching_manager.gd"
+EventManager="*res://scripts/events/event_manager.gd"
+DayRecordManager="*res://scripts/diary/day_record_manager.gd"
+DayFlowManager="*res://scripts/core/day_flow_manager.gd"
+DiaryManager="*res://scripts/diary/diary_manager.gd"
+SaveManager="*res://scripts/save/save_manager.gd"
 
 [display]
 
@@ -22,12 +35,38 @@ window/size/window_width_override=1280
 window/size/window_height_override=720
 window/stretch/mode="canvas_items"
 
-[debug]
+[input]
 
-file_logging/enable_file_logging=false
+move_left={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":65,"unicode":97)]
+}
+move_right={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":68,"unicode":100)]
+}
+move_forward={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":87,"unicode":119)]
+}
+move_back={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":83,"unicode":115)]
+}
+jump={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":32,"unicode":32)]
+}
+interact={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":69,"unicode":101)]
+}
+
+[layer_names]
+
+3d_physics/layer_2="Interactable"
 
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
-textures/default_filters/use_nearest_mipmap_filter=false

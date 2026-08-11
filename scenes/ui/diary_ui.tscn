@@ -1,0 +1,81 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/diary_ui.gd" id="1_ui"]
+
+[node name="DiaryUI" type="CanvasLayer"]
+layer = 70
+script = ExtResource("1_ui")
+
+[node name="Panel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -390.0
+offset_top = -270.0
+offset_right = 390.0
+offset_bottom = 270.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 38
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 38
+theme_override_constants/margin_bottom = 28
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="TitleLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.42, 0.22, 0.1, 1)
+theme_override_font_sizes/font_size = 30
+text = "Day 1 — 妖怪日記"
+horizontal_alignment = 1
+
+[node name="InstructionLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "残したい記憶を1〜3キーで選んでください。"
+horizontal_alignment = 1
+
+[node name="Memory1" type="CheckButton" parent="Panel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "1. 川まで歩いた。"
+
+[node name="Memory2" type="CheckButton" parent="Panel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "2. セミをつかまえた。"
+
+[node name="Memory3" type="CheckButton" parent="Panel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "3. 河童らしき影を見た。"
+
+[node name="EntryBody" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 230)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "日記本文"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="FooterLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.48, 0.38, 1)
+text = "[1 / 2 / 3] 選択    [E / Space] 日記を書く"
+horizontal_alignment = 1

@@ -1,13 +1,28 @@
-# Godot 4 generated files
+# Godot 4 generated cache
 .godot/
+*.translation
+
+# Legacy Godot generated files
 /.import/
 export.cfg
-export_presets.cfg
+
+# Export credentials are machine-local and may contain secrets.
+export_credentials.cfg
+
+# Godot 4.2+ temporary native libraries
+~*.dll
+.nomedia
+
+# C# / Mono generated files (kept for future compatibility)
+.mono/
+data_*/
+mono_crash.*.json
 
 # Exported builds
 /builds/
 /exports/
 *.pck
+*.zip
 
 # Imported source assets and Blender backups
 *.blend1
@@ -29,3 +44,7 @@ desktop.ini
 *.tmp
 *~
 
+# Local environment overrides and credentials
+.env
+.env.*
+!.env.example

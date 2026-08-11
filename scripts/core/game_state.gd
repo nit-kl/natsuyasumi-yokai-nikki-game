@@ -11,6 +11,7 @@ enum ProgressPhase {
 	RETURN_HOME,
 	DIARY,
 	DAY_SUMMARY,
+	DAY_COMPLETE,
 }
 
 const FIRST_DAY := 1
@@ -73,4 +74,3 @@ func restore_from_save_data(data: Dictionary) -> void:
 	set_current_area(StringName(data.get("current_area", "grandma_house")))
 	set_progress_phase(int(data.get("progress_phase", ProgressPhase.INTRO)) as ProgressPhase)
 	player_state = data.get("player_state", {}).duplicate(true)
-
