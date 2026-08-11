@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3]
+[gd_scene load_steps=66 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/world/location_area.gd" id="2_location"]
@@ -11,12 +11,33 @@
 [ext_resource type="Resource" path="res://resources/events/kappa_first_glimpse.tres" id="9_kappa_event"]
 [ext_resource type="Script" path="res://scripts/events/kappa_glimpse.gd" id="10_kappa_glimpse"]
 [ext_resource type="Script" path="res://scripts/world/return_home_point.gd" id="11_return_home"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/summer_tree.glb" id="12_summer_tree"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/river_rock_set.glb" id="13_river_rocks"]
+[ext_resource type="PackedScene" path="res://scenes/world/props/rice_patch.tscn" id="14_rice_patch"]
+[ext_resource type="Shader" path="res://shaders/river_water.gdshader" id="15_water_shader"]
+[ext_resource type="Shader" path="res://shaders/rice_paddy.gdshader" id="16_rice_shader"]
+[ext_resource type="PackedScene" path="res://assets/models/yokai/kappa_glimpse.glb" id="17_kappa_model"]
+[ext_resource type="PackedScene" path="res://assets/models/characters/grandma.glb" id="18_grandma_model"]
+[ext_resource type="Script" path="res://scripts/characters/grandma_visual.gd" id="19_grandma_visual"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/grandma_interior.glb" id="20_grandma_interior"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/grandma_house_exterior.glb" id="21_grandma_exterior"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/utility_pole.glb" id="22_utility_pole"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/utility_wires.glb" id="23_utility_wires"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/grandma_yard_props.glb" id="24_yard_props"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/riverbank_props.glb" id="25_riverbank_props"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/old_concrete_bridge.glb" id="26_bridge"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/country_road_details.glb" id="27_road_details"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/summer_tree_variant.glb" id="28_tree_variant"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/bamboo_cluster.glb" id="29_bamboo"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/shrub_pair.glb" id="30_shrub"]
+[ext_resource type="PackedScene" path="res://assets/models/environment/wild_grass_cluster.glb" id="31_wild_grass"]
+[ext_resource type="Script" path="res://scripts/world/vegetation_breeze.gd" id="32_breeze"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMaterial_summer"]
 sky_top_color = Color(0.12, 0.42, 0.78, 1)
 sky_horizon_color = Color(0.7, 0.86, 0.94, 1)
-ground_bottom_color = Color(0.08, 0.13, 0.09, 1)
-ground_horizon_color = Color(0.54, 0.7, 0.57, 1)
+ground_bottom_color = Color(0.16, 0.25, 0.17, 1)
+ground_horizon_color = Color(0.64, 0.76, 0.64, 1)
 
 [sub_resource type="Sky" id="Sky_summer"]
 sky_material = SubResource("SkyMaterial_summer")
@@ -29,11 +50,11 @@ ambient_light_energy = 0.55
 tonemap_mode = 2
 
 [sub_resource type="StandardMaterial3D" id="Material_grass"]
-albedo_color = Color(0.2, 0.42, 0.2, 1)
+albedo_color = Color(0.16, 0.34, 0.17, 1)
 roughness = 1.0
 
 [sub_resource type="StandardMaterial3D" id="Material_road"]
-albedo_color = Color(0.46, 0.36, 0.24, 1)
+albedo_color = Color(0.38, 0.3, 0.2, 1)
 roughness = 1.0
 
 [sub_resource type="StandardMaterial3D" id="Material_house"]
@@ -44,21 +65,121 @@ roughness = 0.9
 albedo_color = Color(0.38, 0.22, 0.11, 1)
 roughness = 0.9
 
-[sub_resource type="StandardMaterial3D" id="Material_water"]
-transparency = 1
-albedo_color = Color(0.08, 0.43, 0.65, 0.8)
-roughness = 0.2
+[sub_resource type="ShaderMaterial" id="Material_water"]
+shader = ExtResource("15_water_shader")
 
-[sub_resource type="StandardMaterial3D" id="Material_rice"]
-albedo_color = Color(0.42, 0.62, 0.2, 1)
-roughness = 1.0
+[sub_resource type="ShaderMaterial" id="Material_rice"]
+shader = ExtResource("16_rice_shader")
 
 [sub_resource type="StandardMaterial3D" id="Material_landmark"]
 albedo_color = Color(0.62, 0.21, 0.13, 1)
 roughness = 0.8
 
+[sub_resource type="StandardMaterial3D" id="Material_roof"]
+albedo_color = Color(0.18, 0.2, 0.22, 1)
+roughness = 0.82
+
+[sub_resource type="StandardMaterial3D" id="Material_channel"]
+transparency = 1
+albedo_color = Color(0.08, 0.31, 0.38, 0.82)
+roughness = 0.28
+
+[sub_resource type="StandardMaterial3D" id="Material_paddy_bank"]
+albedo_color = Color(0.24, 0.38, 0.13, 1)
+roughness = 1.0
+
+[sub_resource type="StandardMaterial3D" id="Material_footpath"]
+albedo_color = Color(0.46, 0.37, 0.23, 1)
+roughness = 0.98
+
+[sub_resource type="StandardMaterial3D" id="Material_window_light"]
+albedo_color = Color(1, 0.58, 0.22, 1)
+emission_enabled = true
+emission = Color(1, 0.34, 0.08, 1)
+emission_energy_multiplier = 0.55
+
+[sub_resource type="StandardMaterial3D" id="Material_riverbed"]
+albedo_color = Color(0.18, 0.145, 0.095, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="Material_shallow_water"]
+transparency = 1
+albedo_color = Color(0.20, 0.58, 0.56, 0.72)
+roughness = 0.36
+metallic_specular = 0.28
+
+[sub_resource type="StandardMaterial3D" id="Material_wet_sand"]
+albedo_color = Color(0.39, 0.34, 0.23, 1)
+roughness = 0.92
+
+[sub_resource type="StandardMaterial3D" id="Material_ripple"]
+transparency = 1
+albedo_color = Color(0.58, 0.88, 0.84, 0.68)
+emission_enabled = true
+emission = Color(0.18, 0.55, 0.5, 1)
+emission_energy_multiplier = 0.32
+roughness = 0.2
+
+[sub_resource type="StandardMaterial3D" id="Material_kappa_reflection"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.22, 0.72, 0.24, 0.32)
+emission_enabled = true
+emission = Color(0.12, 0.58, 0.16, 1)
+emission_energy_multiplier = 0.7
+
+[sub_resource type="StandardMaterial3D" id="Material_kappa_splash"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.58, 0.92, 0.9, 0.86)
+emission_enabled = true
+emission = Color(0.22, 0.62, 0.6, 1)
+emission_energy_multiplier = 0.45
+billboard_mode = 1
+
+[sub_resource type="QuadMesh" id="Mesh_kappa_splash"]
+material = SubResource("Material_kappa_splash")
+size = Vector2(0.07, 0.16)
+
+[sub_resource type="ParticleProcessMaterial" id="Particles_kappa_splash"]
+direction = Vector3(0, 1, 0)
+spread = 58.0
+gravity = Vector3(0, -4.8, 0)
+initial_velocity_min = 1.0
+initial_velocity_max = 1.9
+scale_min = 0.7
+scale_max = 1.25
+color = Color(0.66, 0.94, 0.92, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_evening_mote"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(1, 0.73, 0.3, 0.6)
+emission_enabled = true
+emission = Color(1, 0.38, 0.08, 1)
+emission_energy_multiplier = 0.35
+billboard_mode = 1
+
+[sub_resource type="QuadMesh" id="Mesh_evening_mote"]
+material = SubResource("Material_evening_mote")
+size = Vector2(0.035, 0.035)
+
+[sub_resource type="ParticleProcessMaterial" id="Particles_evening_mote"]
+emission_shape = 3
+emission_box_extents = Vector3(16, 2.5, 22)
+direction = Vector3(0.3, 0.45, -0.12)
+spread = 32.0
+gravity = Vector3(0, 0.008, 0)
+initial_velocity_min = 0.035
+initial_velocity_max = 0.11
+scale_min = 0.7
+scale_max = 1.25
+color = Color(1, 0.78, 0.38, 0.72)
+
 [sub_resource type="BoxShape3D" id="Shape_house_area"]
-size = Vector3(10, 4, 10)
+size = Vector3(11, 4, 14)
 
 [sub_resource type="BoxShape3D" id="Shape_road_area"]
 size = Vector3(16, 4, 28)
@@ -74,10 +195,6 @@ radius = 1.0
 
 [sub_resource type="BoxShape3D" id="Shape_kappa_event_trigger"]
 size = Vector3(10, 4, 5)
-
-[sub_resource type="StandardMaterial3D" id="Material_kappa"]
-albedo_color = Color(0.08, 0.26, 0.14, 1)
-roughness = 0.9
 
 [sub_resource type="SphereShape3D" id="Shape_return_home"]
 radius = 1.2
@@ -96,7 +213,23 @@ light_color = Color(1, 0.91, 0.72, 1)
 light_energy = 1.2
 shadow_enabled = true
 
+[node name="EveningMotes" type="GPUParticles3D" parent="."]
+unique_name_in_owner = true
+position = Vector3(0, 2.6, -1)
+emitting = false
+amount = 14
+lifetime = 10.0
+randomness = 0.6
+visibility_aabb = AABB(-18, -4, -24, 36, 9, 48)
+fixed_fps = 12
+fractional_delta = false
+process_material = SubResource("Particles_evening_mote")
+draw_pass_1 = SubResource("Mesh_evening_mote")
+
 [node name="Terrain" type="Node3D" parent="."]
+
+[node name="CountryRoadDetails" parent="Terrain" instance=ExtResource("27_road_details")]
+visible = false
 
 [node name="SouthGround" type="CSGBox3D" parent="Terrain"]
 position = Vector3(0, -0.1, 8.5)
@@ -112,89 +245,252 @@ material = SubResource("Material_grass")
 
 [node name="VillageRoad" type="CSGBox3D" parent="Terrain"]
 unique_name_in_owner = true
-position = Vector3(0, 0.015, 2)
-size = Vector3(4, 0.03, 32)
+position = Vector3(0.55, 0.015, 10)
+rotation_degrees = Vector3(0, -5, 0)
+size = Vector3(4, 0.03, 16)
+material = SubResource("Material_road")
+
+[node name="VillageRoadBend" type="CSGBox3D" parent="Terrain"]
+position = Vector3(-0.25, 0.016, -0.25)
+rotation_degrees = Vector3(0, 5, 0)
+size = Vector3(4, 0.032, 12)
+material = SubResource("Material_road")
+
+[node name="VillageRoadRiverApproach" type="CSGBox3D" parent="Terrain"]
+position = Vector3(0.28, 0.017, -9.7)
+rotation_degrees = Vector3(0, -4, 0)
+size = Vector3(4, 0.034, 8.5)
 material = SubResource("Material_road")
 
 [node name="RiceFieldLeft" type="CSGBox3D" parent="Terrain"]
-position = Vector3(-9, 0.01, 3)
-size = Vector3(10, 0.02, 20)
+position = Vector3(-8.7, 0.01, 7.1)
+rotation_degrees = Vector3(0, -2, 0)
+size = Vector3(9.8, 0.02, 10.6)
 material = SubResource("Material_rice")
 
 [node name="RiceFieldRight" type="CSGBox3D" parent="Terrain"]
-position = Vector3(9, 0.01, 3)
-size = Vector3(10, 0.02, 20)
+position = Vector3(9.1, 0.01, 6.5)
+rotation_degrees = Vector3(0, 2.5, 0)
+size = Vector3(10.1, 0.02, 11.2)
 material = SubResource("Material_rice")
+
+[node name="RiceFieldLeftLower" type="CSGBox3D" parent="Terrain"]
+position = Vector3(-8.35, 0.012, -5.2)
+rotation_degrees = Vector3(0, 2.5, 0)
+size = Vector3(9.2, 0.024, 10.7)
+material = SubResource("Material_rice")
+
+[node name="RiceFieldRightLower" type="CSGBox3D" parent="Terrain"]
+position = Vector3(8.75, 0.012, -5.55)
+rotation_degrees = Vector3(0, -3, 0)
+size = Vector3(9.7, 0.024, 10.1)
+material = SubResource("Material_rice")
+
+[node name="IrrigationChannelLeft" type="CSGBox3D" parent="Terrain"]
+position = Vector3(-3.05, -0.04, 7.2)
+rotation_degrees = Vector3(0, -3, 0)
+size = Vector3(1.15, 0.06, 11)
+material = SubResource("Material_channel")
+
+[node name="IrrigationChannelRight" type="CSGBox3D" parent="Terrain"]
+position = Vector3(3.25, -0.04, 6.9)
+rotation_degrees = Vector3(0, 2, 0)
+size = Vector3(1.15, 0.06, 11.5)
+material = SubResource("Material_channel")
+
+[node name="IrrigationChannelLeftLower" type="CSGBox3D" parent="Terrain"]
+position = Vector3(-3.15, -0.038, -5.25)
+rotation_degrees = Vector3(0, 3, 0)
+size = Vector3(1.15, 0.064, 10.8)
+material = SubResource("Material_channel")
+
+[node name="IrrigationChannelRightLower" type="CSGBox3D" parent="Terrain"]
+position = Vector3(3.18, -0.038, -5.45)
+rotation_degrees = Vector3(0, -3.5, 0)
+size = Vector3(1.15, 0.064, 10.4)
+material = SubResource("Material_channel")
+
+[node name="RoadEdgeLeft" type="CSGBox3D" parent="Terrain"]
+position = Vector3(-2.55, 0.045, 9.9)
+rotation_degrees = Vector3(0, -5, 0)
+size = Vector3(0.34, 0.09, 15.8)
+material = SubResource("Material_paddy_bank")
+
+[node name="RoadEdgeRight" type="CSGBox3D" parent="Terrain"]
+position = Vector3(3.65, 0.045, 9.9)
+rotation_degrees = Vector3(0, -5, 0)
+size = Vector3(0.34, 0.09, 15.8)
+material = SubResource("Material_paddy_bank")
+
+[node name="CrossFieldFootpathLeft" type="CSGBox3D" parent="Terrain"]
+position = Vector3(-8.6, 0.04, 0.75)
+rotation_degrees = Vector3(0, -1, 0)
+size = Vector3(9.7, 0.07, 0.48)
+material = SubResource("Material_footpath")
+
+[node name="CrossFieldFootpathRight" type="CSGBox3D" parent="Terrain"]
+position = Vector3(8.9, 0.04, 0.45)
+rotation_degrees = Vector3(0, 2, 0)
+size = Vector3(10, 0.07, 0.48)
+material = SubResource("Material_footpath")
+
+[node name="PaddyBankLeftOuter" type="CSGBox3D" parent="Terrain"]
+position = Vector3(-13.9, 0.045, 1.1)
+rotation_degrees = Vector3(0, -1, 0)
+size = Vector3(0.4, 0.09, 22.4)
+material = SubResource("Material_paddy_bank")
+
+[node name="PaddyBankRightOuter" type="CSGBox3D" parent="Terrain"]
+position = Vector3(14.15, 0.045, 0.65)
+rotation_degrees = Vector3(0, 1, 0)
+size = Vector3(0.4, 0.09, 22.2)
+material = SubResource("Material_paddy_bank")
+
+[node name="RicePlantsLeft" parent="Terrain" instance=ExtResource("14_rice_patch")]
+position = Vector3(-9, 0.03, 3)
+script = ExtResource("32_breeze")
+amplitude_degrees = 0.42
+frequency_hz = 0.14
+
+[node name="RicePlantsRight" parent="Terrain" instance=ExtResource("14_rice_patch")]
+position = Vector3(9, 0.03, 3)
+rotation_degrees = Vector3(0, 180, 0)
+script = ExtResource("32_breeze")
+amplitude_degrees = 0.42
+frequency_hz = 0.14
 
 [node name="GrandmaHouse" type="Node3D" parent="."]
 unique_name_in_owner = true
 
+[node name="GrandmaExterior" parent="GrandmaHouse" instance=ExtResource("21_grandma_exterior")]
+position = Vector3(0, 0.18, 22)
+scale = Vector3(0.82, 0.82, 0.82)
+
+[node name="YardProps" parent="GrandmaHouse" instance=ExtResource("24_yard_props")]
+position = Vector3(0, 0.18, 22)
+
+[node name="GrandmaInterior" parent="GrandmaHouse" instance=ExtResource("20_grandma_interior")]
+visible = false
+position = Vector3(0, 0.18, 22)
+
 [node name="Floor" type="CSGBox3D" parent="GrandmaHouse"]
+visible = false
 position = Vector3(0, 0.05, 22)
 size = Vector3(8, 0.1, 8)
 use_collision = true
 material = SubResource("Material_house")
 
 [node name="BackWall" type="CSGBox3D" parent="GrandmaHouse"]
+visible = false
 position = Vector3(0, 1.5, 26)
 size = Vector3(8, 3, 0.25)
 use_collision = true
 material = SubResource("Material_house")
 
 [node name="LeftWall" type="CSGBox3D" parent="GrandmaHouse"]
+visible = false
 position = Vector3(-4, 1.5, 22)
 size = Vector3(0.25, 3, 8)
 use_collision = true
 material = SubResource("Material_house")
 
 [node name="RightWall" type="CSGBox3D" parent="GrandmaHouse"]
+visible = false
 position = Vector3(4, 1.5, 22)
 size = Vector3(0.25, 3, 8)
 use_collision = true
 material = SubResource("Material_house")
 
 [node name="FrontWallLeft" type="CSGBox3D" parent="GrandmaHouse"]
+visible = false
 position = Vector3(-2.75, 1.5, 18)
 size = Vector3(2.5, 3, 0.25)
 use_collision = true
 material = SubResource("Material_house")
 
 [node name="FrontWallRight" type="CSGBox3D" parent="GrandmaHouse"]
+visible = false
 position = Vector3(2.75, 1.5, 18)
 size = Vector3(2.5, 3, 0.25)
 use_collision = true
 material = SubResource("Material_house")
 
+[node name="RoofLeft" type="CSGBox3D" parent="GrandmaHouse"]
+visible = false
+position = Vector3(-2.05, 3.55, 22)
+rotation_degrees = Vector3(0, 0, 25)
+size = Vector3(4.9, 0.22, 9)
+use_collision = true
+material = SubResource("Material_roof")
+
+[node name="RoofRight" type="CSGBox3D" parent="GrandmaHouse"]
+visible = false
+position = Vector3(2.05, 3.55, 22)
+rotation_degrees = Vector3(0, 0, -25)
+size = Vector3(4.9, 0.22, 9)
+use_collision = true
+material = SubResource("Material_roof")
+
+[node name="Engawa" type="CSGBox3D" parent="GrandmaHouse"]
+visible = false
+position = Vector3(0, 0.28, 17.45)
+size = Vector3(7.2, 0.18, 1.15)
+use_collision = true
+material = SubResource("Material_wood")
+
+[node name="EntranceStep" type="CSGBox3D" parent="GrandmaHouse"]
+visible = false
+position = Vector3(0, 0.1, 16.65)
+size = Vector3(2.3, 0.2, 0.7)
+use_collision = true
+material = SubResource("Material_wood")
+
+[node name="WarmWindowLeft" type="CSGBox3D" parent="GrandmaHouse"]
+visible = false
+position = Vector3(-2.55, 1.65, 17.84)
+size = Vector3(1.55, 1.35, 0.04)
+material = SubResource("Material_window_light")
+
+[node name="WarmWindowRight" type="CSGBox3D" parent="GrandmaHouse"]
+visible = false
+position = Vector3(2.55, 1.65, 17.84)
+size = Vector3(1.55, 1.35, 0.04)
+material = SubResource("Material_window_light")
+
 [node name="HouseLabel" type="Label3D" parent="GrandmaHouse"]
+visible = false
 position = Vector3(0, 2.6, 17.8)
 text = "GRANDMA'S HOUSE"
 font_size = 48
 outline_size = 8
 
 [node name="Grandma" type="Area3D" parent="GrandmaHouse"]
-position = Vector3(0, 1, 24)
+position = Vector3(1.15, 1, 13.9)
+rotation_degrees = Vector3(0, -18, 0)
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("4_dialogue_interactable")
-interaction_text = "Talk to Grandma (prototype)"
+interaction_text = "おばあちゃんと話す"
 dialogue = ExtResource("5_grandma_dialogue")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="GrandmaHouse/Grandma"]
 shape = SubResource("Shape_grandma_interaction")
 
-[node name="PrototypeBody" type="CSGCylinder3D" parent="GrandmaHouse/Grandma"]
-radius = 0.4
-height = 1.8
-material = SubResource("Material_house")
+[node name="GrandmaVisual" type="Node3D" parent="GrandmaHouse/Grandma"]
+position = Vector3(0, -0.9, 0)
+script = ExtResource("19_grandma_visual")
+
+[node name="GrandmaModel" parent="GrandmaHouse/Grandma/GrandmaVisual" instance=ExtResource("18_grandma_model")]
 
 [node name="Label3D" type="Label3D" parent="GrandmaHouse/Grandma"]
+visible = false
 position = Vector3(0, 1.4, 0)
 text = "GRANDMA"
 font_size = 40
 outline_size = 8
 
 [node name="ReturnHomePoint" type="Area3D" parent="GrandmaHouse"]
-position = Vector3(0, 1, 20)
+position = Vector3(0, 1, 17)
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("11_return_home")
@@ -203,6 +499,7 @@ script = ExtResource("11_return_home")
 shape = SubResource("Shape_return_home")
 
 [node name="Label3D" type="Label3D" parent="GrandmaHouse/ReturnHomePoint"]
+visible = false
 position = Vector3(0, 1, 0)
 text = "RETURN HOME"
 font_size = 36
@@ -213,10 +510,119 @@ unique_name_in_owner = true
 
 [node name="Water" type="CSGBox3D" parent="River"]
 position = Vector3(0, -0.65, -18)
-size = Vector3(40, 0.15, 6)
+size = Vector3(18, 0.15, 5.6)
 material = SubResource("Material_water")
 
+[node name="WaterWest" type="CSGBox3D" parent="River"]
+position = Vector3(-14.2, -0.65, -17.45)
+rotation_degrees = Vector3(0, -2.2, 0)
+size = Vector3(11.2, 0.15, 5.2)
+material = SubResource("Material_water")
+
+[node name="WaterEast" type="CSGBox3D" parent="River"]
+position = Vector3(14.2, -0.65, -18.65)
+rotation_degrees = Vector3(0, 2.4, 0)
+size = Vector3(11.2, 0.15, 5.25)
+material = SubResource("Material_water")
+
+[node name="RiverBed" type="CSGBox3D" parent="River"]
+position = Vector3(0, -0.88, -18)
+size = Vector3(18.4, 0.18, 5.35)
+material = SubResource("Material_riverbed")
+
+[node name="RiverBedWest" type="CSGBox3D" parent="River"]
+position = Vector3(-14.2, -0.88, -17.45)
+rotation_degrees = Vector3(0, -2.2, 0)
+size = Vector3(11.6, 0.18, 4.95)
+material = SubResource("Material_riverbed")
+
+[node name="RiverBedEast" type="CSGBox3D" parent="River"]
+position = Vector3(14.2, -0.88, -18.65)
+rotation_degrees = Vector3(0, 2.4, 0)
+size = Vector3(11.6, 0.18, 5)
+material = SubResource("Material_riverbed")
+
+[node name="NearBank" type="CSGBox3D" parent="River"]
+position = Vector3(0, -0.18, -14.75)
+rotation_degrees = Vector3(-10, 0, 0)
+size = Vector3(18, 0.32, 1.35)
+material = SubResource("Material_grass")
+
+[node name="FarBank" type="CSGBox3D" parent="River"]
+position = Vector3(0, -0.18, -21.25)
+rotation_degrees = Vector3(10, 0, 0)
+size = Vector3(18, 0.32, 1.35)
+material = SubResource("Material_grass")
+
+[node name="NearBankWest" type="CSGBox3D" parent="River"]
+position = Vector3(-14.2, -0.18, -14.4)
+rotation_degrees = Vector3(-10, -2.2, 0)
+size = Vector3(11.4, 0.32, 1.35)
+material = SubResource("Material_grass")
+
+[node name="FarBankWest" type="CSGBox3D" parent="River"]
+position = Vector3(-14.2, -0.18, -20.5)
+rotation_degrees = Vector3(10, -2.2, 0)
+size = Vector3(11.4, 0.32, 1.35)
+material = SubResource("Material_grass")
+
+[node name="NearBankEast" type="CSGBox3D" parent="River"]
+position = Vector3(14.2, -0.18, -15.55)
+rotation_degrees = Vector3(-10, 2.4, 0)
+size = Vector3(11.4, 0.32, 1.35)
+material = SubResource("Material_grass")
+
+[node name="FarBankEast" type="CSGBox3D" parent="River"]
+position = Vector3(14.2, -0.18, -21.75)
+rotation_degrees = Vector3(10, 2.4, 0)
+size = Vector3(11.4, 0.32, 1.35)
+material = SubResource("Material_grass")
+
+[node name="KappaShallowCove" type="CSGBox3D" parent="River"]
+position = Vector3(4.35, -0.46, -15.25)
+rotation_degrees = Vector3(0, -6, 0)
+size = Vector3(4.7, 0.08, 1.65)
+material = SubResource("Material_shallow_water")
+
+[node name="KappaSandbar" type="CSGCylinder3D" parent="River"]
+position = Vector3(5.5, -0.53, -19.55)
+radius = 1.45
+height = 0.12
+sides = 18
+scale = Vector3(1.5, 1, 0.42)
+material = SubResource("Material_wet_sand")
+
+[node name="LookoutStoneNear" type="CSGCylinder3D" parent="River"]
+position = Vector3(1.55, -0.06, -14.1)
+radius = 0.62
+height = 0.16
+sides = 9
+scale = Vector3(1, 1, 0.72)
+material = SubResource("Material_riverbed")
+
+[node name="LookoutStoneMid" type="CSGCylinder3D" parent="River"]
+position = Vector3(2.75, -0.12, -14.45)
+rotation_degrees = Vector3(0, 18, 0)
+radius = 0.52
+height = 0.14
+sides = 8
+scale = Vector3(1, 1, 0.76)
+material = SubResource("Material_riverbed")
+
+[node name="LookoutStoneFar" type="CSGCylinder3D" parent="River"]
+position = Vector3(3.75, -0.2, -14.9)
+rotation_degrees = Vector3(0, -13, 0)
+radius = 0.44
+height = 0.12
+sides = 9
+scale = Vector3(1, 1, 0.78)
+material = SubResource("Material_riverbed")
+
+[node name="BridgeVisual" parent="River" instance=ExtResource("26_bridge")]
+position = Vector3(0, 0.08, -18)
+
 [node name="Bridge" type="CSGBox3D" parent="River"]
+visible = false
 unique_name_in_owner = true
 position = Vector3(0, 0.08, -18)
 size = Vector3(3, 0.16, 7)
@@ -224,16 +630,37 @@ use_collision = true
 material = SubResource("Material_wood")
 
 [node name="LeftBridgePost" type="CSGBox3D" parent="River"]
+visible = false
 position = Vector3(-1.35, 0.65, -18)
 size = Vector3(0.15, 1.2, 7)
 material = SubResource("Material_wood")
 
 [node name="RightBridgePost" type="CSGBox3D" parent="River"]
+visible = false
 position = Vector3(1.35, 0.65, -18)
 size = Vector3(0.15, 1.2, 7)
 material = SubResource("Material_wood")
 
+[node name="BridgeCrossbarNear" type="CSGBox3D" parent="River"]
+visible = false
+position = Vector3(0, 0.7, -15.15)
+size = Vector3(2.85, 0.12, 0.12)
+material = SubResource("Material_wood")
+
+[node name="BridgeCrossbarFar" type="CSGBox3D" parent="River"]
+visible = false
+position = Vector3(0, 0.7, -20.85)
+size = Vector3(2.85, 0.12, 0.12)
+material = SubResource("Material_wood")
+
+[node name="RiverRockSet" parent="River" instance=ExtResource("13_river_rocks")]
+position = Vector3(0, -0.52, -18)
+scale = Vector3(1.35, 1.35, 1.35)
+
+[node name="RiverbankProps" parent="River" instance=ExtResource("25_riverbank_props")]
+
 [node name="RiverLabel" type="Label3D" parent="River"]
+visible = false
 position = Vector3(4, 1.5, -15)
 text = "RIVER / KAPPA SLICE"
 font_size = 48
@@ -244,12 +671,13 @@ position = Vector3(0, 1, -13.5)
 collision_layer = 2
 collision_mask = 0
 script = ExtResource("3_interactable")
-interaction_text = "Look at the river"
+interaction_text = "川をよく見る"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="River/ObservationPoint"]
 shape = SubResource("Shape_river_interaction")
 
 [node name="Label3D" type="Label3D" parent="River/ObservationPoint"]
+visible = false
 position = Vector3(0, 1, 0)
 text = "OBSERVE"
 font_size = 36
@@ -262,6 +690,7 @@ collision_mask = 1
 monitorable = false
 script = ExtResource("8_event_trigger")
 event_definition = ExtResource("9_kappa_event")
+approach_delay_seconds = 1.9
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="River/KappaEventTrigger"]
 shape = SubResource("Shape_kappa_event_trigger")
@@ -269,46 +698,189 @@ shape = SubResource("Shape_kappa_event_trigger")
 [node name="KappaGlimpse" type="Node3D" parent="River"]
 script = ExtResource("10_kappa_glimpse")
 
+[node name="DiveSplash" type="GPUParticles3D" parent="River/KappaGlimpse"]
+unique_name_in_owner = true
+position = Vector3(4, -0.59, -18)
+emitting = false
+amount = 9
+lifetime = 0.58
+one_shot = true
+explosiveness = 0.92
+randomness = 0.3
+visibility_aabb = AABB(-2, -1, -2, 4, 3, 4)
+process_material = SubResource("Particles_kappa_splash")
+draw_pass_1 = SubResource("Mesh_kappa_splash")
+
 [node name="VisualRoot" type="Node3D" parent="River/KappaGlimpse"]
 unique_name_in_owner = true
 position = Vector3(4, -0.1, -18)
 
-[node name="Body" type="CSGCylinder3D" parent="River/KappaGlimpse/VisualRoot"]
-position = Vector3(0, 0.5, 0)
-radius = 0.4
-height = 0.9
-material = SubResource("Material_kappa")
+[node name="KappaModel" parent="River/KappaGlimpse/VisualRoot" instance=ExtResource("17_kappa_model")]
+unique_name_in_owner = true
+scale = Vector3(0.9, 0.9, 0.9)
 
-[node name="Head" type="CSGSphere3D" parent="River/KappaGlimpse/VisualRoot"]
-position = Vector3(0, 1.05, 0)
-radius = 0.38
-material = SubResource("Material_kappa")
+[node name="Ripple" type="CSGTorus3D" parent="River/KappaGlimpse/VisualRoot"]
+unique_name_in_owner = true
+position = Vector3(0, -0.49, 0)
+inner_radius = 0.32
+outer_radius = 0.42
+sides = 16
+ring_sides = 6
+material = SubResource("Material_ripple")
 
-[node name="Plate" type="CSGCylinder3D" parent="River/KappaGlimpse/VisualRoot"]
-position = Vector3(0, 1.4, 0)
-radius = 0.3
-height = 0.08
-material = SubResource("Material_kappa")
+[node name="GreenReflection" type="CSGCylinder3D" parent="River/KappaGlimpse/VisualRoot"]
+unique_name_in_owner = true
+position = Vector3(0, -0.5, 0)
+radius = 0.78
+height = 0.025
+sides = 24
+material = SubResource("Material_kappa_reflection")
 
 [node name="Landmarks" type="Node3D" parent="."]
 
+[node name="UtilityPoleVisualNearHouse" parent="Landmarks" instance=ExtResource("22_utility_pole")]
+position = Vector3(3.5, 0, 12)
+
+[node name="UtilityPoleVisualMidway" parent="Landmarks" instance=ExtResource("22_utility_pole")]
+position = Vector3(-3.5, 0, 1)
+
+[node name="UtilityPoleVisualNearRiver" parent="Landmarks" instance=ExtResource("22_utility_pole")]
+position = Vector3(3.5, 0, -10)
+
+[node name="UtilityWireRun" parent="Landmarks" instance=ExtResource("23_utility_wires")]
+visible = false
+
 [node name="UtilityPoleNearHouse" type="CSGCylinder3D" parent="Landmarks"]
+visible = false
 position = Vector3(3.5, 2.5, 12)
 radius = 0.15
 height = 5.0
 material = SubResource("Material_landmark")
 
 [node name="UtilityPoleMidway" type="CSGCylinder3D" parent="Landmarks"]
+visible = false
 position = Vector3(-3.5, 2.5, 1)
 radius = 0.15
 height = 5.0
 material = SubResource("Material_landmark")
 
 [node name="UtilityPoleNearRiver" type="CSGCylinder3D" parent="Landmarks"]
+visible = false
 position = Vector3(3.5, 2.5, -10)
 radius = 0.15
 height = 5.0
 material = SubResource("Material_landmark")
+
+[node name="NearHouseCrossarm" type="CSGBox3D" parent="Landmarks"]
+visible = false
+position = Vector3(3.5, 4.45, 12)
+size = Vector3(1.5, 0.12, 0.12)
+material = SubResource("Material_landmark")
+
+[node name="MidwayCrossarm" type="CSGBox3D" parent="Landmarks"]
+visible = false
+position = Vector3(-3.5, 4.45, 1)
+size = Vector3(1.5, 0.12, 0.12)
+material = SubResource("Material_landmark")
+
+[node name="NearRiverCrossarm" type="CSGBox3D" parent="Landmarks"]
+visible = false
+position = Vector3(3.5, 4.45, -10)
+size = Vector3(1.5, 0.12, 0.12)
+material = SubResource("Material_landmark")
+
+[node name="Vegetation" type="Node3D" parent="."]
+script = ExtResource("32_breeze")
+amplitude_degrees = 0.18
+frequency_hz = 0.09
+
+[node name="HouseTree" parent="Vegetation" instance=ExtResource("12_summer_tree")]
+position = Vector3(-7, 0, 15)
+rotation_degrees = Vector3(0, -18, 0)
+scale = Vector3(0.95, 0.95, 0.95)
+
+[node name="FieldTree" parent="Vegetation" instance=ExtResource("12_summer_tree")]
+position = Vector3(8, 0, 8)
+rotation_degrees = Vector3(0, 37, 0)
+scale = Vector3(1.08, 1.08, 1.08)
+
+[node name="BendTree" parent="Vegetation" instance=ExtResource("12_summer_tree")]
+position = Vector3(-6, 0, -6)
+rotation_degrees = Vector3(0, -46, 0)
+scale = Vector3(1.12, 1.12, 1.12)
+
+[node name="RiverTree" parent="Vegetation" instance=ExtResource("12_summer_tree")]
+position = Vector3(9.5, 0, -12)
+rotation_degrees = Vector3(0, 64, 0)
+scale = Vector3(1.2, 1.2, 1.2)
+
+[node name="FarBankTree" parent="Vegetation" instance=ExtResource("12_summer_tree")]
+position = Vector3(-7, 0, -24)
+rotation_degrees = Vector3(0, 12, 0)
+scale = Vector3(1.28, 1.28, 1.28)
+
+[node name="HouseTreeVariant" parent="Vegetation" instance=ExtResource("28_tree_variant")]
+position = Vector3(9.5, 0, 18)
+rotation_degrees = Vector3(0, -31, 0)
+scale = Vector3(0.92, 0.92, 0.92)
+
+[node name="FarRiverTreeVariant" parent="Vegetation" instance=ExtResource("28_tree_variant")]
+position = Vector3(-11, 0, -19)
+rotation_degrees = Vector3(0, 48, 0)
+scale = Vector3(1.15, 1.15, 1.15)
+
+[node name="HouseBamboo" parent="Vegetation" instance=ExtResource("29_bamboo")]
+position = Vector3(-8.5, 0, 20.5)
+rotation_degrees = Vector3(0, 18, 0)
+
+[node name="RiverBamboo" parent="Vegetation" instance=ExtResource("29_bamboo")]
+position = Vector3(7, 0, -8)
+rotation_degrees = Vector3(0, -22, 0)
+scale = Vector3(1.08, 1.08, 1.08)
+
+[node name="HouseShrubs" parent="Vegetation" instance=ExtResource("30_shrub")]
+position = Vector3(-5.3, 0, 12)
+rotation_degrees = Vector3(0, 35, 0)
+
+[node name="FieldShrubs" parent="Vegetation" instance=ExtResource("30_shrub")]
+position = Vector3(5.2, 0, 3.5)
+rotation_degrees = Vector3(0, -42, 0)
+scale = Vector3(0.82, 0.82, 0.82)
+
+[node name="RiverShrubs" parent="Vegetation" instance=ExtResource("30_shrub")]
+position = Vector3(-4.8, 0, -10.5)
+rotation_degrees = Vector3(0, 71, 0)
+scale = Vector3(1.12, 1.12, 1.12)
+
+[node name="FarBankShrubs" parent="Vegetation" instance=ExtResource("30_shrub")]
+position = Vector3(5.8, 0, -23)
+rotation_degrees = Vector3(0, -15, 0)
+
+[node name="HouseWildGrass" parent="Vegetation" instance=ExtResource("31_wild_grass")]
+position = Vector3(4, 0, 13)
+
+[node name="FieldWildGrassLeft" parent="Vegetation" instance=ExtResource("31_wild_grass")]
+position = Vector3(-4.1, 0, 6.8)
+rotation_degrees = Vector3(0, 28, 0)
+
+[node name="FieldWildGrassRight" parent="Vegetation" instance=ExtResource("31_wild_grass")]
+position = Vector3(4.2, 0, -0.8)
+rotation_degrees = Vector3(0, -37, 0)
+scale = Vector3(1.15, 1.15, 1.15)
+
+[node name="RiverWildGrassLeft" parent="Vegetation" instance=ExtResource("31_wild_grass")]
+position = Vector3(-4, 0, -9)
+rotation_degrees = Vector3(0, 62, 0)
+
+[node name="RiverWildGrassRight" parent="Vegetation" instance=ExtResource("31_wild_grass")]
+position = Vector3(4.5, 0, -13)
+rotation_degrees = Vector3(0, -54, 0)
+scale = Vector3(0.9, 0.9, 0.9)
+
+[node name="KappaCoveGrass" parent="Vegetation" instance=ExtResource("31_wild_grass")]
+position = Vector3(5.6, -0.08, -14.7)
+rotation_degrees = Vector3(0, 24, 0)
+scale = Vector3(1.18, 1.18, 1.18)
 
 [node name="Insects" type="Node3D" parent="."]
 
@@ -324,7 +896,7 @@ position = Vector3(-1.6, 1.0, -10)
 [node name="LocationAreas" type="Node3D" parent="."]
 
 [node name="GrandmaHouseArea" type="Area3D" parent="LocationAreas"]
-position = Vector3(0, 2, 22)
+position = Vector3(0, 2, 20.5)
 script = ExtResource("2_location")
 area_id = &"grandma_house"
 
@@ -349,4 +921,4 @@ shape = SubResource("Shape_river_area")
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 unique_name_in_owner = true
-position = Vector3(0, 0.15, 22)
+position = Vector3(0, 0.15, 15.75)

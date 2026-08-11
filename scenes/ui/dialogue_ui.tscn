@@ -1,6 +1,37 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/dialogue_ui.gd" id="1_ui"]
+[ext_resource type="Theme" path="res://resources/ui/summer_diary_theme.tres" id="2_theme"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_dialogue"]
+bg_color = Color(0.91, 0.85, 0.68, 0.97)
+border_width_left = 5
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 4
+border_color = Color(0.08, 0.23, 0.25, 0.96)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+shadow_color = Color(0.01, 0.03, 0.03, 0.4)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_portrait"]
+bg_color = Color(0.065, 0.18, 0.19, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.73, 0.2, 0.12, 0.95)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 0.0
 
 [node name="DialogueUI" type="CanvasLayer"]
 layer = 60
@@ -10,44 +41,63 @@ script = ExtResource("1_ui")
 unique_name_in_owner = true
 anchors_preset = 12
 anchor_right = 1.0
+anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 96.0
-offset_top = -210.0
+offset_top = -286.0
 offset_right = -96.0
-offset_bottom = -36.0
+offset_bottom = -24.0
 grow_horizontal = 2
 grow_vertical = 0
+theme = ExtResource("2_theme")
+theme_override_styles/panel = SubResource("StyleBox_dialogue")
 
 [node name="MarginContainer" type="MarginContainer" parent="Panel"]
 layout_mode = 2
 theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 18
+theme_override_constants/margin_top = 14
 theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 16
+theme_override_constants/margin_bottom = 14
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 22
+
+[node name="PortraitFrame" type="PanelContainer" parent="Panel/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(220, 226)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBox_portrait")
+
+[node name="Portrait" type="TextureRect" parent="Panel/MarginContainer/HBoxContainer/PortraitFrame"]
+unique_name_in_owner = true
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 10
 
-[node name="SpeakerLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="SpeakerLabel" type="Label" parent="Panel/MarginContainer/HBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.95, 0.78, 0.42, 1)
-theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.66, 0.15, 0.09, 1)
+theme_override_font_sizes/font_size = 23
 text = "Speaker"
 
-[node name="DialogueLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="DialogueLabel" type="Label" parent="Panel/MarginContainer/HBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 72)
+custom_minimum_size = Vector2(0, 128)
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.12, 0.2, 0.19, 1)
 text = "Dialogue text"
 autowrap_mode = 2
 
-[node name="ProgressLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="ProgressLabel" type="Label" parent="Panel/MarginContainer/HBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.7, 0.75, 0.78, 1)
+theme_override_colors/font_color = Color(0.18, 0.4, 0.34, 1)
 text = "1 / 1    [E / Space]"
 horizontal_alignment = 2
-

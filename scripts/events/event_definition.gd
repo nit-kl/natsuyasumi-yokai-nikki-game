@@ -17,7 +17,7 @@ func is_valid() -> bool:
 	return not event_id.is_empty() and not location_id.is_empty()
 
 
-func matches(location: StringName, minutes: int, world_flags: Dictionary) -> bool:
+func matches(location: StringName, minutes: int, world_flags: Dictionary = {}) -> bool:
 	if not is_valid() or location != location_id or not _matches_time(minutes):
 		return false
 	for flag in required_flags:
@@ -34,4 +34,3 @@ func _matches_time(minutes: int) -> bool:
 	if start_minutes <= end_minutes:
 		return normalized_minutes >= start_minutes and normalized_minutes <= end_minutes
 	return normalized_minutes >= start_minutes or normalized_minutes <= end_minutes
-

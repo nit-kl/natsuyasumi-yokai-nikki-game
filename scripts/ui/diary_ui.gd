@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 @onready var panel: PanelContainer = %Panel
+@onready var backdrop: ColorRect = %Backdrop
 @onready var title_label: Label = %TitleLabel
 @onready var instruction_label: Label = %InstructionLabel
 @onready var memory_buttons: Array[CheckButton] = [%Memory1, %Memory2, %Memory3]
@@ -10,6 +11,7 @@ extends CanvasLayer
 
 func _ready() -> void:
 	panel.visible = false
+	backdrop.visible = false
 	DiaryManager.diary_opened.connect(_on_diary_opened)
 	DiaryManager.entry_saved.connect(_on_entry_saved)
 
@@ -31,6 +33,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_diary_opened(record: DayRecord, options: Array[Dictionary]) -> void:
+	AudioManager.play_cue(&"diary_page", -4.0)
+	backdrop.visible = true
 	panel.visible = true
 	title_label.text = "Day %d — 妖怪日記" % record.day
 	instruction_label.visible = true
@@ -46,13 +50,14 @@ func _on_diary_opened(record: DayRecord, options: Array[Dictionary]) -> void:
 
 
 func _on_entry_saved(entry: DiaryEntry) -> void:
+	AudioManager.play_cue(&"pencil_write", -4.0)
 	title_label.text = entry.title
 	instruction_label.visible = false
 	for button in memory_buttons:
 		button.visible = false
 	entry_body.visible = true
 	entry_body.text = entry.body
-	footer_label.text = "Day %d complete — Vertical Slice finished" % entry.day
+	footer_label.text = "%d日目の日記が完成した" % entry.day
 
 
 func _toggle_memory(index: int) -> void:

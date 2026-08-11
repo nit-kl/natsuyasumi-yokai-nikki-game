@@ -1,6 +1,31 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/day_flow_ui.gd" id="1_ui"]
+[ext_resource type="Theme" path="res://resources/ui/summer_diary_theme.tres" id="2_theme"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_objective"]
+bg_color = Color(0.9, 0.84, 0.66, 0.94)
+border_width_left = 5
+border_width_bottom = 1
+border_color = Color(0.68, 0.17, 0.1, 0.95)
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+shadow_color = Color(0.02, 0.05, 0.04, 0.28)
+shadow_size = 7
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_summary"]
+bg_color = Color(0.91, 0.85, 0.68, 0.98)
+border_width_left = 6
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.10, 0.25, 0.27, 0.95)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0.02, 0.04, 0.04, 0.45)
+shadow_size = 16
 
 [node name="DayFlowUI" type="CanvasLayer"]
 layer = 58
@@ -8,18 +33,46 @@ script = ExtResource("1_ui")
 
 [node name="ObjectivePanel" type="PanelContainer" parent="."]
 unique_name_in_owner = true
+mouse_filter = 2
 offset_left = 32.0
 offset_top = 128.0
 offset_right = 440.0
-offset_bottom = 184.0
+offset_bottom = 224.0
+theme_override_styles/panel = SubResource("StyleBox_objective")
+theme = ExtResource("2_theme")
 
-[node name="ObjectiveLabel" type="Label" parent="ObjectivePanel"]
+[node name="MarginContainer" type="MarginContainer" parent="ObjectivePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ObjectivePanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ObjectiveStepLabel" type="Label" parent="ObjectivePanel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.72, 0.38, 1)
-text = "It's getting late. Return to Grandma's house."
-horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.65, 0.14, 0.08, 1)
+theme_override_font_sizes/font_size = 14
+text = "今日の気がかり"
+
+[node name="ObjectiveLabel" type="Label" parent="ObjectivePanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.11, 0.22, 0.21, 1)
+theme_override_font_sizes/font_size = 17
+text = "おばあちゃんに、今日の予定を聞こう"
 vertical_alignment = 1
+
+[node name="MemoryHintLabel" type="Label" parent="ObjectivePanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.16, 0.42, 0.34, 1)
+theme_override_font_sizes/font_size = 14
+text = "不思議な記憶を持ち帰ろう"
 
 [node name="SummaryPanel" type="PanelContainer" parent="."]
 unique_name_in_owner = true
@@ -34,6 +87,8 @@ offset_right = 260.0
 offset_bottom = 170.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_theme")
+theme_override_styles/panel = SubResource("StyleBox_summary")
 
 [node name="MarginContainer" type="MarginContainer" parent="SummaryPanel"]
 layout_mode = 2
@@ -50,12 +105,14 @@ theme_override_constants/separation = 18
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
-text = "Day 1 Complete"
+theme_override_colors/font_color = Color(0.08, 0.23, 0.25, 1)
+text = "1日目の夕暮れ"
 horizontal_alignment = 1
 
 [node name="SummaryBody" type="Label" parent="SummaryPanel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 19
-text = "Returned at 16:30\nInsects caught: 0\nEvents remembered: 1\n\n[E / Space] Continue"
+theme_override_colors/font_color = Color(0.19, 0.20, 0.16, 1)
+text = "帰宅時刻　16:30\nつかまえた虫　0匹\n心に残った出来事　1件\n\n[E / Space] 日記を開く"
 horizontal_alignment = 1

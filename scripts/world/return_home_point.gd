@@ -3,7 +3,7 @@ extends Interactable
 
 
 func _ready() -> void:
-	interaction_text = "End the day at Grandma's house"
+	interaction_text = "一日を終える"
 	GameState.phase_changed.connect(_on_phase_changed)
 	_update_availability()
 
@@ -28,4 +28,3 @@ func _update_availability() -> void:
 	visible = should_enable
 	interaction_enabled = should_enable
 	collision_layer = 2 if should_enable else 0
-

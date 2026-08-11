@@ -1,6 +1,7 @@
 extends Node
 
 signal save_completed(path: String)
+signal save_started
 signal load_completed(path: String)
 signal save_failed(message: String)
 signal load_failed(message: String)
@@ -17,8 +18,13 @@ func _ready() -> void:
 	DiaryManager.entry_saved.connect(_on_diary_entry_saved)
 
 
+func has_save_game(path: String = DEFAULT_SAVE_PATH) -> bool:
+	return FileAccess.file_exists(path)
+
+
 func save_game(path: String = DEFAULT_SAVE_PATH) -> bool:
 	last_error = ""
+	save_started.emit()
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	if file == null:
 		return _fail_save("Could not open save file: %s" % error_string(FileAccess.get_open_error()))

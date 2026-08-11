@@ -5,6 +5,5 @@
 [resource]
 script = ExtResource("1_data")
 insect_id = &"abura_zemi"
-display_name = "Abura-zemi"
-description = "A loud cicada whose song fills the summer afternoon."
-
+display_name = "アブラゼミ"
+description = "夏の午後を大きな声で満たす、身近なセミ。"

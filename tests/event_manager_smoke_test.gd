@@ -6,6 +6,7 @@ const KAPPA_EVENT: EventDefinition = preload("res://resources/events/kappa_first
 func _ready() -> void:
 	EventManager.reset_history()
 	assert(KAPPA_EVENT.is_valid())
+	assert(KAPPA_EVENT.matches(&"river", 7 * 60))
 	assert(EventManager.register_event(KAPPA_EVENT))
 
 	var morning_candidates := EventManager.get_candidates(&"river", 7 * 60)
@@ -28,4 +29,3 @@ func _ready() -> void:
 
 	print("Event manager smoke test passed.")
 	get_tree().quit(0)
-

@@ -5,11 +5,10 @@
 [resource]
 script = ExtResource("1_event")
 event_id = &"kappa_first_glimpse"
-display_name = "Something in the river"
-hint_text = "A small shadow slipped beneath the water."
+display_name = "川面に消えた影"
+hint_text = "緑色の小さな影。日記に残せそうだ。"
 priority = 100
 location_id = &"river"
 start_minutes = 300
 end_minutes = 1140
 one_shot = true
-

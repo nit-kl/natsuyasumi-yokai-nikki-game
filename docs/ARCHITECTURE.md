@@ -43,9 +43,22 @@ Godot 4.7.1とGDScriptを使用する。シーンは表示と局所的な振る�
 
 日付の更新は `day_ended` をBootstrapが受け、GameStateへ伝える。これによりClockはCalendarや保存形式へ依存しない。
 
+### SceneFlow
+
+タイトル画面とゲーム本編の遷移を担当する。タイトルからの入口は次の2つに限定する。
+
+- New Game：全ランタイム状態を初期化して本編を開く。
+- Continue：本編シーンのUI生成後にSaveManagerから状態を復元する。
+
+起動シーンは `scenes/bootstrap/title.tscn`、Vertical Slice本編は `scenes/bootstrap/main.tscn` とする。シーン個別のスクリプトから保存対象の各Managerを直接初期化しない。
+
+### AudioManager
+
+`Music`、`Ambience`、`SFX` のバスを分離する。環境音はエリアと時間帯に対応する `AmbientProfile` Resourceから選び、2本のAudioStreamPlayerでクロスフェードする。効果音は `SfxLibrary` Resourceの名前付きキューから選び、最大8音のポリフォニーに制限する。再生ごとのNode生成は行わず、音源未割り当てのキューはエラーにせず無音で継続する。
+
 ## 今後追加するサービス
 
-CalendarManager、WeatherManager、WorldState、EventManager、NPCManager、YokaiManager、DiaryManager、SaveManager、AudioManager、SceneTransitionManagerを、必要になったIssue単位で追加する。未実装の抽象化を先回りして作らない。
+CalendarManager、WeatherManager、WorldState、NPCManager、YokaiManagerを、必要になったIssue単位で追加する。未実装の抽象化を先回りして作らない。
 
 ## データ駆動
 
@@ -64,4 +77,3 @@ CalendarManager、WeatherManager、WorldState、EventManager、NPCManager、Yoka
 - Manual：移動感、環境音、ライティング、虫取り、河童との遭遇、日記の満足感。
 
 Vertical Sliceでは自動検証に加え、実機での手動プレイテストをDefinition of Doneに含める。
-

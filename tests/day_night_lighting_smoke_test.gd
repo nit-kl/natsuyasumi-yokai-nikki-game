@@ -13,6 +13,7 @@ func _ready() -> void:
 	var sun := lighting.get_node("Sun") as DirectionalLight3D
 	var environment := (lighting.get_node("WorldEnvironment") as WorldEnvironment).environment
 	var sky_material := environment.sky.sky_material as ProceduralSkyMaterial
+	var evening_motes := lighting.get_node("EveningMotes") as GPUParticles3D
 
 	GameClock.set_time(5, 0)
 	var dawn_energy := sun.light_energy
@@ -22,13 +23,17 @@ func _ready() -> void:
 	var day_energy := sun.light_energy
 	var day_sky_top := sky_material.sky_top_color
 	var day_rotation := sun.rotation_degrees.x
+	assert(not evening_motes.emitting)
 
 	GameClock.set_time(16, 30)
 	var sunset_horizon := sky_material.sky_horizon_color
+	assert(evening_motes.emitting)
+	assert(lighting.evening_vfx_active)
 
 	GameClock.set_time(22, 0)
 	var night_energy := sun.light_energy
 	var night_sky_top := sky_material.sky_top_color
+	assert(not evening_motes.emitting)
 
 	assert(day_energy > dawn_energy)
 	assert(dawn_energy > night_energy)
@@ -41,4 +46,3 @@ func _ready() -> void:
 	GameClock.set_paused(was_paused)
 	print("Day/night lighting smoke test passed.")
 	get_tree().quit(0)
-

@@ -7,6 +7,10 @@ func _ready() -> void:
 	assert(GRANDMA_DIALOGUE.is_valid())
 	assert(GRANDMA_DIALOGUE.lines.size() == 3)
 	assert(GRANDMA_DIALOGUE.lines[0].speaker == "おばあちゃん")
+	assert(GRANDMA_DIALOGUE.lines[0].portrait != null)
+	assert(GRANDMA_DIALOGUE.lines[1].portrait == GRANDMA_DIALOGUE.lines[0].portrait)
+	assert(GRANDMA_DIALOGUE.lines[2].portrait != null)
+	assert(GRANDMA_DIALOGUE.lines[2].portrait != GRANDMA_DIALOGUE.lines[0].portrait)
 
 	GameClock.set_paused(false)
 	assert(DialogueManager.start_dialogue(GRANDMA_DIALOGUE))
@@ -29,4 +33,3 @@ func _ready() -> void:
 
 	print("Dialogue smoke test passed.")
 	get_tree().quit(0)
-

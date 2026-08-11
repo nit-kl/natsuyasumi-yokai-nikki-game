@@ -1,6 +1,19 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/interaction_prompt.gd" id="1_prompt"]
+[ext_resource type="Theme" path="res://resources/ui/summer_diary_theme.tres" id="2_theme"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_prompt"]
+bg_color = Color(0.055, 0.15, 0.17, 0.94)
+border_width_left = 4
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.89, 0.7, 0.34, 0.95)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="InteractionPrompt" type="CanvasLayer"]
 layer = 50
@@ -20,11 +33,14 @@ offset_bottom = -36.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
+theme = ExtResource("2_theme")
+theme_override_styles/panel = SubResource("StyleBox_prompt")
 
 [node name="PromptLabel" type="Label" parent="Panel"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.96, 0.9, 0.69, 1)
 text = "[E] Interact"
 horizontal_alignment = 1
 vertical_alignment = 1

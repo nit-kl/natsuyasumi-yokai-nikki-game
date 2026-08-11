@@ -11,6 +11,7 @@ func catch_insect(insect: InsectData) -> bool:
 		return false
 	var next_count := get_caught_count(insect.insect_id) + 1
 	caught_counts[insect.insect_id] = next_count
+	AudioManager.play_cue(&"bug_catch", -3.0)
 	insect_caught.emit(insect, next_count)
 	return true
 
@@ -42,4 +43,3 @@ func restore_from_save_data(data: Dictionary) -> void:
 	caught_counts.clear()
 	for insect_id in data:
 		caught_counts[StringName(insect_id)] = maxi(int(data[insect_id]), 0)
-

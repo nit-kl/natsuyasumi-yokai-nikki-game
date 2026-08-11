@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 @onready var panel: PanelContainer = %Panel
+@onready var portrait: TextureRect = %Portrait
 @onready var speaker_label: Label = %SpeakerLabel
 @onready var dialogue_label: Label = %DialogueLabel
 @onready var progress_label: Label = %ProgressLabel
@@ -28,9 +29,10 @@ func _on_dialogue_started(_sequence: DialogueSequence) -> void:
 func _on_line_changed(line: DialogueLine, index: int, total: int) -> void:
 	speaker_label.text = line.speaker
 	dialogue_label.text = line.text
+	portrait.texture = line.portrait
+	portrait.visible = line.portrait != null
 	progress_label.text = "%d / %d    [E / Space]" % [index + 1, total]
 
 
 func _on_dialogue_ended(_sequence: DialogueSequence) -> void:
 	panel.visible = false
-

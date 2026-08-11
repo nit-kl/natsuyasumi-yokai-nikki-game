@@ -39,8 +39,10 @@ const SUNSET_PALETTE := {
 
 @onready var sun: DirectionalLight3D = %Sun
 @onready var world_environment: WorldEnvironment = %WorldEnvironment
+@onready var evening_motes: GPUParticles3D = %EveningMotes
 
 var current_period: GameClock.DayPeriod
+var evening_vfx_active := false
 
 
 func _ready() -> void:
@@ -81,6 +83,7 @@ func update_lighting(minutes: int) -> void:
 
 	_apply_palette(from_palette, to_palette, smoothstep(0.0, 1.0, blend))
 	_update_sun_rotation(minutes)
+	_update_evening_vfx(minutes)
 
 
 func _apply_palette(from_palette: Dictionary, to_palette: Dictionary, blend: float) -> void:
@@ -111,6 +114,14 @@ func _update_sun_rotation(minutes: int) -> void:
 		GameClock.night_start_minutes
 	)
 	sun.rotation_degrees.x = lerpf(-12.0, -168.0, daylight_progress)
+
+
+func _update_evening_vfx(minutes: int) -> void:
+	evening_vfx_active = (
+		minutes >= sunset_transition_start_minutes
+		and minutes < GameClock.night_start_minutes
+	)
+	evening_motes.emitting = evening_vfx_active
 
 
 func _range_ratio(value: int, from_value: int, to_value: int) -> float:

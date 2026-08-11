@@ -1,6 +1,21 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/event_notification.gd" id="1_notification"]
+[ext_resource type="Theme" path="res://resources/ui/summer_diary_theme.tres" id="2_theme"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_memory"]
+bg_color = Color(0.085, 0.19, 0.18, 0.96)
+border_width_bottom = 3
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_color = Color(0.88, 0.66, 0.3, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0.01, 0.04, 0.04, 0.4)
+shadow_size = 10
 
 [node name="EventNotification" type="CanvasLayer"]
 layer = 55
@@ -8,13 +23,16 @@ script = ExtResource("1_notification")
 
 [node name="Panel" type="PanelContainer" parent="."]
 unique_name_in_owner = true
+mouse_filter = 2
 anchors_preset = 10
 anchor_right = 1.0
-offset_left = 320.0
+offset_left = 300.0
 offset_top = 36.0
-offset_right = -320.0
-offset_bottom = 126.0
+offset_right = -300.0
+offset_bottom = 154.0
 grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBox_memory")
+theme = ExtResource("2_theme")
 
 [node name="MarginContainer" type="MarginContainer" parent="Panel"]
 layout_mode = 2
@@ -25,22 +43,31 @@ theme_override_constants/margin_bottom = 12
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HeaderLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.72, 0.34, 1)
+theme_override_font_sizes/font_size = 13
+text = "記憶を見つけた"
+horizontal_alignment = 1
 
 [node name="TitleLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.58, 0.88, 0.72, 1)
+theme_override_colors/font_color = Color(0.94, 0.92, 0.76, 1)
 theme_override_font_sizes/font_size = 20
-text = "Something in the river"
+text = "川面に消えた影"
 horizontal_alignment = 1
 
 [node name="HintLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "A small shadow slipped beneath the water."
+theme_override_colors/font_color = Color(0.67, 0.84, 0.76, 1)
+text = "緑色の小さな影。日記に残せそうだ。"
 horizontal_alignment = 1
 
 [node name="HideTimer" type="Timer" parent="."]
 unique_name_in_owner = true
-wait_time = 3.0
+wait_time = 3.6
 one_shot = true

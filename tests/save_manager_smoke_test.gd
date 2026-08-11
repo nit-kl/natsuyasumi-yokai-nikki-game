@@ -15,6 +15,10 @@ func _ready() -> void:
 	GameState.set_current_day(3)
 	GameState.set_current_area(&"river")
 	GameState.set_progress_phase(GameState.ProgressPhase.FREE_ROAM)
+	GameState.player_state = {
+		"position": [1.25, 0.15, -8.5],
+		"rotation_y": 0.4,
+	}
 	GameClock.set_time(12, 34)
 	GameClock.set_time_scale(2.5)
 	GameClock.set_paused(true)
@@ -25,6 +29,8 @@ func _ready() -> void:
 	assert(DiaryManager.begin_entry(record))
 	assert(DiaryManager.save_draft([0, 1, 2]) != null)
 	assert(GameState.progress_phase == GameState.ProgressPhase.DAY_COMPLETE)
+	assert(GameState.player_state["position"] == [1.25, 0.15, -8.5])
+	assert(is_equal_approx(float(GameState.player_state["rotation_y"]), 0.4))
 	assert(SaveManager.save_game(TEST_SAVE_PATH))
 
 	GameState.start_new_game()
@@ -38,6 +44,8 @@ func _ready() -> void:
 	assert(GameState.current_day == 3)
 	assert(GameState.current_area == &"river")
 	assert(GameState.progress_phase == GameState.ProgressPhase.DAY_COMPLETE)
+	assert(GameState.player_state["position"] == [1.25, 0.15, -8.5])
+	assert(is_equal_approx(float(GameState.player_state["rotation_y"]), 0.4))
 	assert(GameClock.current_minutes == 12 * 60 + 34)
 	assert(is_equal_approx(GameClock.time_scale, 2.5))
 	assert(GameClock.clock_paused)
@@ -57,4 +65,3 @@ func _ready() -> void:
 	SaveManager.auto_save_enabled = true
 	print("Save manager smoke test passed.")
 	get_tree().quit(0)
-
