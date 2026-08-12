@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3]
+[gd_scene load_steps=28 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/debug/debug_menu.tscn" id="2_debug"]
@@ -18,6 +18,13 @@
 [ext_resource type="Script" path="res://scripts/events/event_definition.gd" id="16_event_definition"]
 [ext_resource type="Script" path="res://scripts/diary/day_record_recorder.gd" id="17_recorder"]
 [ext_resource type="PackedScene" path="res://scenes/ui/diary_ui.tscn" id="18_diary_ui"]
+[ext_resource type="Script" path="res://scripts/debug/playtest_debug_controller.gd" id="19_playtest"]
+[ext_resource type="Resource" path="res://resources/debug/foundation_morning.tres" id="20_morning"]
+[ext_resource type="Resource" path="res://resources/debug/kappa_trace_ready.tres" id="21_trace_ready"]
+[ext_resource type="Resource" path="res://resources/debug/kappa_sighting_ready.tres" id="22_sighting_ready"]
+[ext_resource type="Script" path="res://scripts/debug/playtest_preset.gd" id="23_preset"]
+[ext_resource type="PackedScene" path="res://scenes/audio/environment_audio.tscn" id="24_audio"]
+[ext_resource type="Resource" path="res://resources/locations/foundation_audio_profile.tres" id="25_audio_profile"]
 
 [sub_resource type="CircleShape2D" id="Circle_marker"]
 radius = 10.0
@@ -36,6 +43,9 @@ color = Color(0.447, 0.655, 0.553, 1)
 script = ExtResource("8_period_visual")
 palette = ExtResource("9_palette")
 
+[node name="EnvironmentAudio" parent="." instance=ExtResource("24_audio")]
+profiles = Array[ExtResource("25_audio_profile")]([ExtResource("25_audio_profile")])
+
 [node name="Player" parent="." instance=ExtResource("1_player")]
 position = Vector2(320, 180)
 
@@ -53,6 +63,10 @@ events = Array[ExtResource("16_event_definition")]([ExtResource("13_trace"), Ext
 
 [node name="DayRecordRecorder" type="Node" parent="."]
 script = ExtResource("17_recorder")
+
+[node name="PlaytestDebugController" type="Node" parent="."]
+script = ExtResource("19_playtest")
+presets = Array[ExtResource("23_preset")]([ExtResource("20_morning"), ExtResource("21_trace_ready"), ExtResource("22_sighting_ready")])
 
 [node name="KappaGlimpse" parent="." instance=ExtResource("15_glimpse")]
 position = Vector2(416, 128)

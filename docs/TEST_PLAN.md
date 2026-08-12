@@ -420,3 +420,60 @@ PlaceholderはProduction Assetではなく、祖母の歩行・生活Animation�
 2. Force Trace / Force Seenで波紋と短い河童Placeholderを確認する
 3. Jで日記を開き、捕まえた虫や見つけた妖怪が記録される
 4. Save後に状態を変え、Loadで日記・河童stage・event historyが復元される
+
+---
+
+## 22. Vertical Slice Playtest Tools — Issue #039
+
+自動Validation:
+
+- Presetによるday / time / area / Player transform設定
+- World flag / Yokai stage / Event history設定
+- 以前のruntime状態とDiaryの初期化
+- 既知地点Teleport
+- 状態Snapshot
+- runtime reset
+
+手動確認:
+
+1. 640x360の基準解像度でF3を押し、全操作が画面内に表示されることを確認する
+2. 3つのPresetを順に適用する
+3. Candidatesで各Presetのイベント成立状態を確認する
+4. home / insect / kappaへTeleportする
+5. Snapshotで現在状態を確認する
+6. Reset Runtime後も既存SaveをLoadできることを確認する
+7. 時計を事前にpauseしてからDebugMenuを開閉し、pause状態が維持されることを確認する
+
+---
+
+## 23. Player Animation — Issue #021
+
+自動Validation:
+
+- idle / walk / runと8方向からAnimation名を生成できる
+- Player Sceneに`PlayerAnimationController`が存在する
+- Production frames未設定時はPlaceholder表示を維持する
+
+手動確認:
+
+1. 8方向へ歩き、向きの白線と足踏みが入力方向へ追従する
+2. ShiftまたはControllerのrun入力中は足踏みテンポが速くなる
+3. 停止すると最後の向きを保ったidle状態になる
+4. 表示が整数座標・Nearest設定でぼやけないことを確認する
+
+---
+
+## 24. Environment Audio — Issue #029
+
+自動Validation:
+
+- Location Profileが時間帯別Streamを返す
+- 未設定時間帯は無音を返す
+- Areaと時間帯に応じてControllerが再生Streamを切り替える
+
+手動確認（Production音源追加後）:
+
+1. 家・屋外・川を移動し、Location固有の環境音へcrossfadeする
+2. 朝・昼・夕・夜をDebugMenuで変更し、対応する環境音へ切り替わる
+3. 未設定のLocation / 時間帯でエラーや不必要な生成音が鳴らない
+4. 夕方のヒグラシと川音が会話・河童演出を邪魔しない音量か確認する

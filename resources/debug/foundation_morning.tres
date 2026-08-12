@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="PlaytestPreset" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/debug/playtest_preset.gd" id="1_preset"]
+
+[resource]
+script = ExtResource("1_preset")
+preset_id = &"foundation_morning"
+display_name = "朝の基準状態"
+day_index = 1
+time_minutes = 420
+area_id = &"foundation_test"
+player_position = Vector2(320, 180)
+player_facing = &"down"

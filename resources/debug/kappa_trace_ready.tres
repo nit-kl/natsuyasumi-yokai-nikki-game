@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="PlaytestPreset" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/debug/playtest_preset.gd" id="1_preset"]
+
+[resource]
+script = ExtResource("1_preset")
+preset_id = &"kappa_trace_ready"
+display_name = "河童の気配直前"
+day_index = 2
+time_minutes = 720
+area_id = &"river"
+player_position = Vector2(400, 160)
+player_facing = &"up"

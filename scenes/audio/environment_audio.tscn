@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/audio/environment_audio_controller.gd" id="1_controller"]
+
+[node name="EnvironmentAudio" type="Node"]
+script = ExtResource("1_controller")
+
+[node name="PlayerA" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+
+[node name="PlayerB" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true

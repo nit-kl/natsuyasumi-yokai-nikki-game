@@ -7,8 +7,6 @@ signal interaction_performed(target: Node)
 signal bug_catch_succeeded(insect_id: StringName)
 signal bug_catch_missed()
 
-const PLACEHOLDER_COLOR := Color("4f86c6")
-const PLACEHOLDER_OUTLINE := Color("183153")
 const FACING_DOWN: StringName = &"down"
 const FACING_DOWN_LEFT: StringName = &"down_left"
 const FACING_LEFT: StringName = &"left"
@@ -38,7 +36,6 @@ func _ready() -> void:
 	if bug_catcher != null:
 		bug_catcher.catch_succeeded.connect(bug_catch_succeeded.emit)
 		bug_catcher.catch_missed.connect(bug_catch_missed.emit)
-	queue_redraw()
 
 
 func _exit_tree() -> void:
@@ -83,7 +80,6 @@ func _set_facing(value: StringName) -> void:
 		return
 	facing = value
 	facing_changed.emit(facing)
-	queue_redraw()
 
 
 func set_facing(value: StringName) -> void:
@@ -107,16 +103,6 @@ static func direction_to_facing(direction: Vector2, fallback: StringName = FACIN
 	if direction.y > 0.0:
 		return FACING_DOWN_RIGHT if direction.x > 0.0 else FACING_DOWN_LEFT
 	return FACING_UP_RIGHT if direction.x > 0.0 else FACING_UP_LEFT
-
-
-func _draw() -> void:
-	# Milestone 0 placeholder only. Replace with a separately produced sprite asset.
-	draw_circle(Vector2(0, -13), 6.0, Color("f1c27d"))
-	draw_rect(Rect2(-7, -7, 14, 15), PLACEHOLDER_COLOR)
-	draw_rect(Rect2(-7, -7, 14, 15), PLACEHOLDER_OUTLINE, false, 1.0)
-	draw_line(Vector2(-4, 8), Vector2(-4, 13), PLACEHOLDER_OUTLINE, 3.0)
-	draw_line(Vector2(4, 8), Vector2(4, 13), PLACEHOLDER_OUTLINE, 3.0)
-	draw_line(Vector2.ZERO, get_facing_vector(facing) * 5.0, Color.WHITE, 1.0)
 
 
 static func get_facing_vector(value: StringName) -> Vector2:

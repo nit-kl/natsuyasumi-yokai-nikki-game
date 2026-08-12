@@ -6,6 +6,13 @@ extends CanvasLayer
 @onready var minute_spin_box: SpinBox = %MinuteSpinBox
 @onready var status_label: Label = %StatusLabel
 @onready var event_report_label: Label = %EventReportLabel
+@onready var preset_option: OptionButton = %PresetOption
+@onready var teleport_option: OptionButton = %TeleportOption
+
+var _playtest_controller: PlaytestDebugController
+var _preset_ids: Array[StringName] = []
+var _teleport_ids: Array[StringName] = []
+var _clock_was_paused := false
 
 
 func _ready() -> void:
@@ -19,15 +26,25 @@ func _ready() -> void:
 	SaveManager.save_completed.connect(_on_save_completed)
 	SaveManager.load_completed.connect(_on_load_completed)
 	SaveManager.operation_failed.connect(_on_operation_failed)
+	_playtest_controller = get_tree().get_first_node_in_group("playtest_debug_controller") as PlaytestDebugController
+	_populate_playtest_controls()
 	_sync_values()
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("debug_menu"):
-		panel.visible = not panel.visible
-		GameState.set_paused(panel.visible)
-		GameClock.set_clock_paused(panel.visible)
+		_set_menu_visible(not panel.visible)
 		get_viewport().set_input_as_handled()
+
+
+func _set_menu_visible(is_visible: bool) -> void:
+	if is_visible == panel.visible:
+		return
+	if is_visible:
+		_clock_was_paused = GameClock.is_paused
+	panel.visible = is_visible
+	GameState.set_paused(is_visible)
+	GameClock.set_clock_paused(true if is_visible else _clock_was_paused)
 
 
 func _on_apply_day_pressed() -> void:
@@ -54,7 +71,7 @@ func _on_show_events_pressed() -> void:
 		var state := "OK" if bool(entry.matches) else "NO"
 		var reasons: Array = entry.reasons
 		var reason_strings := PackedStringArray(reasons.map(func(reason: Variant) -> String: return String(reason)))
-		var reason_text := "" if reasons.is_empty() else " — %s" % "; ".join(reason_strings)
+		var reason_text := "" if reasons.is_empty() else " - %s" % "; ".join(reason_strings)
 		lines.append("[%s] %s%s" % [state, entry.event_id, reason_text])
 	event_report_label.text = "\n".join(lines) if not lines.is_empty() else "No registered events."
 
@@ -79,6 +96,38 @@ func _on_force_kappa_sighting_pressed() -> void:
 	_on_show_events_pressed()
 
 
+func _on_apply_preset_pressed() -> void:
+	if _playtest_controller == null or preset_option.selected < 0:
+		_set_status("Playtest controller is unavailable.")
+		return
+	var preset_id := _preset_ids[preset_option.selected]
+	_set_status("Applied %s." % preset_id if _playtest_controller.apply_preset(preset_id) else "Preset failed.")
+	_sync_values()
+	_on_show_events_pressed()
+
+
+func _on_teleport_pressed() -> void:
+	if _playtest_controller == null or teleport_option.selected < 0:
+		_set_status("Playtest controller is unavailable.")
+		return
+	var point_id := _teleport_ids[teleport_option.selected]
+	_set_status("Teleported to %s." % point_id if _playtest_controller.teleport(point_id) else "Teleport failed.")
+
+
+func _on_snapshot_pressed() -> void:
+	event_report_label.text = _playtest_controller.get_snapshot_text() if _playtest_controller != null else "Playtest controller is unavailable."
+
+
+func _on_reset_runtime_pressed() -> void:
+	if _playtest_controller == null:
+		_set_status("Playtest controller is unavailable.")
+		return
+	_playtest_controller.reset_runtime_state()
+	_sync_values()
+	_set_status("Runtime state reset. Save file was kept.")
+	_on_show_events_pressed()
+
+
 func _sync_values(_unused: Variant = null) -> void:
 	day_spin_box.value = CalendarManager.day_index
 	hour_spin_box.value = GameClock.time_minutes / 60
@@ -100,3 +149,22 @@ func _on_operation_failed(message: String) -> void:
 
 func _set_status(message: String) -> void:
 	status_label.text = message
+
+
+func _populate_playtest_controls() -> void:
+	preset_option.clear()
+	teleport_option.clear()
+	_preset_ids.clear()
+	_teleport_ids.clear()
+	if _playtest_controller == null:
+		return
+	for preset in _playtest_controller.presets:
+		if preset == null or not preset.is_valid_preset():
+			continue
+		preset_option.add_item(preset.display_name)
+		_preset_ids.append(preset.preset_id)
+	var point_ids: Array = _playtest_controller.teleport_points.keys()
+	point_ids.sort()
+	for point_id: Variant in point_ids:
+		teleport_option.add_item(String(point_id))
+		_teleport_ids.append(StringName(point_id))

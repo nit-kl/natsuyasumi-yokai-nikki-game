@@ -642,3 +642,52 @@ Signalを購読する`DayRecordRecorder`から記録し、各Entityへ日記依�
 
 Save v1既定fieldの`world`、`yokai_states`、`event_history`、`diary.days`へ接続する。
 既存Schema内の実装なのでsave_versionは1を維持する。
+
+---
+
+## 34. Vertical Slice Playtest Tools — Issue #039
+
+再現可能なテスト状態は`PlaytestPreset` Resourceとして管理する。初期Preset:
+
+- 朝の基準状態
+- 河童の気配直前（Day 2 / river / daytime）
+- 河童目撃直前（Day 3 / TRACE完了済み / evening）
+
+`PlaytestDebugController`はPreset適用、既知地点Teleport、状態Snapshot、
+実行中状態Resetを担当する。DebugMenuは表示とユーザー操作だけを受け持つ。
+DebugMenuは640x360の基準解像度に収まる二列構成とし、開く前の時計pause状態を復元する。
+
+Reset対象は日付・時刻・Location・Player transform・World・Yokai・Event history・
+Diaryであり、登録EventやSaveファイルは削除しない。本番BuildではDebugMenu自体を無効化する。
+
+---
+
+## 35. Player Animation — Issue #021
+
+`PlayerAnimationController`はPlayerの移動Signalを購読し、次の命名規則で
+`AnimatedSprite2D`のAnimationを選択する。
+
+```text
+idle_<direction>
+walk_<direction>
+run_<direction>
+```
+
+directionはPlayer移動と同じ8方向とする。斜め方向のProduction framesが未完成の場合は
+同じ左右側の4方向Animationへfallbackできるが、状態名自体は8方向を保持する。
+
+Production Spriteは未完成のため、現時点ではコード描画の足踏みPlaceholderを使用する。
+Reference SheetはCropせず、`SpriteFrames`へProduction Assetが設定された時点で
+同じControllerが自動的にSprite Animationへ切り替わる。
+
+---
+
+## 36. Environment Audio — Issue #029
+
+環境音はLocation Scene配下の`EnvironmentAudioController`が担当し、Core Managerへ
+Scene固有の音源を持ち込まない。`EnvironmentAudioProfile` Resourceがarea IDと
+morning / daytime / evening / nightのLoop音源、音量を保持する。
+
+Areaまたは時間帯の変更時は2つの`AudioStreamPlayer`間でcrossfadeする。
+Production音源が未設定の枠は無音とし、仮の生成音やReference由来音声で埋めない。
+音源追加後もProfileへの割り当てだけで切替可能な構造とする。

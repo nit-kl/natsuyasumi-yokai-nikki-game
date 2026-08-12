@@ -10,8 +10,8 @@ script = ExtResource("1_debug")
 unique_name_in_owner = true
 offset_left = 12.0
 offset_top = 12.0
-offset_right = 272.0
-offset_bottom = 352.0
+offset_right = 628.0
+offset_bottom = 348.0
 
 [node name="Margin" type="MarginContainer" parent="Panel"]
 theme_override_constants/margin_left = 12
@@ -19,89 +19,135 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 10
 
-[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
+[node name="Columns" type="HBoxContainer" parent="Panel/Margin"]
+theme_override_constants/separation = 12
 
-[node name="Title" type="Label" parent="Panel/Margin/VBox"]
+[node name="Left" type="VBoxContainer" parent="Panel/Margin/Columns"]
+custom_minimum_size = Vector2(280, 0)
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="Panel/Margin/Columns/Left"]
 text = "Foundation Debug (F3)"
 
-[node name="DayRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+[node name="DayRow" type="HBoxContainer" parent="Panel/Margin/Columns/Left"]
 
-[node name="Label" type="Label" parent="Panel/Margin/VBox/DayRow"]
+[node name="Label" type="Label" parent="Panel/Margin/Columns/Left/DayRow"]
 text = "Day"
 
-[node name="DaySpinBox" type="SpinBox" parent="Panel/Margin/VBox/DayRow"]
+[node name="DaySpinBox" type="SpinBox" parent="Panel/Margin/Columns/Left/DayRow"]
 unique_name_in_owner = true
 min_value = 1.0
 max_value = 30.0
 value = 1.0
 
-[node name="ApplyDay" type="Button" parent="Panel/Margin/VBox/DayRow"]
+[node name="ApplyDay" type="Button" parent="Panel/Margin/Columns/Left/DayRow"]
 text = "Apply"
 
-[node name="TimeRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+[node name="TimeRow" type="HBoxContainer" parent="Panel/Margin/Columns/Left"]
 
-[node name="Label" type="Label" parent="Panel/Margin/VBox/TimeRow"]
+[node name="Label" type="Label" parent="Panel/Margin/Columns/Left/TimeRow"]
 text = "Time"
 
-[node name="HourSpinBox" type="SpinBox" parent="Panel/Margin/VBox/TimeRow"]
+[node name="HourSpinBox" type="SpinBox" parent="Panel/Margin/Columns/Left/TimeRow"]
 unique_name_in_owner = true
 max_value = 23.0
 value = 7.0
 
-[node name="Separator" type="Label" parent="Panel/Margin/VBox/TimeRow"]
+[node name="Separator" type="Label" parent="Panel/Margin/Columns/Left/TimeRow"]
 text = ":"
 
-[node name="MinuteSpinBox" type="SpinBox" parent="Panel/Margin/VBox/TimeRow"]
+[node name="MinuteSpinBox" type="SpinBox" parent="Panel/Margin/Columns/Left/TimeRow"]
 unique_name_in_owner = true
 max_value = 59.0
 
-[node name="ApplyTime" type="Button" parent="Panel/Margin/VBox/TimeRow"]
+[node name="ApplyTime" type="Button" parent="Panel/Margin/Columns/Left/TimeRow"]
 text = "Apply"
 
-[node name="SaveRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+[node name="SaveRow" type="HBoxContainer" parent="Panel/Margin/Columns/Left"]
 
-[node name="Save" type="Button" parent="Panel/Margin/VBox/SaveRow"]
+[node name="Save" type="Button" parent="Panel/Margin/Columns/Left/SaveRow"]
 text = "Save"
 
-[node name="Load" type="Button" parent="Panel/Margin/VBox/SaveRow"]
+[node name="Load" type="Button" parent="Panel/Margin/Columns/Left/SaveRow"]
 text = "Load"
 
-[node name="Future" type="Label" parent="Panel/Margin/VBox"]
+[node name="EventLabel" type="Label" parent="Panel/Margin/Columns/Left"]
 text = "Events"
-autowrap_mode = 2
 
-[node name="EventRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+[node name="EventRow" type="HBoxContainer" parent="Panel/Margin/Columns/Left"]
 
-[node name="ShowEvents" type="Button" parent="Panel/Margin/VBox/EventRow"]
+[node name="ShowEvents" type="Button" parent="Panel/Margin/Columns/Left/EventRow"]
 text = "Candidates"
 
-[node name="TriggerEvent" type="Button" parent="Panel/Margin/VBox/EventRow"]
+[node name="TriggerEvent" type="Button" parent="Panel/Margin/Columns/Left/EventRow"]
 text = "Trigger Top"
 
-[node name="KappaRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+[node name="KappaRow" type="HBoxContainer" parent="Panel/Margin/Columns/Left"]
 
-[node name="ForceTrace" type="Button" parent="Panel/Margin/VBox/KappaRow"]
+[node name="ForceTrace" type="Button" parent="Panel/Margin/Columns/Left/KappaRow"]
 text = "Force Trace"
 
-[node name="ForceSighting" type="Button" parent="Panel/Margin/VBox/KappaRow"]
+[node name="ForceSighting" type="Button" parent="Panel/Margin/Columns/Left/KappaRow"]
 text = "Force Seen"
 
-[node name="EventReportLabel" type="Label" parent="Panel/Margin/VBox"]
+[node name="Divider" type="VSeparator" parent="Panel/Margin/Columns"]
+
+[node name="Right" type="VBoxContainer" parent="Panel/Margin/Columns"]
+custom_minimum_size = Vector2(280, 0)
+size_flags_horizontal = 3
+
+[node name="PresetLabel" type="Label" parent="Panel/Margin/Columns/Right"]
+text = "Playtest Preset"
+
+[node name="PresetRow" type="HBoxContainer" parent="Panel/Margin/Columns/Right"]
+
+[node name="PresetOption" type="OptionButton" parent="Panel/Margin/Columns/Right/PresetRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(220, 48)
+custom_minimum_size = Vector2(180, 0)
+size_flags_horizontal = 3
+
+[node name="ApplyPreset" type="Button" parent="Panel/Margin/Columns/Right/PresetRow"]
+text = "Apply"
+
+[node name="TeleportRow" type="HBoxContainer" parent="Panel/Margin/Columns/Right"]
+
+[node name="TeleportOption" type="OptionButton" parent="Panel/Margin/Columns/Right/TeleportRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+size_flags_horizontal = 3
+
+[node name="Teleport" type="Button" parent="Panel/Margin/Columns/Right/TeleportRow"]
+text = "Teleport"
+
+[node name="StateRow" type="HBoxContainer" parent="Panel/Margin/Columns/Right"]
+
+[node name="Snapshot" type="Button" parent="Panel/Margin/Columns/Right/StateRow"]
+text = "Snapshot"
+
+[node name="ResetRuntime" type="Button" parent="Panel/Margin/Columns/Right/StateRow"]
+text = "Reset Runtime"
+
+[node name="EventReportLabel" type="Label" parent="Panel/Margin/Columns/Right"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(280, 150)
+size_flags_vertical = 3
 text = "Event report"
 autowrap_mode = 2
 
-[node name="StatusLabel" type="Label" parent="Panel/Margin/VBox"]
+[node name="StatusLabel" type="Label" parent="Panel/Margin/Columns/Right"]
 unique_name_in_owner = true
 text = "Ready."
 autowrap_mode = 2
 
-[connection signal="pressed" from="Panel/Margin/VBox/DayRow/ApplyDay" to="." method="_on_apply_day_pressed"]
-[connection signal="pressed" from="Panel/Margin/VBox/TimeRow/ApplyTime" to="." method="_on_apply_time_pressed"]
-[connection signal="pressed" from="Panel/Margin/VBox/SaveRow/Save" to="." method="_on_save_pressed"]
-[connection signal="pressed" from="Panel/Margin/VBox/SaveRow/Load" to="." method="_on_load_pressed"]
-[connection signal="pressed" from="Panel/Margin/VBox/EventRow/ShowEvents" to="." method="_on_show_events_pressed"]
-[connection signal="pressed" from="Panel/Margin/VBox/EventRow/TriggerEvent" to="." method="_on_trigger_event_pressed"]
-[connection signal="pressed" from="Panel/Margin/VBox/KappaRow/ForceTrace" to="." method="_on_force_kappa_trace_pressed"]
-[connection signal="pressed" from="Panel/Margin/VBox/KappaRow/ForceSighting" to="." method="_on_force_kappa_sighting_pressed"]
+[connection signal="pressed" from="Panel/Margin/Columns/Left/DayRow/ApplyDay" to="." method="_on_apply_day_pressed"]
+[connection signal="pressed" from="Panel/Margin/Columns/Left/TimeRow/ApplyTime" to="." method="_on_apply_time_pressed"]
+[connection signal="pressed" from="Panel/Margin/Columns/Left/SaveRow/Save" to="." method="_on_save_pressed"]
+[connection signal="pressed" from="Panel/Margin/Columns/Left/SaveRow/Load" to="." method="_on_load_pressed"]
+[connection signal="pressed" from="Panel/Margin/Columns/Left/EventRow/ShowEvents" to="." method="_on_show_events_pressed"]
+[connection signal="pressed" from="Panel/Margin/Columns/Left/EventRow/TriggerEvent" to="." method="_on_trigger_event_pressed"]
+[connection signal="pressed" from="Panel/Margin/Columns/Left/KappaRow/ForceTrace" to="." method="_on_force_kappa_trace_pressed"]
+[connection signal="pressed" from="Panel/Margin/Columns/Left/KappaRow/ForceSighting" to="." method="_on_force_kappa_sighting_pressed"]
+[connection signal="pressed" from="Panel/Margin/Columns/Right/PresetRow/ApplyPreset" to="." method="_on_apply_preset_pressed"]
+[connection signal="pressed" from="Panel/Margin/Columns/Right/TeleportRow/Teleport" to="." method="_on_teleport_pressed"]
+[connection signal="pressed" from="Panel/Margin/Columns/Right/StateRow/Snapshot" to="." method="_on_snapshot_pressed"]
+[connection signal="pressed" from="Panel/Margin/Columns/Right/StateRow/ResetRuntime" to="." method="_on_reset_runtime_pressed"]

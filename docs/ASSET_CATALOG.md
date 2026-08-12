@@ -39,6 +39,7 @@ Reference:
 
 Production:
 
+- [x] idle / walk / run 8方向Animation制御（コード描画Placeholder）
 - [ ] idle 8方向
 - [ ] walk 8方向
 - [ ] run 8方向
@@ -421,6 +422,7 @@ Vertical Slice必須:
 
 Vertical Slice:
 
+- [x] Location / 時間帯別の環境音切替制御（音源未設定）
 - [ ] summer daytime ambience
 - [ ] cicada loop
 - [ ] river loop

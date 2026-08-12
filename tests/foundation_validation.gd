@@ -1,6 +1,7 @@
 extends Node
 
 const PlayerController = preload("res://scripts/player/player.gd")
+const PlayerAnimationControllerComponent = preload("res://scripts/player/player_animation.gd")
 const InteractionDetectorComponent = preload("res://scripts/interaction/interaction_detector.gd")
 const InteractableComponent = preload("res://scripts/interaction/interactable.gd")
 const DialogueChoiceData = preload("res://scripts/dialogue/dialogue_choice.gd")
@@ -20,6 +21,9 @@ const EventDefinitionResource = preload("res://scripts/events/event_definition.g
 const YokaiDataResource = preload("res://scripts/yokai/yokai_data.gd")
 const DayRecordResource = preload("res://scripts/diary/day_record.gd")
 const DiaryUIComponent = preload("res://scripts/ui/diary_ui.gd")
+const PlaytestPresetResource = preload("res://scripts/debug/playtest_preset.gd")
+const PlaytestDebugControllerComponent = preload("res://scripts/debug/playtest_debug_controller.gd")
+const EnvironmentAudioProfileResource = preload("res://scripts/audio/environment_audio_profile.gd")
 const TEST_SAVE_PATH := "user://foundation_validation_save.json"
 const CORRUPT_SAVE_PATH := "user://foundation_validation_corrupt.json"
 
@@ -37,6 +41,7 @@ func _run() -> void:
 	_test_input_map()
 	_test_player_directions()
 	_test_player_movement_state()
+	_test_player_animation_state()
 	_test_interaction_contract()
 	_test_interaction_selection()
 	_test_dialogue_resources()
@@ -45,12 +50,14 @@ func _run() -> void:
 	_test_grandma_scene()
 	_test_day_period_palette()
 	_test_day_period_visual_controller()
+	_test_environment_audio()
 	_test_insect_entity()
 	_test_bug_catching()
 	_test_world_and_yokai_state()
 	_test_event_manager()
 	_test_kappa_events()
 	_test_day_record_and_diary()
+	_test_playtest_tools()
 	_test_save_validation()
 	_test_save_round_trip()
 	_test_corrupted_json()
@@ -139,6 +146,31 @@ func _test_player_movement_state() -> void:
 	player.set_movement_locked(true)
 	_expect(player.velocity.is_zero_approx(), "Movement lock should stop the player")
 	_expect(not player.is_moving, "Movement lock should clear movement state")
+	player.queue_free()
+
+
+func _test_player_animation_state() -> void:
+	_expect(
+		PlayerAnimationControllerComponent.make_animation_name(&"down", false, false) == &"idle_down",
+		"Stopped player should select the directional idle animation",
+	)
+	_expect(
+		PlayerAnimationControllerComponent.make_animation_name(&"up_left", true, false) == &"walk_up_left",
+		"Moving player should select the directional walk animation",
+	)
+	_expect(
+		PlayerAnimationControllerComponent.make_animation_name(&"right", true, true) == &"run_right",
+		"Running player should select the directional run animation",
+	)
+	var player_scene: PackedScene = load("res://scenes/player/player.tscn")
+	var player := player_scene.instantiate()
+	add_child(player)
+	var animation_controller := player.get_node("AnimatedSprite2D") as PlayerAnimationController
+	_expect(animation_controller != null, "Player scene should include the animation controller")
+	if animation_controller != null:
+		animation_controller.set_visual_state(&"down_right", true, false)
+		_expect(animation_controller.desired_animation == &"walk_down_right", "Controller should track 8-direction walk state")
+		_expect(not animation_controller.is_using_production_frames(), "Missing production frames should keep the explicit placeholder")
 	player.queue_free()
 
 
@@ -293,6 +325,32 @@ func _test_day_period_visual_controller() -> void:
 	controller.queue_free()
 
 
+func _test_environment_audio() -> void:
+	var morning_stream := AudioStreamGenerator.new()
+	var evening_stream := AudioStreamGenerator.new()
+	var profile := EnvironmentAudioProfileResource.new()
+	profile.area_id = &"audio_validation"
+	profile.morning_stream = morning_stream
+	profile.evening_stream = evening_stream
+	_expect(profile.get_stream(&"morning") == morning_stream, "Audio profile should select the morning stream")
+	_expect(profile.get_stream(&"evening") == evening_stream, "Audio profile should select the evening stream")
+	_expect(profile.get_stream(&"night") == null, "Missing ambience assets should remain silent")
+	var audio_scene: PackedScene = load("res://scenes/audio/environment_audio.tscn")
+	var controller := audio_scene.instantiate() as EnvironmentAudioController
+	controller.profiles = [profile]
+	controller.crossfade_seconds = 0.0
+	GameState.set_area(&"audio_validation")
+	GameClock.debug_set_time(7, 0)
+	add_child(controller)
+	_expect(controller.get_profile(&"audio_validation") == profile, "Audio controller should resolve its location profile")
+	_expect(controller.player_a.stream == morning_stream, "Initial area and period should select ambience")
+	GameClock.debug_set_time(17, 0)
+	_expect(controller.player_b.stream == evening_stream, "Period change should switch ambience streams")
+	controller.player_a.stop()
+	controller.player_b.stop()
+	controller.free()
+
+
 func _test_insect_entity() -> void:
 	var invalid_data := InsectDataResource.new()
 	_expect(not invalid_data.is_valid_insect(), "Insect data requires a stable id and display name")
@@ -427,6 +485,36 @@ func _test_day_record_and_diary() -> void:
 	_expect(restored.events_seen.has(&"kappa_first_sighting"), "DayRecord round trip should preserve events")
 	var formatted := DiaryUIComponent.format_record(restored)
 	_expect(formatted.contains("grandma") and formatted.contains("kappa"), "Diary UI should format recorded facts")
+
+
+func _test_playtest_tools() -> void:
+	var player := PlayerController.new()
+	add_child(player)
+	var controller := PlaytestDebugControllerComponent.new()
+	var preset: PlaytestPreset = load("res://resources/debug/kappa_sighting_ready.tres")
+	controller.presets = [preset]
+	add_child(controller)
+	WorldState.set_flag(&"old_flag")
+	DiaryManager.record_insect(&"old_insect")
+	_expect(controller.apply_preset(&"kappa_sighting_ready"), "Playtest preset should apply")
+	_expect(CalendarManager.day_index == 3, "Preset should set day")
+	_expect(GameClock.time_minutes == 1020, "Preset should set time")
+	_expect(GameState.current_area_id == &"river", "Preset should set area")
+	_expect(YokaiManager.get_stage(&"kappa") == &"TRACE", "Preset should set kappa stage")
+	_expect(WorldState.has_flag(&"kappa_first_trace_complete"), "Preset should set required flags")
+	_expect(not WorldState.has_flag(&"old_flag"), "Preset should clear previous runtime flags")
+	_expect(EventManager.has_seen(&"kappa_first_trace"), "Preset should set event history")
+	_expect(player.global_position == Vector2(400, 160), "Preset should position player")
+	_expect(controller.teleport(&"home"), "Known teleport point should work")
+	_expect(player.global_position == Vector2(280, 180), "Teleport should move player")
+	var snapshot := controller.get_snapshot()
+	_expect(snapshot.kappa_stage == &"TRACE", "Snapshot should expose yokai stage")
+	controller.reset_runtime_state()
+	_expect(CalendarManager.day_index == 1, "Runtime reset should restore day 1")
+	_expect(GameState.current_area_id == &"foundation_test", "Runtime reset should restore foundation area")
+	_expect(YokaiManager.get_stage(&"kappa") == &"UNKNOWN", "Runtime reset should clear yokai state")
+	controller.queue_free()
+	player.queue_free()
 
 
 func _test_save_validation() -> void:
