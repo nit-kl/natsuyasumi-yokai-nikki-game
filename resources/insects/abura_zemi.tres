@@ -1,9 +1,0 @@
-[gd_resource type="Resource" script_class="InsectData" load_steps=2 format=3]
-
-[ext_resource type="Script" path="res://scripts/minigames/insect_data.gd" id="1_data"]
-
-[resource]
-script = ExtResource("1_data")
-insect_id = &"abura_zemi"
-display_name = "アブラゼミ"
-description = "夏の午後を大きな声で満たす、身近なセミ。"

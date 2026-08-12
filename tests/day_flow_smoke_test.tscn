@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3]
-
-[ext_resource type="Script" path="res://tests/day_flow_smoke_test.gd" id="1_test"]
-
-[node name="DayFlowSmokeTest" type="Node"]
-script = ExtResource("1_test")
