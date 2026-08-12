@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/player/pixel_camera.tscn" id="2_camera"]
+
+[sub_resource type="CapsuleShape2D" id="Capsule_player"]
+radius = 6.0
+height = 12.0
+
+[sub_resource type="CircleShape2D" id="Circle_interaction"]
+radius = 20.0
+
+[node name="Player" type="CharacterBody2D"]
+collision_layer = 1
+collision_mask = 10
+script = ExtResource("1_player")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 6)
+shape = SubResource("Capsule_player")
+
+[node name="InteractionDetector" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 60
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionDetector"]
+position = Vector2(0, -8)
+shape = SubResource("Circle_interaction")
+
+[node name="ShadowSprite" type="Sprite2D" parent="."]
+visible = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="PixelCamera" parent="." instance=ExtResource("2_camera")]

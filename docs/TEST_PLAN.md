@@ -238,3 +238,28 @@ InputMapは初期からActionベースで設計する。
 
 ### Minor
 演出、表示、小さな不整合。
+
+---
+
+## 13. Milestone 0 Validation
+
+Windows / PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/validate_project.ps1
+```
+
+検証対象:
+
+- Godot editor headless import / script parse
+- GameClockの時間帯境界、pause、time_scale、Debug時刻設定
+- CalendarManagerの1〜30日境界とDebug日付設定
+- Save v1 round trip
+- Unknown field tolerance
+- Version mismatch
+- Corrupted JSON
+- Missing required calendar data
+
+手動確認ではプロジェクトを実行し、F3でDebugMenuを開いて
+Day / Time / Save / Loadを操作する。表示のNearest維持とカメラの
+Subpixel jitterがないことは、Production Sprite導入後にも再確認する。

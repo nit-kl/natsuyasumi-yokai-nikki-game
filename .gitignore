@@ -52,6 +52,8 @@ desktop.ini
 crash_*.txt
 .codex-captures/
 /tmp/
+/.godot-appdata/
+/.godot-localappdata/
 
 # Local environment overrides and credentials
 .env

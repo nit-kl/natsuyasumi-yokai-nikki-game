@@ -295,3 +295,15 @@ Autosave時に前回データをBackupしてから置換する方式を推奨。
 - Version mismatch
 - Corrupted JSON
 - Missing optional field
+
+---
+
+## 19. Milestone 0 実装範囲
+
+`SaveManager`はv1全体の既定Dictionaryを生成するが、現時点でゲーム状態へ
+復元する対象は`calendar.day_index`、`calendar.time_minutes`、Playerの
+`scene_id`と`position`のみとする。未実装システムの項目は空の既定値を保持する。
+
+読込時はJSON object、`save_version`、必須calendar field、値域を検証する。
+未知fieldは将来拡張のため許容し、非対応versionと破損データは状態へ適用しない。
+Backup / migration / atomic replacementはSaveManager拡張Issueで実装する。

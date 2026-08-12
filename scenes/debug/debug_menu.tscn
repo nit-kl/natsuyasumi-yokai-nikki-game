@@ -1,0 +1,81 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/debug_menu.gd" id="1_debug"]
+
+[node name="DebugMenu" type="CanvasLayer"]
+layer = 100
+script = ExtResource("1_debug")
+
+[node name="Panel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 272.0
+offset_bottom = 244.0
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
+
+[node name="Title" type="Label" parent="Panel/Margin/VBox"]
+text = "Foundation Debug (F3)"
+
+[node name="DayRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+
+[node name="Label" type="Label" parent="Panel/Margin/VBox/DayRow"]
+text = "Day"
+
+[node name="DaySpinBox" type="SpinBox" parent="Panel/Margin/VBox/DayRow"]
+unique_name_in_owner = true
+min_value = 1.0
+max_value = 30.0
+value = 1.0
+
+[node name="ApplyDay" type="Button" parent="Panel/Margin/VBox/DayRow"]
+text = "Apply"
+
+[node name="TimeRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+
+[node name="Label" type="Label" parent="Panel/Margin/VBox/TimeRow"]
+text = "Time"
+
+[node name="HourSpinBox" type="SpinBox" parent="Panel/Margin/VBox/TimeRow"]
+unique_name_in_owner = true
+max_value = 23.0
+value = 7.0
+
+[node name="Separator" type="Label" parent="Panel/Margin/VBox/TimeRow"]
+text = ":"
+
+[node name="MinuteSpinBox" type="SpinBox" parent="Panel/Margin/VBox/TimeRow"]
+unique_name_in_owner = true
+max_value = 59.0
+
+[node name="ApplyTime" type="Button" parent="Panel/Margin/VBox/TimeRow"]
+text = "Apply"
+
+[node name="SaveRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+
+[node name="Save" type="Button" parent="Panel/Margin/VBox/SaveRow"]
+text = "Save"
+
+[node name="Load" type="Button" parent="Panel/Margin/VBox/SaveRow"]
+text = "Load"
+
+[node name="Future" type="Label" parent="Panel/Margin/VBox"]
+text = "Future: Weather / Teleport / Yokai / Event"
+autowrap_mode = 2
+
+[node name="StatusLabel" type="Label" parent="Panel/Margin/VBox"]
+unique_name_in_owner = true
+text = "Ready."
+autowrap_mode = 2
+
+[connection signal="pressed" from="Panel/Margin/VBox/DayRow/ApplyDay" to="." method="_on_apply_day_pressed"]
+[connection signal="pressed" from="Panel/Margin/VBox/TimeRow/ApplyTime" to="." method="_on_apply_time_pressed"]
+[connection signal="pressed" from="Panel/Margin/VBox/SaveRow/Save" to="." method="_on_save_pressed"]
+[connection signal="pressed" from="Panel/Margin/VBox/SaveRow/Load" to="." method="_on_load_pressed"]

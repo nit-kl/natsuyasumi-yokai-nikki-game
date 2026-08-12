@@ -488,3 +488,19 @@ Sceneに直接大量の設定値を書かない。
 - IDは `snake_case`
 - Resource IDは永続Saveと連携するため変更に注意
 - Debug printを本番コードに放置しない
+
+---
+
+## 24. Milestone 0 実装基準
+
+- 基準解像度: 640x360
+- Window stretch: `canvas_items` / `keep` / integer scale
+- Texture filter: Nearest、Mipmap filter無効
+- 2D transform / vertex pixel snap有効
+- 初期Autoload: `GameState`, `GameClock`, `CalendarManager`, `SaveManager`, `SceneTransitionManager`
+- DebugMenuはdebug buildでのみ有効
+- `foundation_test` は基盤確認用Scene IDであり、本番ロケーションではない
+
+Playerの表示はMilestone 0専用のコード描画Placeholderとする。
+Reference Sheetから切り出した画像は使用せず、Production Sprite完成後に
+`AnimatedSprite2D` の`SpriteFrames`へ差し替える。

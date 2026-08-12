@@ -1,0 +1,41 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/debug/debug_menu.tscn" id="2_debug"]
+[ext_resource type="Script" path="res://scripts/ui/foundation_hud.gd" id="3_hud"]
+
+[node name="Bootstrap" type="Node2D"]
+
+[node name="FoundationBackdrop" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-640, -360, 640, -360, 640, 360, -640, 360)
+color = Color(0.447, 0.655, 0.553, 1)
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+position = Vector2(320, 180)
+
+[node name="FoundationHUD" type="CanvasLayer" parent="."]
+script = ExtResource("3_hud")
+
+[node name="Margin" type="MarginContainer" parent="FoundationHUD"]
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 628.0
+offset_bottom = 348.0
+
+[node name="VBox" type="VBoxContainer" parent="FoundationHUD/Margin"]
+
+[node name="DayLabel" type="Label" parent="FoundationHUD/Margin/VBox"]
+unique_name_in_owner = true
+text = "Day 1 / 30"
+
+[node name="TimeLabel" type="Label" parent="FoundationHUD/Margin/VBox"]
+unique_name_in_owner = true
+text = "07:00  morning"
+
+[node name="Spacer" type="Control" parent="FoundationHUD/Margin/VBox"]
+custom_minimum_size = Vector2(0, 244)
+
+[node name="Notice" type="Label" parent="FoundationHUD/Margin/VBox"]
+text = "Milestone 0 placeholder — F3: Debug Menu"
+
+[node name="DebugMenu" parent="." instance=ExtResource("2_debug")]

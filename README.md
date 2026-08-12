@@ -40,7 +40,7 @@ Pre-production / Vertical Slice development.
 
 ## Technology
 
-- Godot 4.x
+- Godot 4.4以降（Milestone 0 validation: Godot 4.7.1）
 - GDScript
 - 2D Pixel Art
 - TileMapLayer
@@ -139,6 +139,12 @@ Vertical Sliceを完成させ、
 詳細:
 
 `docs/DEVELOPMENT_PLAN.md`
+
+Milestone 0のValidation:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/validate_project.ps1
+```
 
 ---
 
