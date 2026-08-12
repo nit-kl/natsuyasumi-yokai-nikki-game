@@ -28,16 +28,21 @@ func _unhandled_input(event: InputEvent) -> void:
 	if _actor != null and bool(_actor.get("movement_locked")):
 		return
 	if event.is_action_pressed("interact") and not GameState.is_paused:
+		var viewport := get_viewport()
+		if viewport != null:
+			viewport.set_input_as_handled()
 		try_interact()
-		get_viewport().set_input_as_handled()
 
 
 func try_interact() -> bool:
 	refresh_candidate()
 	if not is_instance_valid(current_candidate):
 		return false
-	current_candidate.interact(_actor)
-	interaction_performed.emit(current_candidate)
+	var interacted_candidate := current_candidate
+	interacted_candidate.interact(_actor)
+	if not is_instance_valid(interacted_candidate):
+		return true
+	interaction_performed.emit(interacted_candidate)
 	refresh_candidate()
 	return true
 

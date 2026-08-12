@@ -1,0 +1,53 @@
+[gd_scene load_steps=22 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="Script" path="res://scripts/core/day_period_visual_controller.gd" id="2_visual"]
+[ext_resource type="Resource" path="res://resources/locations/default_day_period_palette.tres" id="3_palette"]
+[ext_resource type="PackedScene" path="res://scenes/audio/environment_audio.tscn" id="4_audio"]
+[ext_resource type="Resource" path="res://resources/locations/grandma_house_audio_profile.tres" id="5_house_audio"]
+[ext_resource type="Resource" path="res://resources/locations/home_outdoor_audio_profile.tres" id="6_outdoor_audio"]
+[ext_resource type="Script" path="res://scripts/diary/day_record_recorder.gd" id="7_recorder"]
+[ext_resource type="PackedScene" path="res://scenes/ui/gameplay_hud.tscn" id="8_hud"]
+[ext_resource type="PackedScene" path="res://scenes/debug/debug_menu.tscn" id="9_debug"]
+[ext_resource type="PackedScene" path="res://scenes/ui/dialogue_ui.tscn" id="10_dialogue"]
+[ext_resource type="PackedScene" path="res://scenes/ui/diary_ui.tscn" id="11_diary"]
+[ext_resource type="Resource" path="res://resources/locations/river_audio_profile.tres" id="12_river_audio"]
+[ext_resource type="Script" path="res://scripts/events/event_registry.gd" id="13_registry"]
+[ext_resource type="Resource" path="res://resources/events/kappa_first_trace.tres" id="14_trace"]
+[ext_resource type="Resource" path="res://resources/events/kappa_first_sighting.tres" id="15_sighting"]
+[ext_resource type="Script" path="res://scripts/events/event_definition.gd" id="16_event_definition"]
+[ext_resource type="Script" path="res://scripts/debug/playtest_debug_controller.gd" id="17_playtest"]
+[ext_resource type="Resource" path="res://resources/debug/foundation_morning.tres" id="18_morning"]
+[ext_resource type="Resource" path="res://resources/debug/kappa_trace_ready.tres" id="19_trace_ready"]
+[ext_resource type="Resource" path="res://resources/debug/kappa_sighting_ready.tres" id="20_sighting_ready"]
+[ext_resource type="Script" path="res://scripts/debug/playtest_preset.gd" id="21_preset"]
+
+[node name="LocationRuntime" type="Node"]
+
+[node name="DayPeriodVisualController" type="CanvasModulate" parent="."]
+script = ExtResource("2_visual")
+palette = ExtResource("3_palette")
+
+[node name="EnvironmentAudio" parent="." instance=ExtResource("4_audio")]
+profiles = Array[EnvironmentAudioProfile]([ExtResource("5_house_audio"), ExtResource("6_outdoor_audio"), ExtResource("12_river_audio")])
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+
+[node name="DayRecordRecorder" type="Node" parent="."]
+script = ExtResource("7_recorder")
+
+[node name="EventRegistry" type="Node" parent="."]
+script = ExtResource("13_registry")
+events = Array[ExtResource("16_event_definition")]([ExtResource("14_trace"), ExtResource("15_sighting")])
+
+[node name="PlaytestDebugController" type="Node" parent="."]
+script = ExtResource("17_playtest")
+presets = Array[ExtResource("21_preset")]([ExtResource("18_morning"), ExtResource("19_trace_ready"), ExtResource("20_sighting_ready")])
+
+[node name="GameplayHUD" parent="." instance=ExtResource("8_hud")]
+
+[node name="DebugMenu" parent="." instance=ExtResource("9_debug")]
+
+[node name="DialogueController" parent="." instance=ExtResource("10_dialogue")]
+
+[node name="DiaryUI" parent="." instance=ExtResource("11_diary")]

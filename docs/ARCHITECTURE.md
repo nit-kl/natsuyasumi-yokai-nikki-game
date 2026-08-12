@@ -691,3 +691,57 @@ morning / daytime / evening / nightのLoop音源、音量を保持する。
 Areaまたは時間帯の変更時は2つの`AudioStreamPlayer`間でcrossfadeする。
 Production音源が未設定の枠は無音とし、仮の生成音やReference由来音声で埋めない。
 音源追加後もProfileへの割り当てだけで切替可能な構造とする。
+
+---
+
+## 37. Grandma House / Home Outdoor Greybox — Issues #025–#026
+
+各Locationは`LocationScene`をrootにし、永続的な`area_id`と入口IDを持つ
+`MapSpawnPoint`を所有する。`MapDoorway`はInteraction contractを実装し、
+遷移先Sceneと入口IDだけをSceneTransitionManagerへ渡す。
+
+共通のPlayer、HUD、Dialogue、Diary、Debug、時間帯描画、環境音は
+`LocationRuntime` Sceneへまとめる。Location固有Entityや配置は共通Runtimeへ入れない。
+
+祖母の家は寝室・居間・台所・縁側、家周辺は家・田舎道・畑の関係を確認できる
+Greyboxとする。Production TileMap差し替え用にGround / DetailsBack / Collision /
+Foregroundの`TileMapLayer`階層を先に固定する。コード描画面はProduction Assetではない。
+
+Riverは追加でWater `TileMapLayer`と水域Collisionを分離する。岸沿いの歩行帯に
+河童の波紋・一瞬の目撃Presenterを配置し、水面内へPlayerを侵入させない。
+家周辺東端と川の帰路を入口IDで相互接続する。
+
+---
+
+## 38. Return-home Flow — Issue #035
+
+祖母の家固有の`ReturnHomeFlow`が、夕方・夜の祖母Dialogue、当日の日記Review、
+翌朝への進行を調停する。NPC、DialogueController、DiaryUI、CalendarManagerへ
+祖母の家固有条件を持ち込まない。
+
+```text
+夕方・夜に祖母と会話
+→ 夕食会話
+→ 当日のDiary Review
+→ 日記を閉じる
+→ 翌日07:00
+→ 寝室Spawn
+→ Autosave
+```
+
+Diary Review開始時に当日の`sleep_time`と`evening_diary_written` fragmentを確定する。
+通常のJキーによる日記閲覧は日付を進めない。Day 30は31日目へ進めず、Review完了だけを記録する。
+Save v1既存fieldだけを使用するため、save_versionは変更しない。
+
+---
+
+## 39. Vertical Slice Polish — Issue #040
+
+### Location-aware Load
+
+`LocationCatalog`が永続`scene_id`とMap Scene pathの対応を一箇所で管理する。
+実ゲームのLoadはSave内のLocationが現在地と異なる場合、先にSceneを交換してから
+Player位置・向きと各Manager状態を復元する。未知の`scene_id`は現在状態へ適用せず拒否する。
+
+DebugMenuはLoad前に自身を閉じ、Global pauseとClock pauseを復元してからScene交換する。
+Save v1 Schemaは変更しない。

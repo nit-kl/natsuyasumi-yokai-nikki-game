@@ -1,0 +1,102 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://scripts/maps/location_scene.gd" id="1_location"]
+[ext_resource type="Script" path="res://scripts/maps/greybox_map_visual.gd" id="2_visual"]
+[ext_resource type="PackedScene" path="res://scenes/maps/common/location_runtime.tscn" id="3_runtime"]
+[ext_resource type="Script" path="res://scripts/maps/map_spawn_point.gd" id="4_spawn"]
+[ext_resource type="Script" path="res://scripts/maps/map_doorway.gd" id="5_door"]
+[ext_resource type="PackedScene" path="res://scenes/yokai/kappa_glimpse.tscn" id="6_kappa"]
+
+[sub_resource type="RectangleShape2D" id="BoundaryHorizontal"]
+size = Vector2(640, 16)
+
+[sub_resource type="RectangleShape2D" id="BoundaryVertical"]
+size = Vector2(16, 360)
+
+[sub_resource type="RectangleShape2D" id="WaterCollision"]
+size = Vector2(640, 152)
+
+[sub_resource type="RectangleShape2D" id="DoorArea"]
+size = Vector2(48, 72)
+
+[node name="River" type="Node2D"]
+script = ExtResource("1_location")
+area_id = &"river"
+default_spawn_id = &"home_path"
+
+[node name="Ground" type="TileMapLayer" parent="."]
+
+[node name="Water" type="TileMapLayer" parent="."]
+
+[node name="DetailsBack" type="TileMapLayer" parent="."]
+
+[node name="GreyboxVisual" type="Node2D" parent="."]
+script = ExtResource("2_visual")
+layout = 2
+
+[node name="Collision" type="TileMapLayer" parent="."]
+
+[node name="GreyboxCollision" type="StaticBody2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="Top" type="CollisionShape2D" parent="GreyboxCollision"]
+position = Vector2(320, -8)
+shape = SubResource("BoundaryHorizontal")
+
+[node name="Bottom" type="CollisionShape2D" parent="GreyboxCollision"]
+position = Vector2(320, 368)
+shape = SubResource("BoundaryHorizontal")
+
+[node name="Left" type="CollisionShape2D" parent="GreyboxCollision"]
+position = Vector2(-8, 180)
+shape = SubResource("BoundaryVertical")
+
+[node name="Right" type="CollisionShape2D" parent="GreyboxCollision"]
+position = Vector2(648, 180)
+shape = SubResource("BoundaryVertical")
+
+[node name="WaterBoundary" type="CollisionShape2D" parent="GreyboxCollision"]
+position = Vector2(320, 124)
+shape = SubResource("WaterCollision")
+
+[node name="Objects" type="Node2D" parent="."]
+
+[node name="ReturnHome" type="Area2D" parent="Objects"]
+position = Vector2(24, 264)
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("5_door")
+interaction_text = "家の方へ戻る"
+destination_scene = "res://scenes/maps/village/home_outdoor.tscn"
+destination_spawn_id = &"river_path"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/ReturnHome"]
+shape = SubResource("DoorArea")
+
+[node name="NPCs" type="Node2D" parent="."]
+
+[node name="Yokai" type="Node2D" parent="."]
+
+[node name="KappaGlimpse" parent="Yokai" instance=ExtResource("6_kappa")]
+position = Vector2(416, 128)
+
+[node name="EventTriggers" type="Node2D" parent="."]
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="HomePath" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(72, 264)
+script = ExtResource("4_spawn")
+spawn_id = &"home_path"
+facing = &"right"
+
+[node name="KappaBank" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(400, 240)
+script = ExtResource("4_spawn")
+spawn_id = &"kappa_bank"
+facing = &"up"
+
+[node name="Foreground" type="TileMapLayer" parent="."]
+
+[node name="LocationRuntime" parent="." instance=ExtResource("3_runtime")]

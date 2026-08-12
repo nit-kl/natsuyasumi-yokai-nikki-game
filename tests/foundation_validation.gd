@@ -24,6 +24,10 @@ const DiaryUIComponent = preload("res://scripts/ui/diary_ui.gd")
 const PlaytestPresetResource = preload("res://scripts/debug/playtest_preset.gd")
 const PlaytestDebugControllerComponent = preload("res://scripts/debug/playtest_debug_controller.gd")
 const EnvironmentAudioProfileResource = preload("res://scripts/audio/environment_audio_profile.gd")
+const LocationSceneComponent = preload("res://scripts/maps/location_scene.gd")
+const MapSpawnPointComponent = preload("res://scripts/maps/map_spawn_point.gd")
+const ReturnHomeFlowComponent = preload("res://scripts/events/return_home_flow.gd")
+const LocationCatalogData = preload("res://scripts/maps/location_catalog.gd")
 const TEST_SAVE_PATH := "user://foundation_validation_save.json"
 const CORRUPT_SAVE_PATH := "user://foundation_validation_corrupt.json"
 
@@ -51,6 +55,9 @@ func _run() -> void:
 	_test_day_period_palette()
 	_test_day_period_visual_controller()
 	_test_environment_audio()
+	_test_location_maps()
+	_test_return_home_rules()
+	_test_location_catalog()
 	_test_insect_entity()
 	_test_bug_catching()
 	_test_world_and_yokai_state()
@@ -351,6 +358,52 @@ func _test_environment_audio() -> void:
 	controller.free()
 
 
+func _test_location_maps() -> void:
+	var grandma_house_scene: PackedScene = load("res://scenes/maps/grandma_house/grandma_house.tscn")
+	var outdoor_scene: PackedScene = load("res://scenes/maps/village/home_outdoor.tscn")
+	var river_scene: PackedScene = load("res://scenes/maps/river/river.tscn")
+	_expect(grandma_house_scene != null, "Grandma house map should load")
+	_expect(outdoor_scene != null, "Home outdoor map should load")
+	_expect(river_scene != null, "River map should load")
+	var house := grandma_house_scene.instantiate() as LocationScene
+	var outdoor := outdoor_scene.instantiate() as LocationScene
+	var river := river_scene.instantiate() as LocationScene
+	_expect(house.area_id == &"grandma_house", "Grandma house should use a stable location ID")
+	_expect(outdoor.area_id == &"home_outdoor", "Home outdoor should use a stable location ID")
+	_expect(river.area_id == &"river", "River should use a stable location ID")
+	_expect(house.get_node_or_null("Ground") is TileMapLayer, "House should expose the production Ground layer")
+	_expect(house.get_node_or_null("Collision") is TileMapLayer, "House should expose the production Collision layer")
+	_expect(house.get_node_or_null("NPCs/Grandma") != null, "Grandma should be placed in the house NPC layer")
+	_expect(outdoor.get_node_or_null("Objects/Aburazemi") != null, "Outdoor map should contain the bug-catching target")
+	_expect(river.get_node_or_null("Water") is TileMapLayer, "River should expose a separate production Water layer")
+	_expect(river.get_node_or_null("Yokai/KappaGlimpse") != null, "River should contain the subtle kappa presenter")
+	_expect(river.get_node_or_null("GreyboxCollision/WaterBoundary") is CollisionShape2D, "River water should have a greybox boundary")
+	var spawn_point := MapSpawnPointComponent.new()
+	spawn_point.spawn_id = &"validation_entry"
+	var spawn_parent := Node2D.new()
+	house.add_child(spawn_parent)
+	spawn_parent.add_child(spawn_point)
+	_expect(house.get_spawn_point(&"validation_entry") == spawn_point, "Location should resolve its own spawn point")
+	house.free()
+	outdoor.free()
+	river.free()
+
+
+func _test_return_home_rules() -> void:
+	_expect(ReturnHomeFlowComponent.is_return_period(&"evening"), "Evening should allow the return-home flow")
+	_expect(ReturnHomeFlowComponent.is_return_period(&"night"), "Night should allow the return-home flow")
+	_expect(not ReturnHomeFlowComponent.is_return_period(&"morning"), "Morning should keep grandma's normal dialogue")
+	var dinner: DialogueResource = load("res://resources/dialogue/grandma_evening_dinner.tres")
+	_expect(dinner != null and dinner.is_valid_dialogue(), "Dinner dialogue should be valid data")
+
+
+func _test_location_catalog() -> void:
+	_expect(LocationCatalogData.get_scene_path(&"grandma_house").ends_with("grandma_house.tscn"), "Save location catalog should resolve grandma house")
+	_expect(LocationCatalogData.get_scene_path(&"home_outdoor").ends_with("home_outdoor.tscn"), "Save location catalog should resolve home outdoor")
+	_expect(LocationCatalogData.get_scene_path(&"river").ends_with("river.tscn"), "Save location catalog should resolve river")
+	_expect(not LocationCatalogData.has_area(&"unknown_area"), "Unknown save locations should be rejected")
+
+
 func _test_insect_entity() -> void:
 	var invalid_data := InsectDataResource.new()
 	_expect(not invalid_data.is_valid_insect(), "Insect data requires a stable id and display name")
@@ -504,7 +557,7 @@ func _test_playtest_tools() -> void:
 	_expect(WorldState.has_flag(&"kappa_first_trace_complete"), "Preset should set required flags")
 	_expect(not WorldState.has_flag(&"old_flag"), "Preset should clear previous runtime flags")
 	_expect(EventManager.has_seen(&"kappa_first_trace"), "Preset should set event history")
-	_expect(player.global_position == Vector2(400, 160), "Preset should position player")
+	_expect(player.global_position == Vector2(400, 240), "Preset should position player")
 	_expect(controller.teleport(&"home"), "Known teleport point should work")
 	_expect(player.global_position == Vector2(280, 180), "Teleport should move player")
 	var snapshot := controller.get_snapshot()
@@ -531,6 +584,9 @@ func _test_save_validation() -> void:
 	missing_optional.erase("player")
 	missing_optional.erase("diary")
 	_expect(SaveManager.deserialize(missing_optional), "Missing optional fields should be tolerated")
+	var unknown_location := valid_data.duplicate(true)
+	unknown_location["player"]["scene_id"] = "unknown_location"
+	_expect(not SaveManager.deserialize(unknown_location), "Unknown save location IDs should be rejected")
 
 
 func _test_save_round_trip() -> void:

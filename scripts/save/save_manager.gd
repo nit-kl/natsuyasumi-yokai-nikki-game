@@ -1,5 +1,7 @@
 extends Node
 
+const LocationCatalogData = preload("res://scripts/maps/location_catalog.gd")
+
 signal save_completed(path: String)
 signal load_completed(path: String)
 signal operation_failed(message: String)
@@ -81,6 +83,11 @@ func validate_data(data: Dictionary) -> String:
 		return "day_index is outside the supported range."
 	if minutes < 0 or minutes >= GameClock.MINUTES_PER_DAY:
 		return "time_minutes is outside the supported range."
+	var player_data: Variant = data.get("player", {})
+	if player_data is Dictionary and player_data.has("scene_id"):
+		var scene_id := StringName(player_data.get("scene_id", ""))
+		if not LocationCatalogData.has_area(scene_id):
+			return "player.scene_id is not a known location."
 	return ""
 
 
@@ -97,23 +104,56 @@ func save_game(path: String = SAVE_PATH) -> bool:
 
 
 func load_game(path: String = SAVE_PATH) -> bool:
+	var data := _read_save_data(path)
+	if data.is_empty():
+		return false
+	if not deserialize(data):
+		return false
+	load_completed.emit(path)
+	return true
+
+
+func load_game_into_world(path: String = SAVE_PATH) -> bool:
+	var data := _read_save_data(path)
+	if data.is_empty():
+		return false
+	var validation_error := validate_data(data)
+	if not validation_error.is_empty():
+		_set_error(validation_error)
+		return false
+	var player_data: Dictionary = data.get("player", {})
+	var target_area := StringName(player_data.get("scene_id", GameState.DEFAULT_AREA))
+	var target_scene := LocationCatalogData.get_scene_path(target_area)
+	if target_scene.is_empty():
+		_set_error("Save data references an unknown scene_id: %s." % target_area)
+		return false
+	if target_area != GameState.current_area_id:
+		var transition_error := await SceneTransitionManager.change_scene(target_scene)
+		if transition_error != OK:
+			_set_error("Could not restore saved location (error %d)." % transition_error)
+			return false
+		await get_tree().process_frame
+	if not deserialize(data):
+		return false
+	load_completed.emit(path)
+	return true
+
+
+func _read_save_data(path: String) -> Dictionary:
 	if not save_exists(path):
 		_set_error("Save file does not exist.")
-		return false
+		return {}
 	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
 		_set_error("Could not open save file for reading (error %d)." % FileAccess.get_open_error())
-		return false
+		return {}
 	var json := JSON.new()
 	var parse_error := json.parse(file.get_as_text())
 	file.close()
 	if parse_error != OK or not json.data is Dictionary:
 		_set_error("Save data is not valid JSON object data.")
-		return false
-	if not deserialize(json.data):
-		return false
-	load_completed.emit(path)
-	return true
+		return {}
+	return json.data
 
 
 func _set_error(message: String) -> void:

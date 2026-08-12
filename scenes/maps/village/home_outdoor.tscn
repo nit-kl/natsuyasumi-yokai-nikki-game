@@ -1,0 +1,121 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://scripts/maps/location_scene.gd" id="1_location"]
+[ext_resource type="Script" path="res://scripts/maps/greybox_map_visual.gd" id="2_visual"]
+[ext_resource type="PackedScene" path="res://scenes/maps/common/location_runtime.tscn" id="3_runtime"]
+[ext_resource type="Script" path="res://scripts/maps/map_spawn_point.gd" id="4_spawn"]
+[ext_resource type="Script" path="res://scripts/maps/map_doorway.gd" id="5_door"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/insect.tscn" id="6_insect"]
+[ext_resource type="Resource" path="res://resources/insects/aburazemi.tres" id="7_insect_data"]
+
+[sub_resource type="RectangleShape2D" id="BoundaryHorizontal"]
+size = Vector2(640, 16)
+
+[sub_resource type="RectangleShape2D" id="BoundaryVertical"]
+size = Vector2(16, 360)
+
+[sub_resource type="RectangleShape2D" id="HouseBody"]
+size = Vector2(160, 112)
+
+[sub_resource type="RectangleShape2D" id="DoorArea"]
+size = Vector2(72, 28)
+
+[node name="HomeOutdoor" type="Node2D"]
+script = ExtResource("1_location")
+area_id = &"home_outdoor"
+default_spawn_id = &"house_exit"
+
+[node name="Ground" type="TileMapLayer" parent="."]
+
+[node name="DetailsBack" type="TileMapLayer" parent="."]
+
+[node name="GreyboxVisual" type="Node2D" parent="."]
+script = ExtResource("2_visual")
+layout = 1
+
+[node name="Collision" type="TileMapLayer" parent="."]
+
+[node name="GreyboxCollision" type="StaticBody2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="Top" type="CollisionShape2D" parent="GreyboxCollision"]
+position = Vector2(320, -8)
+shape = SubResource("BoundaryHorizontal")
+
+[node name="Bottom" type="CollisionShape2D" parent="GreyboxCollision"]
+position = Vector2(320, 368)
+shape = SubResource("BoundaryHorizontal")
+
+[node name="Left" type="CollisionShape2D" parent="GreyboxCollision"]
+position = Vector2(-8, 180)
+shape = SubResource("BoundaryVertical")
+
+[node name="Right" type="CollisionShape2D" parent="GreyboxCollision"]
+position = Vector2(648, 180)
+shape = SubResource("BoundaryVertical")
+
+[node name="House" type="CollisionShape2D" parent="GreyboxCollision"]
+position = Vector2(320, 56)
+shape = SubResource("HouseBody")
+
+[node name="Objects" type="Node2D" parent="."]
+
+[node name="EnterHouse" type="Area2D" parent="Objects"]
+position = Vector2(320, 120)
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("5_door")
+interaction_text = "家に入る"
+destination_scene = "res://scenes/maps/grandma_house/grandma_house.tscn"
+destination_spawn_id = &"entrance"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/EnterHouse"]
+shape = SubResource("DoorArea")
+
+[node name="GoToRiver" type="Area2D" parent="Objects"]
+position = Vector2(604, 184)
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("5_door")
+interaction_text = "川へ向かう"
+destination_scene = "res://scenes/maps/river/river.tscn"
+destination_spawn_id = &"home_path"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/GoToRiver"]
+shape = SubResource("DoorArea")
+
+[node name="Aburazemi" parent="Objects" instance=ExtResource("6_insect")]
+position = Vector2(496, 260)
+data = ExtResource("7_insect_data")
+starts_moving = false
+
+[node name="NPCs" type="Node2D" parent="."]
+
+[node name="Yokai" type="Node2D" parent="."]
+
+[node name="EventTriggers" type="Node2D" parent="."]
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="HouseExit" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(320, 148)
+script = ExtResource("4_spawn")
+spawn_id = &"house_exit"
+facing = &"down"
+
+[node name="RoadWest" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(64, 184)
+script = ExtResource("4_spawn")
+spawn_id = &"road_west"
+facing = &"right"
+
+[node name="RiverPath" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(568, 184)
+script = ExtResource("4_spawn")
+spawn_id = &"river_path"
+facing = &"left"
+
+[node name="Foreground" type="TileMapLayer" parent="."]
+
+[node name="LocationRuntime" parent="." instance=ExtResource("3_runtime")]

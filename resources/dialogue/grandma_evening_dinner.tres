@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="DialogueResource" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/dialogue/dialogue_resource.gd" id="1_resource"]
+[ext_resource type="Script" path="res://scripts/dialogue/dialogue_line.gd" id="2_line"]
+
+[sub_resource type="Resource" id="Line_welcome"]
+script = ExtResource("2_line")
+speaker = "おばあちゃん"
+text = "おかえり。日が暮れる前に帰ってきたね。"
+
+[sub_resource type="Resource" id="Line_dinner"]
+script = ExtResource("2_line")
+speaker = "おばあちゃん"
+text = "ごはんにしようか。今日はどんなものを見つけたんだい？"
+
+[sub_resource type="Resource" id="Line_diary"]
+script = ExtResource("2_line")
+speaker = "おばあちゃん"
+text = "忘れないうちに、今日のことを日記に書いておいで。"
+
+[resource]
+script = ExtResource("1_resource")
+dialogue_id = &"grandma_evening_dinner"
+lines = Array[ExtResource("2_line")]([SubResource("Line_welcome"), SubResource("Line_dinner"), SubResource("Line_diary")])

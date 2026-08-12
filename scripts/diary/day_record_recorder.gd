@@ -3,9 +3,12 @@ extends Node
 
 
 func _ready() -> void:
-	EventManager.event_completed.connect(DiaryManager.record_event)
-	YokaiManager.stage_changed.connect(_on_yokai_stage_changed)
-	GameState.area_changed.connect(DiaryManager.record_location)
+	if not EventManager.event_completed.is_connected(DiaryManager.record_event):
+		EventManager.event_completed.connect(DiaryManager.record_event)
+	if not YokaiManager.stage_changed.is_connected(_on_yokai_stage_changed):
+		YokaiManager.stage_changed.connect(_on_yokai_stage_changed)
+	if not GameState.area_changed.is_connected(DiaryManager.record_location):
+		GameState.area_changed.connect(DiaryManager.record_location)
 	if is_instance_valid(GameState.player):
 		GameState.player.bug_catch_succeeded.connect(DiaryManager.record_insect)
 	for npc in get_tree().get_nodes_in_group("npc"):

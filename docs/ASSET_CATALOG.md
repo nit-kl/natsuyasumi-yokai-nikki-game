@@ -248,6 +248,8 @@ Reference:
 
 Production:
 
+- [x] Scene / TileMapLayer / Collision / 出入口Greybox（Production Tile未設定）
+
 ### 外観
 - [ ] roof tiles
 - [ ] wall tiles
@@ -296,6 +298,8 @@ Reference:
 
 Production:
 
+- [x] Scene / Water Layer / Collision / 帰路Greybox（Production Tile未設定）
+
 - [ ] water calm
 - [ ] water flow
 - [ ] shallow water
@@ -319,6 +323,7 @@ Production:
 
 ## 家周辺
 
+- [x] Scene / TileMapLayer / Collision / 出入口Greybox（Production Tile未設定）
 - [ ] rice field
 - [ ] dirt road
 - [ ] utility pole

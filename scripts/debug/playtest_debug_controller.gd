@@ -13,7 +13,7 @@ const DEFAULT_POSITION := Vector2(320, 180)
 @export var teleport_points: Dictionary = {
 	&"home": Vector2(280, 180),
 	&"insect": Vector2(320, 132),
-	&"kappa": Vector2(400, 144),
+	&"kappa": Vector2(400, 240),
 }
 
 

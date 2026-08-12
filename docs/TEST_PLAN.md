@@ -477,3 +477,95 @@ PlaceholderはProduction Assetではなく、祖母の歩行・生活Animation�
 2. 朝・昼・夕・夜をDebugMenuで変更し、対応する環境音へ切り替わる
 3. 未設定のLocation / 時間帯でエラーや不必要な生成音が鳴らない
 4. 夕方のヒグラシと川音が会話・河童演出を邪魔しない音量か確認する
+
+---
+
+## 25. Grandma House / Home Outdoor Greybox — Issues #025–#026
+
+自動Validation:
+
+- 祖母の家・家周辺Sceneをロードできる
+- 各Mapが安定したarea IDとTileMapLayer契約を持つ
+- 祖母と虫取り対象がそれぞれのMapに配置されている
+- Location内の入口IDを解決できる
+
+手動確認:
+
+1. 起動時に祖母の家の寝室へ配置される
+2. 居間の祖母と会話できる
+3. 縁側の出口から家周辺へ移動し、玄関前へ配置される
+4. 家周辺の玄関から祖母の家へ戻り、縁側側へ配置される
+5. 家周辺のセミを虫取り網で捕まえられる
+6. Greybox外周と家屋をPlayerが通り抜けない
+7. ReferenceをCropしたProduction Tileが混入していない
+
+---
+
+## 26. River Greybox — Issue #027
+
+自動Validation:
+
+- River Sceneをロードでき、area IDが`river`である
+- Ground / Water / Collision / Foregroundを別TileMapLayerとして持つ
+- 水域Collisionと河童Presenterが存在する
+
+手動確認:
+
+1. 家周辺の東端から川へ移動し、岸の帰路側へ配置される
+2. 岸沿いを歩けるが、水面へ侵入できない
+3. Day 2昼のPreset / Eventで波紋が表示される
+4. Day 3夕方のPreset / Eventで河童が一瞬だけ見える
+5. 帰路から家周辺東端へ戻れる
+6. ReferenceをCropしたProduction Tileが混入していない
+
+回帰テスト:
+
+- `tests/map_transition_smoke_test.tscn`でScene交換後も入力元Nodeへアクセスせず、
+  指定した入口へPlayerが配置されることを確認する。
+
+---
+
+## 27. Return-home Flow — Issue #035
+
+自動Validation:
+
+- evening / nightだけを帰宅時間として判定する
+- 夕食Dialogue Resourceが有効である
+- `tests/return_home_flow_smoke_test.tscn`で夕食後の日記Reviewから翌朝まで進行する
+- 通常の日記閲覧では日付が進まない
+
+手動確認:
+
+1. DebugMenuで夕方へ変更し、祖母の家へ戻る
+2. 祖母の会話が夕食内容へ変わる
+3. 会話終了後に当日の日記が自動表示される
+4. 河童・虫・訪問場所など当日の事実が表示される
+5. 日記を閉じると翌日07:00になり、寝室へ戻る
+6. DebugMenuのLoadでAutosaveから翌朝の状態を読み込める
+7. Day 30では日付が進まず、同じ夜に夕食フローが再実行されない
+
+---
+
+## 28. Vertical Slice Polish — Issue #040
+
+自動回帰:
+
+- `LocationCatalog`がVertical Sliceの3 Locationを解決する
+- 未知のSave `scene_id`を拒否する
+- `tests/save_location_restore_smoke_test.tscn`で家のSaveを川からLoadし、
+  家Scene・保存位置・向きを復元する
+- DebugMenu Load時はメニューを閉じ、pause状態を残さない
+
+手動確認:
+
+1. 祖母の家・家周辺・川でそれぞれSaveする
+2. 別Mapへ移動してからLoadし、保存Map・位置・向きへ戻る
+3. F3メニューが閉じ、Player操作と時計進行が復帰する
+
+一括実行:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/run_vertical_slice_validation.ps1
+```
+
+Foundation、Map遷移、帰宅フロー、別Location Save復元の4 Sceneを順に実行する。

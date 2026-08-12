@@ -9,5 +9,5 @@ display_name = "河童の気配直前"
 day_index = 2
 time_minutes = 720
 area_id = &"river"
-player_position = Vector2(400, 160)
+player_position = Vector2(400, 240)
 player_facing = &"up"

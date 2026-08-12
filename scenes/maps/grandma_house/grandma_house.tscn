@@ -1,0 +1,109 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://scripts/maps/location_scene.gd" id="1_location"]
+[ext_resource type="Script" path="res://scripts/maps/greybox_map_visual.gd" id="2_visual"]
+[ext_resource type="PackedScene" path="res://scenes/maps/common/location_runtime.tscn" id="3_runtime"]
+[ext_resource type="PackedScene" path="res://scenes/npc/grandma.tscn" id="4_grandma"]
+[ext_resource type="Script" path="res://scripts/maps/map_spawn_point.gd" id="5_spawn"]
+[ext_resource type="Script" path="res://scripts/maps/map_doorway.gd" id="6_door"]
+[ext_resource type="Script" path="res://scripts/events/return_home_flow.gd" id="7_return_flow"]
+[ext_resource type="Resource" path="res://resources/dialogue/grandma_evening_dinner.tres" id="8_dinner"]
+
+[sub_resource type="RectangleShape2D" id="WallHorizontal"]
+size = Vector2(576, 16)
+
+[sub_resource type="RectangleShape2D" id="WallVertical"]
+size = Vector2(16, 296)
+
+[sub_resource type="RectangleShape2D" id="WallBottom"]
+size = Vector2(256, 16)
+
+[sub_resource type="RectangleShape2D" id="DoorArea"]
+size = Vector2(64, 24)
+
+[node name="GrandmaHouse" type="Node2D"]
+script = ExtResource("1_location")
+area_id = &"grandma_house"
+default_spawn_id = &"bedroom"
+
+[node name="Ground" type="TileMapLayer" parent="."]
+
+[node name="DetailsBack" type="TileMapLayer" parent="."]
+
+[node name="GreyboxVisual" type="Node2D" parent="."]
+script = ExtResource("2_visual")
+
+[node name="Collision" type="TileMapLayer" parent="."]
+
+[node name="GreyboxWalls" type="StaticBody2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="Top" type="CollisionShape2D" parent="GreyboxWalls"]
+position = Vector2(320, 32)
+shape = SubResource("WallHorizontal")
+
+[node name="Left" type="CollisionShape2D" parent="GreyboxWalls"]
+position = Vector2(32, 180)
+shape = SubResource("WallVertical")
+
+[node name="Right" type="CollisionShape2D" parent="GreyboxWalls"]
+position = Vector2(608, 180)
+shape = SubResource("WallVertical")
+
+[node name="BottomLeft" type="CollisionShape2D" parent="GreyboxWalls"]
+position = Vector2(160, 328)
+shape = SubResource("WallBottom")
+
+[node name="BottomRight" type="CollisionShape2D" parent="GreyboxWalls"]
+position = Vector2(480, 328)
+shape = SubResource("WallBottom")
+
+[node name="Objects" type="Node2D" parent="."]
+
+[node name="ExitToOutdoor" type="Area2D" parent="Objects"]
+position = Vector2(320, 304)
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("6_door")
+interaction_text = "外へ出る"
+destination_scene = "res://scenes/maps/village/home_outdoor.tscn"
+destination_spawn_id = &"house_exit"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/ExitToOutdoor"]
+shape = SubResource("DoorArea")
+
+[node name="NPCs" type="Node2D" parent="."]
+
+[node name="Grandma" parent="NPCs" instance=ExtResource("4_grandma")]
+position = Vector2(352, 136)
+
+[node name="Yokai" type="Node2D" parent="."]
+
+[node name="EventTriggers" type="Node2D" parent="."]
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="Bedroom" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(112, 136)
+script = ExtResource("5_spawn")
+spawn_id = &"bedroom"
+facing = &"right"
+
+[node name="Entrance" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(320, 272)
+script = ExtResource("5_spawn")
+spawn_id = &"entrance"
+facing = &"up"
+
+[node name="Foreground" type="TileMapLayer" parent="."]
+
+[node name="LocationRuntime" parent="." instance=ExtResource("3_runtime")]
+
+[node name="ReturnHomeFlow" type="Node" parent="."]
+script = ExtResource("7_return_flow")
+dinner_dialogue = ExtResource("8_dinner")
+grandma_path = NodePath("../NPCs/Grandma")
+dialogue_controller_path = NodePath("../LocationRuntime/DialogueController")
+diary_ui_path = NodePath("../LocationRuntime/DiaryUI")
+bedroom_spawn_path = NodePath("../SpawnPoints/Bedroom")

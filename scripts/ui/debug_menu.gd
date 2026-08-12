@@ -62,7 +62,8 @@ func _on_save_pressed() -> void:
 
 
 func _on_load_pressed() -> void:
-	SaveManager.load_game()
+	_set_menu_visible(false)
+	await SaveManager.load_game_into_world()
 
 
 func _on_show_events_pressed() -> void:

@@ -1,6 +1,9 @@
 class_name DiaryUI
 extends CanvasLayer
 
+signal opened(day_index: int)
+signal closed()
+
 @onready var panel: PanelContainer = %Panel
 @onready var title_label: Label = %TitleLabel
 @onready var body_label: Label = %BodyLabel
@@ -35,6 +38,13 @@ func set_open(value: bool) -> void:
 	GameClock.set_clock_paused(true if value else _clock_was_paused)
 	if value:
 		refresh()
+		opened.emit(CalendarManager.day_index)
+	else:
+		closed.emit()
+
+
+func is_open() -> bool:
+	return panel.visible
 
 
 func refresh(day_index: int = CalendarManager.day_index) -> void:
@@ -50,6 +60,7 @@ static func format_record(record: DayRecord) -> String:
 	lines.append("見つけた妖怪: %s" % _join_names(record.met_yokai))
 	lines.append("捕まえた虫: %s" % _join_names(record.caught_insects))
 	lines.append("できごと: %s" % _join_names(record.events_seen))
+	lines.append("日記: %s" % _join_names(record.diary_fragments))
 	return "\n".join(lines)
 
 

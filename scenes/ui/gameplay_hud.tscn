@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/foundation_hud.gd" id="1_hud"]
+
+[node name="GameplayHUD" type="CanvasLayer"]
+script = ExtResource("1_hud")
+
+[node name="Margin" type="MarginContainer" parent="."]
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 628.0
+offset_bottom = 348.0
+
+[node name="VBox" type="VBoxContainer" parent="Margin"]
+
+[node name="DayLabel" type="Label" parent="Margin/VBox"]
+unique_name_in_owner = true
+text = "Day 1 / 30"
+
+[node name="TimeLabel" type="Label" parent="Margin/VBox"]
+unique_name_in_owner = true
+text = "07:00  morning"
+
+[node name="InteractionLabel" type="Label" parent="Margin/VBox"]
+unique_name_in_owner = true
+visible = false
+text = "E / Z: 調べる"
+
+[node name="Spacer" type="Control" parent="Margin/VBox"]
+custom_minimum_size = Vector2(0, 220)
+
+[node name="Notice" type="Label" parent="Margin/VBox"]
+text = "Move: WASD / Arrows   Interact: E / Z   Net: X   Debug: F3"

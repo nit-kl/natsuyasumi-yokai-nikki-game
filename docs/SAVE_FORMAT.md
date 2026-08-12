@@ -322,3 +322,8 @@ Save v1の既存fieldへ以下を接続する。
 
 未知field許容とmissing optional fieldの既定値復元は維持する。
 Schema fieldとsave_versionは変更しない。
+
+Vertical Slice実ゲームのLoadでは`player.scene_id`を`LocationCatalog`で検証し、
+現在地と異なる場合は対応Sceneへ遷移してからposition / facingを適用する。
+未知のscene IDは黙って現在Sceneへ適用しない。
+`validate_data()`の段階でCatalog未登録の`player.scene_id`を拒否する。
