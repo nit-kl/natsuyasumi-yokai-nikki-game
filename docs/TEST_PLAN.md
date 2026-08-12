@@ -263,3 +263,160 @@ powershell -ExecutionPolicy Bypass -File tools/validate_project.ps1
 手動確認ではプロジェクトを実行し、F3でDebugMenuを開いて
 Day / Time / Save / Loadを操作する。表示のNearest維持とカメラの
 Subpixel jitterがないことは、Production Sprite導入後にも再確認する。
+
+---
+
+## 14. Player Movement Validation — Issue #020
+
+自動Validation:
+
+- 8入力方向が対応するfacingへ変換される
+- 入力停止時に最後のfacingを維持する
+- 斜め歩行が軸方向と同じ速度になる
+- run入力時にrun speedへ切り替わる
+- movement lock時に停止する
+
+手動確認:
+
+1. WASDと矢印キーで8方向へ移動できる
+2. 斜め移動だけ速くならない
+3. Shiftを押している間だけ走行速度になる
+4. F3でDebugMenuを開くとPlayerが停止する
+5. Placeholder上の白線が最後に向いた8方向を示す
+
+---
+
+## 15. Interaction Validation — Issue #022
+
+自動Validation:
+
+- `Interactable`の有効・無効とprompt text
+- interaction実行時のsignal
+- 利用可能な最短距離候補の選択
+- 同距離候補のpriority判定
+
+手動確認:
+
+1. Foundation Sceneで`TEST`マーカーへ近づく
+2. マーカーの方向を向いた時だけInteraction promptが表示される
+3. EまたはZでinteractionが1回実行される
+4. マーカーから離れるとpromptが消える
+5. F3表示中はinteractionが実行されない
+
+`FoundationInteractionMarker`はシステム確認専用で、ゲーム本編の調査物ではない。
+
+---
+
+## 16. Dialogue Validation — Issue #023
+
+自動Validation:
+
+- Dialogue Resourceの必須ID・本文検証
+- 通常行の送り
+- 選択肢行での自動送り抑止
+- 選択肢による指定行への分岐
+- 最終行後の終了
+- 会話開始・終了時のPlayer移動ロック
+- 会話中のGameClock停止と従来pause状態の復元
+
+手動確認:
+
+1. Foundation Sceneの`TEST`マーカーをEまたはZで調べる
+2. 話者名と本文が表示され、Playerが移動できない
+3. EまたはZで次の行へ進む
+4. 選択肢を方向キーで選び、EまたはZで決定する
+5. 最終行後にUIが閉じ、Playerが再び移動できる
+
+Foundation用会話はシステム確認データであり、本編Dialogueではない。
+
+---
+
+## 17. NPC / Grandma Validation — Issue #024
+
+自動Validation:
+
+- NPCDataの必須ID・表示名
+- actor位置に応じたNPCの基本方向転換
+- Grandma Sceneの安定IDと表示名
+- NPCDataからDialogueがInteractionAreaへ設定される
+- NPC表示名を使ったInteraction prompt
+
+手動確認:
+
+1. Foundation Scene左側の祖母Placeholderへ近づく
+2. 「おばあちゃんと話す」が表示される
+3. 会話開始時に祖母がPlayerの方向を向く
+4. 祖母の3行の会話が最後まで進む
+
+PlaceholderはProduction Assetではなく、祖母の歩行・生活Animationも未実装。
+
+---
+
+## 18. Day-period Visual Validation — Issue #028
+
+自動Validation:
+
+- morning / daytime / evening / nightのPalette lookup
+- Visual ControllerによるCanvasModulate色の適用
+
+手動確認:
+
+1. F3のTime変更で05:00、10:00、16:30、19:00を順番に設定する
+2. 朝・昼・夕・夜の色へ滑らかに変化する
+3. HUDとDialogue UIはCanvasModulateの影響を受けず読める
+4. 夜が探索不能な暗さにならない
+
+---
+
+## 19. Bug Entity Validation — Issue #030
+
+自動Validation:
+
+- InsectDataの必須ID・表示名
+- Entityからの安定insect_id取得
+- 移動方向の正規化
+- 捕獲要求Signal
+- 捕獲確定後の状態・非表示・再要求拒否
+
+手動確認はIssue #031の捕獲範囲・道具入力と統合後に実施する。
+
+---
+
+## 20. Bug Catching Validation — Issue #031
+
+自動Validation:
+
+- 範囲内で最も近い未捕獲Insectの選択
+- 捕獲成功後のInsect状態
+- movement lock中の道具使用拒否
+
+手動確認:
+
+1. Foundation Scene上側の虫Placeholderへ近づいて向く
+2. Xで虫取り網を使用する
+3. 範囲内なら虫が消え、捕獲したIDがHUDへ表示される
+4. 虫がいない方向でXを押すと空振り表示になる
+5. Dialogue中とF3表示中は網を使用できない
+
+---
+
+## 21. Event / Kappa / Diary Validation — Issues #032〜#038
+
+自動Validation:
+
+- World flag設定・解除
+- Yokai stage進行と逆行拒否
+- Eventの日付・場所・時間帯・Flag・Yokai条件
+- priority、exclusive group、one-shot
+- Event actionとhistory
+- 河童TRACE→SEENイベント連鎖
+- DayRecordの重複排除とserialize round trip
+- Diary表示用format
+- World / Yokai / Event history / DayRecordのSave round trip
+
+手動確認:
+
+1. F3のCandidatesで河童イベントの不成立理由を確認する
+2. Force Trace / Force Seenで波紋と短い河童Placeholderを確認する
+3. Jで日記を開き、捕まえた虫や見つけた妖怪が記録される
+4. Save後に状態を変え、Loadで日記・河童stage・event historyが復元される

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="NPCData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/npc/npc_data.gd" id="1_data"]
+[ext_resource type="Resource" path="res://resources/dialogue/grandma_foundation_dialogue.tres" id="2_dialogue"]
+
+[resource]
+script = ExtResource("1_data")
+npc_id = &"grandma"
+display_name = "おばあちゃん"
+default_facing = &"left"
+default_dialogue = ExtResource("2_dialogue")

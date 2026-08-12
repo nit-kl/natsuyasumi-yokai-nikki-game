@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="YokaiData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/yokai/yokai_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+yokai_id = &"kappa"
+display_name = "河童"

@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/npc/npc.gd" id="1_npc"]
+[ext_resource type="Script" path="res://scripts/npc/npc_interaction_area.gd" id="2_interaction"]
+
+[sub_resource type="CapsuleShape2D" id="Capsule_body"]
+radius = 7.0
+height = 14.0
+
+[sub_resource type="CircleShape2D" id="Circle_interaction"]
+radius = 18.0
+
+[node name="NPC" type="CharacterBody2D"]
+groups = ["npc"]
+collision_layer = 8
+collision_mask = 2
+motion_mode = 1
+script = ExtResource("1_npc")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 6)
+shape = SubResource("Capsule_body")
+
+[node name="InteractionArea" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("2_interaction")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionArea"]
+shape = SubResource("Circle_interaction")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]

@@ -1,8 +1,30 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=21 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/debug/debug_menu.tscn" id="2_debug"]
 [ext_resource type="Script" path="res://scripts/ui/foundation_hud.gd" id="3_hud"]
+[ext_resource type="Script" path="res://scripts/dialogue/dialogue_interactable.gd" id="4_interactable"]
+[ext_resource type="Resource" path="res://resources/dialogue/foundation_test_dialogue.tres" id="5_dialogue"]
+[ext_resource type="PackedScene" path="res://scenes/ui/dialogue_ui.tscn" id="6_dialogue_ui"]
+[ext_resource type="PackedScene" path="res://scenes/npc/grandma.tscn" id="7_grandma"]
+[ext_resource type="Script" path="res://scripts/core/day_period_visual_controller.gd" id="8_period_visual"]
+[ext_resource type="Resource" path="res://resources/locations/default_day_period_palette.tres" id="9_palette"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/insect.tscn" id="10_insect"]
+[ext_resource type="Resource" path="res://resources/insects/aburazemi.tres" id="11_aburazemi"]
+[ext_resource type="Script" path="res://scripts/events/event_registry.gd" id="12_registry"]
+[ext_resource type="Resource" path="res://resources/events/kappa_first_trace.tres" id="13_trace"]
+[ext_resource type="Resource" path="res://resources/events/kappa_first_sighting.tres" id="14_sighting"]
+[ext_resource type="PackedScene" path="res://scenes/yokai/kappa_glimpse.tscn" id="15_glimpse"]
+[ext_resource type="Script" path="res://scripts/events/event_definition.gd" id="16_event_definition"]
+[ext_resource type="Script" path="res://scripts/diary/day_record_recorder.gd" id="17_recorder"]
+[ext_resource type="PackedScene" path="res://scenes/ui/diary_ui.tscn" id="18_diary_ui"]
+
+[sub_resource type="CircleShape2D" id="Circle_marker"]
+radius = 10.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_marker"]
+font_size = 12
+font_color = Color(0.12, 0.18, 0.12, 1)
 
 [node name="Bootstrap" type="Node2D"]
 
@@ -10,8 +32,49 @@
 polygon = PackedVector2Array(-640, -360, 640, -360, 640, 360, -640, 360)
 color = Color(0.447, 0.655, 0.553, 1)
 
+[node name="DayPeriodVisualController" type="CanvasModulate" parent="."]
+script = ExtResource("8_period_visual")
+palette = ExtResource("9_palette")
+
 [node name="Player" parent="." instance=ExtResource("1_player")]
 position = Vector2(320, 180)
+
+[node name="Grandma" parent="." instance=ExtResource("7_grandma")]
+position = Vector2(280, 180)
+
+[node name="Aburazemi" parent="." instance=ExtResource("10_insect")]
+position = Vector2(320, 132)
+data = ExtResource("11_aburazemi")
+starts_moving = false
+
+[node name="EventRegistry" type="Node" parent="."]
+script = ExtResource("12_registry")
+events = Array[ExtResource("16_event_definition")]([ExtResource("13_trace"), ExtResource("14_sighting")])
+
+[node name="DayRecordRecorder" type="Node" parent="."]
+script = ExtResource("17_recorder")
+
+[node name="KappaGlimpse" parent="." instance=ExtResource("15_glimpse")]
+position = Vector2(416, 128)
+
+[node name="FoundationInteractionMarker" type="Area2D" parent="."]
+position = Vector2(360, 180)
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("4_interactable")
+interaction_text = "基盤確認マーカーを調べる"
+dialogue = ExtResource("5_dialogue")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FoundationInteractionMarker"]
+shape = SubResource("Circle_marker")
+
+[node name="Label" type="Label" parent="FoundationInteractionMarker"]
+offset_left = -24.0
+offset_top = -28.0
+offset_right = 25.0
+offset_bottom = -5.0
+text = "TEST"
+label_settings = SubResource("LabelSettings_marker")
 
 [node name="FoundationHUD" type="CanvasLayer" parent="."]
 script = ExtResource("3_hud")
@@ -32,10 +95,19 @@ text = "Day 1 / 30"
 unique_name_in_owner = true
 text = "07:00  morning"
 
+[node name="InteractionLabel" type="Label" parent="FoundationHUD/Margin/VBox"]
+unique_name_in_owner = true
+visible = false
+text = "E / Z: 調べる"
+
 [node name="Spacer" type="Control" parent="FoundationHUD/Margin/VBox"]
-custom_minimum_size = Vector2(0, 244)
+custom_minimum_size = Vector2(0, 220)
 
 [node name="Notice" type="Label" parent="FoundationHUD/Margin/VBox"]
-text = "Milestone 0 placeholder — F3: Debug Menu"
+text = "Move: WASD / Arrows   Interact: E / Z   Net: X   Debug: F3"
 
 [node name="DebugMenu" parent="." instance=ExtResource("2_debug")]
+
+[node name="DialogueController" parent="." instance=ExtResource("6_dialogue_ui")]
+
+[node name="DiaryUI" parent="." instance=ExtResource("18_diary_ui")]

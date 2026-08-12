@@ -16,8 +16,10 @@ func save_exists(path: String = SAVE_PATH) -> bool:
 
 func serialize() -> Dictionary:
 	var player_position := Vector2.ZERO
+	var player_facing := "down"
 	if is_instance_valid(GameState.player):
 		player_position = GameState.player.global_position
+		player_facing = String(GameState.player.get("facing"))
 	return {
 		"save_version": SAVE_VERSION,
 		"meta": {"play_time_seconds": 0, "last_saved_at": Time.get_datetime_string_from_system(true)},
@@ -29,14 +31,14 @@ func serialize() -> Dictionary:
 		"player": {
 			"scene_id": String(GameState.current_area_id),
 			"position": [player_position.x, player_position.y],
-			"facing": "down",
+			"facing": player_facing,
 		},
 		"inventory": {"items": {}, "money": 0},
-		"world": {"flags": [], "discovered_locations": []},
+		"world": WorldState.serialize(),
 		"npc_states": {},
-		"yokai_states": {},
-		"event_history": [],
-		"diary": {"days": []},
+		"yokai_states": YokaiManager.serialize(),
+		"event_history": EventManager.serialize_history(),
+		"diary": DiaryManager.serialize(),
 		"settings_snapshot": {},
 	}
 
@@ -54,6 +56,13 @@ func deserialize(data: Dictionary) -> bool:
 	var saved_position: Variant = player_data.get("position", [])
 	if is_instance_valid(GameState.player) and saved_position is Array and saved_position.size() == 2:
 		GameState.player.global_position = Vector2(float(saved_position[0]), float(saved_position[1]))
+	if is_instance_valid(GameState.player) and GameState.player.has_method("set_facing"):
+		GameState.player.set_facing(StringName(player_data.get("facing", "down")))
+	WorldState.deserialize(data.get("world", {}))
+	YokaiManager.deserialize(data.get("yokai_states", {}))
+	var history: Variant = data.get("event_history", [])
+	EventManager.deserialize_history(history if history is Array else [])
+	DiaryManager.deserialize(data.get("diary", {}))
 	last_error_message = ""
 	return true
 

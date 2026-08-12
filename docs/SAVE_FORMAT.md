@@ -307,3 +307,18 @@ Autosave時に前回データをBackupしてから置換する方式を推奨。
 読込時はJSON object、`save_version`、必須calendar field、値域を検証する。
 未知fieldは将来拡張のため許容し、非対応versionと破損データは状態へ適用しない。
 Backup / migration / atomic replacementはSaveManager拡張Issueで実装する。
+
+---
+
+## 20. Vertical Slice State Integration
+
+Save v1の既存fieldへ以下を接続する。
+
+- `world.flags` / `world.discovered_locations`: WorldState
+- `yokai_states`: YokaiManager
+- `event_history`: EventManagerのone-shot履歴
+- `diary.days`: DiaryManagerのDayRecord
+- `player.facing`: Playerの8方向facing
+
+未知field許容とmissing optional fieldの既定値復元は維持する。
+Schema fieldとsave_versionは変更しない。

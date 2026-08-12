@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="InsectData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/insects/insect_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+insect_id = &"aburazemi"
+display_name = "アブラゼミ"
+move_speed = 18.0
+direction_change_seconds = 3.0

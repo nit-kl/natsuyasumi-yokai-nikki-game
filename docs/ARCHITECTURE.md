@@ -504,3 +504,141 @@ Sceneに直接大量の設定値を書かない。
 Playerの表示はMilestone 0専用のコード描画Placeholderとする。
 Reference Sheetから切り出した画像は使用せず、Production Sprite完成後に
 `AnimatedSprite2D` の`SpriteFrames`へ差し替える。
+
+---
+
+## 25. Player Movement — Issue #020
+
+- `Input.get_vector`によるKeyboard / Controller共通の8方向入力
+- 斜め移動はベクトル長を1へ制限し、軸方向と同速度にする
+- walk 80 px/s、run 128 px/sを初期値とし、Player Sceneから調整可能にする
+- 最後に入力された向きを`down`から`down_right`までの`StringName`で保持する
+- Dialogue / Eventから利用できる`set_movement_locked()`を提供する
+- Playerの移動には`CharacterBody2D.move_and_slide()`を使用する
+
+歩行アニメーションと方向別Sprite切替はIssue #021の責務とする。
+
+---
+
+## 26. Interaction System — Issue #022
+
+対象はInteraction collision layerを持つ`Area2D`とし、次のContractを実装する。
+
+```gdscript
+func can_interact(actor: Node) -> bool
+func get_interaction_text(actor: Node) -> String
+func interact(actor: Node) -> void
+```
+
+Player配下の`InteractionDetector`が向いている方向へ追従し、重なっている
+利用可能な対象のうち最短距離のものを候補にする。同距離の場合のみ
+`interaction_priority`を使用する。候補がない場合はInteraction UIを表示しない。
+
+`Interactable`は共通の最小実装であり、NPC・妖怪・ドア等はContractを守りつつ
+固有処理をそれぞれの責務内に実装する。InteractionDetectorは個別種別を知らない。
+
+---
+
+## 27. Dialogue System — Issue #023
+
+会話データはSceneから分離したResourceで構成する。
+
+```text
+DialogueResource (dialogue_id, lines)
+└─ DialogueLine (speaker, text, choices)
+   └─ DialogueChoice (text, next_line_index)
+```
+
+`DialogueController`は現在行、UI表示、通常送り、選択肢分岐、終了を管理する。
+会話中はactorの`set_movement_locked(true)`を呼び、終了時に解除する。
+GameClockは会話開始前のpause状態を保存して停止し、会話終了時に元へ戻す。
+`DialogueInteractable`がInteraction ContractとDialogue開始を橋渡しする。
+
+`dialogue_id`は将来のEvent historyやSave参照に利用できる永続IDとして扱う。
+条件分岐、Flag変更、Event actionとの連携はWorldState / EventManager導入時に
+Resourceへ拡張し、DialogueControllerへゲーム固有条件を直書きしない。
+
+---
+
+## 28. NPC / Grandma Base — Issue #024
+
+汎用NPC Sceneは`CharacterBody2D`をルートとし、描画、Body Collision、
+Dialogue用InteractionArea、AnimationPlayerを分離する。
+
+`NPCData`が永続`npc_id`、表示名、初期向き、標準Dialogueを保持する。
+NPC Scene固有スクリプトへ個別会話を直書きしない。
+
+祖母は`npc_id = grandma`のNPCDataと専用Sceneで構成する。Production Spriteは
+未完成のため、コード描画Placeholderを使用する。Reference SheetのCropは使用しない。
+祖母の生活行動・Schedule・状態差分は後続IssueでComponent / Resourceとして追加する。
+
+---
+
+## 29. Day-period Visual Controller — Issue #028
+
+`DayPeriodVisualController`はScene配下の`CanvasModulate`として配置し、
+`GameClock.period_changed`を購読する。Core Clockは描画Nodeを参照しない。
+
+朝・昼・夕・夜の色は`DayPeriodPalette` Resourceへ分離し、Locationごとの差し替えを
+可能にする。切替は短いTweenで行い、Debugによる時刻変更にも同じSignal経路で反映する。
+
+初期色は方向性確認用であり、Production MapとVisual Playtest後に調整する。
+夜を真っ暗にせず、夕方の郷愁を優先するART_GUIDEの方針に従う。
+
+---
+
+## 30. Bug Entity — Issue #030
+
+虫の不変設定は`InsectData` Resourceに分離し、永続`insect_id`、表示名、
+移動速度、方向転換間隔を持つ。Entityは`CharacterBody2D`として
+`PERCHED / MOVING / CAUGHT`の最小状態だけを管理する。
+
+捕獲処理は`request_catch()`で要求Signalを発行し、判定側が成功時に
+`confirm_caught()`を呼ぶ。網の範囲、成功率、所持品追加、演出はIssue #031で扱う。
+
+Production虫Spriteは未完成のためコード描画Placeholderを使用し、
+Reference Sheetの虫画像はCropしない。
+
+---
+
+## 31. Bug Catching Mechanic — Issue #031
+
+Player配下の`BugCatcher` Area2Dが向いている方向へ追従し、`use_tool`入力時に
+範囲内で最も近い未捕獲Insectへ捕獲を要求する。初期Vertical Sliceでは
+範囲内なら確定成功とし、確率・レアリティ・複雑な照準UIを導入しない。
+
+連打防止の短いcooldownを持ち、Dialogue / Debug pause / movement lock中は使用不可。
+成功・空振りはSignalでHUDや将来のInventory / DayRecordへ通知する。
+
+網Sprite、振り下ろしAnimation、捕獲VFX、Inventory追加はProduction Assetと
+各責務の実装時にSignalへ接続する。
+
+---
+
+## 32. Minimal Event / Yokai State — Issues #032〜#034
+
+- `WorldState`: 永続Flagと発見Location
+- `YokaiManager`: `UNKNOWN → TRACE → SEEN → CONTACTED → FRIENDLY → CLOSE`
+- `EventCondition`: day / location / time period / flag / Yokai stage
+- `EventDefinition`: priority / one-shot / exclusive group / actions
+- `EventManager`: 登録、候補評価、理由表示、開始、history
+
+Actionの初期対応はFlag設定・解除とYokai stage変更に限定する。Scene演出は
+`event_started` SignalをPresenterが購読し、EventManagerへ固有Nodeを持ち込まない。
+
+河童は`kappa`の永続IDを持ち、仕様どおりDay 2のTRACE、Day 3以降のSEENを
+別Event Resourceで定義する。見せ方は波紋と短いPlaceholder表示のみで、
+派手なSpawn演出やReference SheetのCropは行わない。
+
+---
+
+## 33. DayRecord / Diary / Save — Issues #036〜#038
+
+`DayRecord`はその日の事実だけを保持する。Location、NPC、Yokai、虫、Eventは
+Signalを購読する`DayRecordRecorder`から記録し、各Entityへ日記依存を入れない。
+
+`DiaryManager`は日別Recordの所有・重複排除・serializeを担当する。
+`DiaryUI`は現在日の事実をノート形式で表示し、文章生成やEvent条件を持たない。
+
+Save v1既定fieldの`world`、`yokai_states`、`event_history`、`diary.days`へ接続する。
+既存Schema内の実装なのでsave_versionは1を維持する。

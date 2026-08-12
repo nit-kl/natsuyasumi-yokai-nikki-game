@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="DialogueResource" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/dialogue/dialogue_resource.gd" id="1_resource"]
+[ext_resource type="Script" path="res://scripts/dialogue/dialogue_line.gd" id="2_line"]
+[ext_resource type="Script" path="res://scripts/dialogue/dialogue_choice.gd" id="3_choice"]
+
+[sub_resource type="Resource" id="Choice_continue"]
+script = ExtResource("3_choice")
+text = "もう少し見る"
+next_line_index = 2
+
+[sub_resource type="Resource" id="Choice_finish"]
+script = ExtResource("3_choice")
+text = "離れる"
+next_line_index = 3
+
+[sub_resource type="Resource" id="Line_intro"]
+script = ExtResource("2_line")
+speaker = "確認マーカー"
+text = "これはDialogue Systemの動作確認用マーカーだ。"
+
+[sub_resource type="Resource" id="Line_choice"]
+script = ExtResource("2_line")
+speaker = "確認マーカー"
+text = "どうする？"
+choices = Array[ExtResource("3_choice")]([SubResource("Choice_continue"), SubResource("Choice_finish")])
+
+[sub_resource type="Resource" id="Line_detail"]
+script = ExtResource("2_line")
+speaker = "確認マーカー"
+text = "会話内容はResourceとしてSceneから分離されている。"
+
+[resource]
+script = ExtResource("1_resource")
+dialogue_id = &"foundation_test_dialogue"
+lines = Array[ExtResource("2_line")]([SubResource("Line_intro"), SubResource("Line_choice"), SubResource("Line_detail")])

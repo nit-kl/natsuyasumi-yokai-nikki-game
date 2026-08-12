@@ -5,6 +5,7 @@ extends CanvasLayer
 @onready var hour_spin_box: SpinBox = %HourSpinBox
 @onready var minute_spin_box: SpinBox = %MinuteSpinBox
 @onready var status_label: Label = %StatusLabel
+@onready var event_report_label: Label = %EventReportLabel
 
 
 func _ready() -> void:
@@ -45,6 +46,37 @@ func _on_save_pressed() -> void:
 
 func _on_load_pressed() -> void:
 	SaveManager.load_game()
+
+
+func _on_show_events_pressed() -> void:
+	var lines: Array[String] = []
+	for entry in EventManager.get_debug_report():
+		var state := "OK" if bool(entry.matches) else "NO"
+		var reasons: Array = entry.reasons
+		var reason_strings := PackedStringArray(reasons.map(func(reason: Variant) -> String: return String(reason)))
+		var reason_text := "" if reasons.is_empty() else " — %s" % "; ".join(reason_strings)
+		lines.append("[%s] %s%s" % [state, entry.event_id, reason_text])
+	event_report_label.text = "\n".join(lines) if not lines.is_empty() else "No registered events."
+
+
+func _on_trigger_event_pressed() -> void:
+	var candidates := EventManager.get_candidates()
+	if candidates.is_empty():
+		_set_status("No matching event candidate.")
+		return
+	var event: EventDefinition = candidates[0]
+	_set_status("Triggered %s." % event.event_id if EventManager.trigger_event(event.event_id) else "Trigger failed.")
+	_on_show_events_pressed()
+
+
+func _on_force_kappa_trace_pressed() -> void:
+	_set_status("Forced kappa_first_trace." if EventManager.trigger_event(&"kappa_first_trace", true) else "Event is not registered.")
+	_on_show_events_pressed()
+
+
+func _on_force_kappa_sighting_pressed() -> void:
+	_set_status("Forced kappa_first_sighting." if EventManager.trigger_event(&"kappa_first_sighting", true) else "Event is not registered.")
+	_on_show_events_pressed()
 
 
 func _sync_values(_unused: Variant = null) -> void:

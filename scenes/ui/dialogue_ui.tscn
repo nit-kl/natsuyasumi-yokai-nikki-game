@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/dialogue/dialogue_controller.gd" id="1_dialogue"]
+
+[node name="DialogueController" type="CanvasLayer"]
+layer = 50
+script = ExtResource("1_dialogue")
+
+[node name="Panel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+offset_left = 64.0
+offset_top = 224.0
+offset_right = 576.0
+offset_bottom = 344.0
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
+
+[node name="SpeakerLabel" type="Label" parent="Panel/Margin/VBox"]
+unique_name_in_owner = true
+text = "話者"
+
+[node name="BodyLabel" type="Label" parent="Panel/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+text = "会話本文"
+autowrap_mode = 2
+
+[node name="ChoicesContainer" type="VBoxContainer" parent="Panel/Margin/VBox"]
+unique_name_in_owner = true
+
+[node name="ContinueLabel" type="Label" parent="Panel/Margin/VBox"]
+unique_name_in_owner = true
+text = "E / Z: 次へ"
+horizontal_alignment = 2

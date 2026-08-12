@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="EventDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/events/event_definition.gd" id="1_event"]
+[ext_resource type="Script" path="res://scripts/events/event_condition.gd" id="2_condition"]
+[ext_resource type="Script" path="res://scripts/events/event_action.gd" id="3_action"]
+
+[sub_resource type="Resource" id="Condition_sighting"]
+script = ExtResource("2_condition")
+min_day = 3
+locations = Array[StringName]([&"river"])
+time_periods = Array[StringName]([&"daytime", &"evening"])
+required_flags = Array[StringName]([&"kappa_first_trace_complete"])
+forbidden_flags = Array[StringName]([&"kappa_first_sighting_complete"])
+required_yokai_id = &"kappa"
+minimum_yokai_stage = &"TRACE"
+
+[sub_resource type="Resource" id="Action_stage"]
+script = ExtResource("3_action")
+type = 2
+target_id = &"kappa"
+value = &"SEEN"
+
+[sub_resource type="Resource" id="Action_flag"]
+script = ExtResource("3_action")
+target_id = &"kappa_first_sighting_complete"
+
+[resource]
+script = ExtResource("1_event")
+event_id = &"kappa_first_sighting"
+priority = 100
+condition = SubResource("Condition_sighting")
+actions = Array[ExtResource("3_action")]([SubResource("Action_stage"), SubResource("Action_flag")])
+one_shot = true
+exclusive_group = &"river_major_event"

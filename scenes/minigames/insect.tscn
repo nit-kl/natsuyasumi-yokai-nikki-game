@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/insects/insect.gd" id="1_insect"]
+
+[sub_resource type="CircleShape2D" id="Circle_body"]
+radius = 4.0
+
+[node name="Insect" type="CharacterBody2D"]
+collision_layer = 32
+collision_mask = 2
+motion_mode = 1
+script = ExtResource("1_insect")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Circle_body")
