@@ -626,8 +626,9 @@ Player配下の`BugCatcher` Area2Dが向いている方向へ追従し、`use_to
 Actionの初期対応はFlag設定・解除とYokai stage変更に限定する。Scene演出は
 `event_started` SignalをPresenterが購読し、EventManagerへ固有Nodeを持ち込まない。
 
-河童は`kappa`の永続IDを持ち、仕様どおりDay 2のTRACE、Day 3以降のSEENを
-別Event Resourceで定義する。見せ方は波紋と短いPlaceholder表示のみで、
+河童は`kappa`の永続IDを持ち、Vertical SliceではDay 1の川沿いでTRACE、続いてSEENを
+別Event Resourceと離れた`EventTriggerArea`で定義する。通常歩行で自然に発火し、
+目撃後は夕方へ進む。見せ方は波紋と短いPlaceholder表示のみで、
 派手なSpawn演出やReference SheetのCropは行わない。
 
 ---
@@ -707,9 +708,17 @@ Production音源が未設定の枠は無音とし、仮の生成音やReference�
 Greyboxとする。Production TileMap差し替え用にGround / DetailsBack / Collision /
 Foregroundの`TileMapLayer`階層を先に固定する。コード描画面はProduction Assetではない。
 
+家周辺の最初のProduction Art検証では、640x360背景プレートをGroundとDetailsBackの間に
+配置し、既存TileMapLayer契約とCollisionを維持する。色・密度・導線の実画面評価後、
+複数Mapで再利用する要素だけを32x32 modular TileSetへ分解する。
+
 Riverは追加でWater `TileMapLayer`と水域Collisionを分離する。岸沿いの歩行帯に
 河童の波紋・一瞬の目撃Presenterを配置し、水面内へPlayerを侵入させない。
 家周辺東端と川の帰路を入口IDで相互接続する。
+
+川の最初のProduction Art検証も640x360背景プレートを使用し、Water `TileMapLayer`と
+Collision契約を維持する。背景には河童の波紋を描き込まず、4 frameのProduction VFXを
+PresenterがEvent発火中だけ表示する。
 
 ---
 
@@ -745,3 +754,14 @@ Player位置・向きと各Manager状態を復元する。未知の`scene_id`は
 
 DebugMenuはLoad前に自身を閉じ、Global pauseとClock pauseを復元してからScene交換する。
 Save v1 Schemaは変更しない。
+
+---
+
+## 40. Vertical Slice One-day Flow — Issue #041
+
+`EventTriggerArea`はLocation固有の小さなArea2Dとして、Player接近時に指定Eventを
+通常条件付きで発火する。川の順路上でTRACEとSEENを空間的に分け、同時発火を避ける。
+
+祖母の家の`ReturnHomeFlow`はVertical Slice終了モードを持ち、夕食後の日記を閉じた時に
+Day 2へ進めず`vertical_slice_complete` flagを保存する。完了Panelを表示し、Playerと時計を
+停止する。CalendarManagerとSave v1 SchemaにはVertical Slice固有条件を追加しない。

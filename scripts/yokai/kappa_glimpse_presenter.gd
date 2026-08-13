@@ -5,7 +5,7 @@ extends Node2D
 @export var sighting_event_id: StringName = &"kappa_first_sighting"
 @export_range(0.1, 5.0, 0.1) var glimpse_seconds: float = 1.2
 
-@onready var ripple: Node2D = %Ripple
+@onready var ripple: AnimatedSprite2D = %Ripple
 @onready var silhouette: Node2D = %Silhouette
 
 
@@ -23,6 +23,8 @@ func _on_event_started(event: EventDefinition) -> void:
 
 
 func present_trace() -> void:
+	ripple.frame = 0
+	ripple.play(&"ripple")
 	ripple.visible = true
 	var tween := create_tween()
 	tween.tween_interval(glimpse_seconds)
@@ -30,6 +32,8 @@ func present_trace() -> void:
 
 
 func present_sighting() -> void:
+	ripple.frame = 0
+	ripple.play(&"ripple")
 	ripple.visible = true
 	silhouette.visible = true
 	var tween := create_tween()

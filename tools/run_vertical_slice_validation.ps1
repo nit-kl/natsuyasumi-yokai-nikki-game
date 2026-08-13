@@ -11,6 +11,7 @@ $testScenes = @(
     "tests/foundation_validation.tscn",
     "tests/map_transition_smoke_test.tscn",
     "tests/return_home_flow_smoke_test.tscn",
+    "tests/vertical_slice_day_flow_smoke_test.tscn",
     "tests/save_location_restore_smoke_test.tscn"
 )
 

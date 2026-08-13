@@ -6,9 +6,10 @@
 
 [sub_resource type="Resource" id="Condition_trace"]
 script = ExtResource("2_condition")
-min_day = 2
+min_day = 1
+max_day = 1
 locations = Array[StringName]([&"river"])
-time_periods = Array[StringName]([&"daytime"])
+time_periods = Array[StringName]([&"morning", &"daytime"])
 forbidden_flags = Array[StringName]([&"kappa_first_trace_complete"])
 
 [sub_resource type="Resource" id="Action_stage"]

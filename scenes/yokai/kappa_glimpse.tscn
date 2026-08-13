@@ -1,18 +1,23 @@
 [gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/yokai/kappa_glimpse_presenter.gd" id="1_presenter"]
-[ext_resource type="Script" path="res://scripts/yokai/ripple_placeholder_visual.gd" id="2_ripple"]
+[ext_resource type="SpriteFrames" path="res://resources/vfx/water_ripple_sprite_frames.tres" id="2_ripple"]
 [ext_resource type="Script" path="res://scripts/yokai/kappa_placeholder_visual.gd" id="3_kappa"]
 
 [node name="KappaGlimpse" type="Node2D"]
 script = ExtResource("1_presenter")
 
-[node name="Ripple" type="Node2D" parent="."]
+[node name="Ripple" type="AnimatedSprite2D" parent="."]
 unique_name_in_owner = true
-script = ExtResource("2_ripple")
+visible = false
+texture_filter = 1
+sprite_frames = ExtResource("2_ripple")
+animation = &"ripple"
+autoplay = "ripple"
 
 [node name="Silhouette" type="Node2D" parent="."]
 unique_name_in_owner = true
+visible = false
 position = Vector2(0, -4)
 modulate = Color(0.75, 0.82, 0.72, 1)
 script = ExtResource("3_kappa")

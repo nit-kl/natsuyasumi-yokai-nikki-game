@@ -11,8 +11,8 @@ func _ready() -> void:
 		GameState.area_changed.connect(DiaryManager.record_location)
 	if is_instance_valid(GameState.player):
 		GameState.player.bug_catch_succeeded.connect(DiaryManager.record_insect)
-	for npc in get_tree().get_nodes_in_group("npc"):
-		_connect_npc(npc)
+	_connect_existing_npcs()
+	_connect_existing_npcs.call_deferred()
 	get_tree().node_added.connect(_on_node_added)
 	DiaryManager.record_location(GameState.current_area_id)
 
@@ -23,10 +23,20 @@ func _on_yokai_stage_changed(yokai_id: StringName, stage: StringName) -> void:
 
 
 func _on_node_added(node: Node) -> void:
-	if node.is_in_group("npc"):
+	if node is NPC:
 		_connect_npc.call_deferred(node)
 
 
 func _connect_npc(npc: Node) -> void:
 	if npc.has_signal("interacted") and not npc.interacted.is_connected(DiaryManager.record_npc):
 		npc.interacted.connect(DiaryManager.record_npc)
+
+
+func _connect_existing_npcs() -> void:
+	var nodes: Array[Node] = [get_tree().root]
+	while not nodes.is_empty():
+		var node: Node = nodes.pop_back()
+		if node is NPC:
+			_connect_npc(node)
+		for child in node.get_children():
+			nodes.append(child)

@@ -100,6 +100,34 @@ facing = &"up"
 
 [node name="LocationRuntime" parent="." instance=ExtResource("3_runtime")]
 
+[node name="VerticalSliceCompletion" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="Panel" type="PanelContainer" parent="VerticalSliceCompletion"]
+visible = false
+offset_left = 160.0
+offset_top = 112.0
+offset_right = 480.0
+offset_bottom = 248.0
+
+[node name="Margin" type="MarginContainer" parent="VerticalSliceCompletion/Panel"]
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="VBox" type="VBoxContainer" parent="VerticalSliceCompletion/Panel/Margin"]
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="Title" type="Label" parent="VerticalSliceCompletion/Panel/Margin/VBox"]
+text = "夏休みの一日がおわりました"
+horizontal_alignment = 1
+
+[node name="Body" type="Label" parent="VerticalSliceCompletion/Panel/Margin/VBox"]
+text = "川で見た影のことを、日記に書きました。"
+horizontal_alignment = 1
+
 [node name="ReturnHomeFlow" type="Node" parent="."]
 script = ExtResource("7_return_flow")
 dinner_dialogue = ExtResource("8_dinner")
@@ -107,3 +135,5 @@ grandma_path = NodePath("../NPCs/Grandma")
 dialogue_controller_path = NodePath("../LocationRuntime/DialogueController")
 diary_ui_path = NodePath("../LocationRuntime/DiaryUI")
 bedroom_spawn_path = NodePath("../SpawnPoints/Bedroom")
+completion_panel_path = NodePath("../VerticalSliceCompletion/Panel")
+end_vertical_slice_after_review = true

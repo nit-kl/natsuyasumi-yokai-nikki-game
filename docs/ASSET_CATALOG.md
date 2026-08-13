@@ -40,6 +40,7 @@ Reference:
 Production:
 
 - [x] idle / walk / run 8方向Animation制御（コード描画Placeholder）
+- [x] idle / walk / run 4方向Production Sprite（斜めはcardinal fallback）
 - [ ] idle 8方向
 - [ ] walk 8方向
 - [ ] run 8方向
@@ -298,7 +299,10 @@ Reference:
 
 Production:
 
-- [x] Scene / Water Layer / Collision / 帰路Greybox（Production Tile未設定）
+- [x] Scene / Water Layer / Collision / 帰路
+- [x] 640x360 Production背景プレート（水面、浅瀬、川岸、土道、草花）
+- [x] ripple VFX（4 frame）
+- [ ] 再利用用32x32 modular TileSetへの分解
 
 - [ ] water calm
 - [ ] water flow
@@ -316,14 +320,16 @@ Production:
 - [ ] wooden bridge
 - [ ] guard rail
 - [ ] river plants
-- [ ] ripple VFX
+- [x] ripple VFX
 - [ ] splash VFX
 
 ---
 
 ## 家周辺
 
-- [x] Scene / TileMapLayer / Collision / 出入口Greybox（Production Tile未設定）
+- [x] Scene / TileMapLayer / Collision / 出入口
+- [x] 640x360 Production背景プレート（家、田舎道、田んぼ、用水路、庭）
+- [ ] 再利用用32x32 modular TileSetへの分解
 - [ ] rice field
 - [ ] dirt road
 - [ ] utility pole
@@ -442,6 +448,10 @@ Vertical Slice:
 ---
 
 # 9. Vertical Slice必須アセット一覧
+
+Art direction benchmark:
+
+- [x] 家周辺・主人公・田園・用水路の代表画面（Production Tile / Spriteではない）
 
 ### Characters
 - [ ] protagonist production sprites

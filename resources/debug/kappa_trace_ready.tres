@@ -6,8 +6,8 @@
 script = ExtResource("1_preset")
 preset_id = &"kappa_trace_ready"
 display_name = "河童の気配直前"
-day_index = 2
-time_minutes = 720
+day_index = 1
+time_minutes = 600
 area_id = &"river"
 player_position = Vector2(400, 240)
 player_facing = &"up"

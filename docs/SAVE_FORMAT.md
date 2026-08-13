@@ -327,3 +327,6 @@ Vertical Slice実ゲームのLoadでは`player.scene_id`を`LocationCatalog`で�
 現在地と異なる場合は対応Sceneへ遷移してからposition / facingを適用する。
 未知のscene IDは黙って現在Sceneへ適用しない。
 `validate_data()`の段階でCatalog未登録の`player.scene_id`を拒否する。
+
+Issue #041では`world.flags`の`vertical_slice_complete`を一日通し体験の終端として使用する。
+終了SaveはDay 1と夕方の時刻を維持し、Schema fieldとsave_versionは変更しない。

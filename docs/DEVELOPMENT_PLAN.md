@@ -351,6 +351,9 @@ Godot 2Dプロジェクトとして、安全に拡張できる基盤を作る。
 #038 Save integration
 #039 Vertical Slice playtest tools
 #040 Vertical Slice polish
+#041 Vertical Slice one-day flow integration
+#043 Home outdoor production art integration
+#044 River production art integration
 ```
 
 ---

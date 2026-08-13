@@ -26,6 +26,7 @@ class ReturnHomeMonitor extends Node:
 			_fail("Return-home scene dependencies are missing.")
 			return
 		flow.autosave_enabled = false
+		flow.end_vertical_slice_after_review = false
 		CalendarManager.debug_set_day(3)
 		GameClock.debug_set_time(17, 0)
 		var interaction := grandma.get_node("InteractionArea") as NPCInteractionArea

@@ -177,7 +177,8 @@ func _test_player_animation_state() -> void:
 	if animation_controller != null:
 		animation_controller.set_visual_state(&"down_right", true, false)
 		_expect(animation_controller.desired_animation == &"walk_down_right", "Controller should track 8-direction walk state")
-		_expect(not animation_controller.is_using_production_frames(), "Missing production frames should keep the explicit placeholder")
+		_expect(animation_controller.is_using_production_frames(), "Cardinal production frames should serve diagonal movement through fallback")
+		_expect(animation_controller.animation == &"walk_right", "Down-right movement should fall back to the right production animation")
 	player.queue_free()
 
 
@@ -375,9 +376,22 @@ func _test_location_maps() -> void:
 	_expect(house.get_node_or_null("Collision") is TileMapLayer, "House should expose the production Collision layer")
 	_expect(house.get_node_or_null("NPCs/Grandma") != null, "Grandma should be placed in the house NPC layer")
 	_expect(outdoor.get_node_or_null("Objects/Aburazemi") != null, "Outdoor map should contain the bug-catching target")
+	var outdoor_background := outdoor.get_node_or_null("ProductionBackground") as Sprite2D
+	_expect(outdoor_background != null and outdoor_background.texture != null, "Outdoor map should use its production background")
+	_expect(outdoor_background.texture.get_size() == Vector2(640, 360), "Outdoor production background should match the base viewport")
+	_expect(not outdoor.get_node("GreyboxVisual").visible, "Outdoor greybox visual should be disabled after production art integration")
+	_expect(outdoor.get_node_or_null("GreyboxCollision/IrrigationWest") is CollisionShape2D, "Outdoor irrigation channel should block the rice-field side")
+	_expect(outdoor.get_node_or_null("GreyboxCollision/IrrigationEast") is CollisionShape2D, "Outdoor irrigation channel should block the garden side")
 	_expect(river.get_node_or_null("Water") is TileMapLayer, "River should expose a separate production Water layer")
 	_expect(river.get_node_or_null("Yokai/KappaGlimpse") != null, "River should contain the subtle kappa presenter")
 	_expect(river.get_node_or_null("GreyboxCollision/WaterBoundary") is CollisionShape2D, "River water should have a greybox boundary")
+	var river_background := river.get_node_or_null("ProductionBackground") as Sprite2D
+	_expect(river_background != null and river_background.texture != null, "River map should use its production background")
+	_expect(river_background.texture.get_size() == Vector2(640, 360), "River production background should match the base viewport")
+	_expect(not river.get_node("GreyboxVisual").visible, "River greybox visual should be disabled after production art integration")
+	var ripple := river.get_node_or_null("Yokai/KappaGlimpse/Ripple") as AnimatedSprite2D
+	_expect(ripple != null and ripple.sprite_frames.get_frame_count(&"ripple") == 4, "Kappa trace should use the four-frame production ripple")
+	_expect(ripple != null and not ripple.visible, "River background should stay calm before a kappa event")
 	var spawn_point := MapSpawnPointComponent.new()
 	spawn_point.spawn_id = &"validation_entry"
 	var spawn_parent := Node2D.new()
@@ -508,16 +522,16 @@ func _test_kappa_events() -> void:
 	var trace_event: EventDefinition = load("res://resources/events/kappa_first_trace.tres")
 	var sighting_event: EventDefinition = load("res://resources/events/kappa_first_sighting.tres")
 	EventManager.register_events([trace_event, sighting_event])
-	CalendarManager.debug_set_day(2)
+	CalendarManager.debug_set_day(1)
 	GameClock.debug_set_time(12, 0)
 	GameState.set_area(&"river")
 	_expect(EventManager.trigger_event(&"kappa_first_trace"), "Kappa trace should trigger under documented conditions")
 	_expect(YokaiManager.get_stage(&"kappa") == &"TRACE", "Kappa trace should advance stage to TRACE")
 	_expect(WorldState.has_flag(&"kappa_first_trace_complete"), "Kappa trace should set completion flag")
-	CalendarManager.debug_set_day(3)
-	_expect(EventManager.trigger_event(&"kappa_first_sighting"), "Kappa sighting should follow trace on day 3")
+	_expect(EventManager.trigger_event(&"kappa_first_sighting"), "Kappa sighting should follow the trace later on day 1")
 	_expect(YokaiManager.get_stage(&"kappa") == &"SEEN", "Kappa sighting should advance stage to SEEN")
 	_expect(WorldState.has_flag(&"kappa_first_sighting_complete"), "Kappa sighting should set completion flag")
+	_expect(GameClock.time_minutes == 1020, "Kappa sighting should move the slice into evening")
 
 
 func _test_day_record_and_diary() -> void:
@@ -550,8 +564,8 @@ func _test_playtest_tools() -> void:
 	WorldState.set_flag(&"old_flag")
 	DiaryManager.record_insect(&"old_insect")
 	_expect(controller.apply_preset(&"kappa_sighting_ready"), "Playtest preset should apply")
-	_expect(CalendarManager.day_index == 3, "Preset should set day")
-	_expect(GameClock.time_minutes == 1020, "Preset should set time")
+	_expect(CalendarManager.day_index == 1, "Preset should keep the vertical slice on day 1")
+	_expect(GameClock.time_minutes == 720, "Preset should set the sighting setup time")
 	_expect(GameState.current_area_id == &"river", "Preset should set area")
 	_expect(YokaiManager.get_stage(&"kappa") == &"TRACE", "Preset should set kappa stage")
 	_expect(WorldState.has_flag(&"kappa_first_trace_complete"), "Preset should set required flags")

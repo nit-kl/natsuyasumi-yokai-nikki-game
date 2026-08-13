@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/location_scene.gd" id="1_location"]
 [ext_resource type="Script" path="res://scripts/maps/greybox_map_visual.gd" id="2_visual"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://scripts/maps/map_doorway.gd" id="5_door"]
 [ext_resource type="PackedScene" path="res://scenes/minigames/insect.tscn" id="6_insect"]
 [ext_resource type="Resource" path="res://resources/insects/aburazemi.tres" id="7_insect_data"]
+[ext_resource type="Texture2D" path="res://assets/maps/home_outdoor/map_home_outdoor.png" id="8_background"]
 
 [sub_resource type="RectangleShape2D" id="BoundaryHorizontal"]
 size = Vector2(640, 16)
@@ -15,7 +16,13 @@ size = Vector2(640, 16)
 size = Vector2(16, 360)
 
 [sub_resource type="RectangleShape2D" id="HouseBody"]
-size = Vector2(160, 112)
+size = Vector2(240, 112)
+
+[sub_resource type="RectangleShape2D" id="IrrigationWest"]
+size = Vector2(224, 16)
+
+[sub_resource type="RectangleShape2D" id="IrrigationEast"]
+size = Vector2(360, 16)
 
 [sub_resource type="RectangleShape2D" id="DoorArea"]
 size = Vector2(72, 28)
@@ -27,9 +34,15 @@ default_spawn_id = &"house_exit"
 
 [node name="Ground" type="TileMapLayer" parent="."]
 
+[node name="ProductionBackground" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(320, 180)
+texture = ExtResource("8_background")
+
 [node name="DetailsBack" type="TileMapLayer" parent="."]
 
 [node name="GreyboxVisual" type="Node2D" parent="."]
+visible = false
 script = ExtResource("2_visual")
 layout = 1
 
@@ -56,8 +69,16 @@ position = Vector2(648, 180)
 shape = SubResource("BoundaryVertical")
 
 [node name="House" type="CollisionShape2D" parent="GreyboxCollision"]
-position = Vector2(320, 56)
+position = Vector2(336, 56)
 shape = SubResource("HouseBody")
+
+[node name="IrrigationWest" type="CollisionShape2D" parent="GreyboxCollision"]
+position = Vector2(112, 216)
+shape = SubResource("IrrigationWest")
+
+[node name="IrrigationEast" type="CollisionShape2D" parent="GreyboxCollision"]
+position = Vector2(460, 216)
+shape = SubResource("IrrigationEast")
 
 [node name="Objects" type="Node2D" parent="."]
 

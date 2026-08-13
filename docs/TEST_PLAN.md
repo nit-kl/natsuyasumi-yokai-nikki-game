@@ -498,6 +498,7 @@ PlaceholderはProduction Assetではなく、祖母の歩行・生活Animation�
 5. 家周辺のセミを虫取り網で捕まえられる
 6. Greybox外周と家屋をPlayerが通り抜けない
 7. ReferenceをCropしたProduction Tileが混入していない
+8. 家周辺のProduction背景が640x360で表示され、道路・玄関・川への導線とCollisionが一致する
 
 ---
 
@@ -513,10 +514,12 @@ PlaceholderはProduction Assetではなく、祖母の歩行・生活Animation�
 
 1. 家周辺の東端から川へ移動し、岸の帰路側へ配置される
 2. 岸沿いを歩けるが、水面へ侵入できない
-3. Day 2昼のPreset / Eventで波紋が表示される
-4. Day 3夕方のPreset / Eventで河童が一瞬だけ見える
+3. Day 1の気配Preset / Eventで波紋が表示される
+4. Day 1の目撃Preset / Eventで河童が一瞬だけ見え、夕方になる
 5. 帰路から家周辺東端へ戻れる
 6. ReferenceをCropしたProduction Tileが混入していない
+7. 川のProduction背景が640x360で表示され、水域境界・岸道・帰路がCollisionと一致する
+8. 河童イベント前は波紋がなく、TRACE / SEEN時だけ4 frameの波紋が表示される
 
 回帰テスト:
 
@@ -568,4 +571,19 @@ PlaceholderはProduction Assetではなく、祖母の歩行・生活Animation�
 powershell -ExecutionPolicy Bypass -File tools/run_vertical_slice_validation.ps1
 ```
 
-Foundation、Map遷移、帰宅フロー、別Location Save復元の4 Sceneを順に実行する。
+Foundation、Map遷移、帰宅フロー、一日通し、別Location Save復元の5 Sceneを順に実行する。
+
+---
+
+## 29. Vertical Slice One-day Flow — Issue #041
+
+自動E2E:
+
+- Day 1 07:00に祖母の家の寝室から開始する
+- 祖母との朝会話、外出、セミ捕獲を順に実行する
+- 川の2つの接近TriggerでTRACEからSEENへ進み、夕方へ変化する
+- 帰宅後の夕食、日記Reviewまで進行する
+- 日記に祖母、虫、3 Location、河童、2 Eventが記録される
+- 日記を閉じてもDay 2へ進まず、完了Panel、入力停止、時計停止になる
+
+一括Validationは上記E2Eを含む5 Sceneを順に実行する。

@@ -165,11 +165,15 @@ CLOSE
 
 ## 9. 河童イベントチェーン
 
+Vertical Slice「河童と出会う1日」では、テンポと一日通しの体験を検証するため、
+以下の最初の2段階をDay 1の川沿いで連続して体験する。製品版の日付設計へ
+展開する際は、同じEvent IDとYokai stageを維持したまま日付条件を再調整する。
+
 ### KAPPA_01_TRACE
-条件:
-- Day >= 2
+条件（Vertical Slice）:
+- Day 1
 - 川
-- 昼
+- 朝〜昼
 
 結果:
 - 水面に波紋
@@ -177,14 +181,16 @@ CLOSE
 - Stage = TRACE
 
 ### KAPPA_02_SEEN
-条件:
+条件（Vertical Slice）:
 - Stage TRACE
-- Day >= 3
+- Day 1
+- 川沿いの奥側
 
 結果:
 - 皿だけ見える
 - 一瞬姿を確認
 - Stage = SEEN
+- 夕方へ進行
 
 ### KAPPA_03_CUCUMBER
 条件:
