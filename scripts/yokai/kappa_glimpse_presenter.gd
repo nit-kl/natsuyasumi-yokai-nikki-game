@@ -6,13 +6,13 @@ extends Node2D
 @export_range(0.1, 5.0, 0.1) var glimpse_seconds: float = 1.2
 
 @onready var ripple: AnimatedSprite2D = %Ripple
-@onready var silhouette: Node2D = %Silhouette
+@onready var kappa_surface: AnimatedSprite2D = %KappaSurface
 
 
 func _ready() -> void:
 	EventManager.event_started.connect(_on_event_started)
 	ripple.visible = false
-	silhouette.visible = false
+	kappa_surface.visible = false
 
 
 func _on_event_started(event: EventDefinition) -> void:
@@ -35,7 +35,9 @@ func present_sighting() -> void:
 	ripple.frame = 0
 	ripple.play(&"ripple")
 	ripple.visible = true
-	silhouette.visible = true
+	kappa_surface.frame = 0
+	kappa_surface.play(&"surface")
+	kappa_surface.visible = true
 	var tween := create_tween()
 	tween.tween_interval(glimpse_seconds)
 	tween.tween_callback(_hide_glimpse)
@@ -43,4 +45,4 @@ func present_sighting() -> void:
 
 func _hide_glimpse() -> void:
 	ripple.visible = false
-	silhouette.visible = false
+	kappa_surface.visible = false

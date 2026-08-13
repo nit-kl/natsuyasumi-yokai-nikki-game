@@ -73,8 +73,8 @@ Reference:
 
 Production:
 
-- [ ] idle
-- [ ] walk
+- [x] idle 4方向
+- [x] walk 4方向
 - [ ] talk
 - [ ] sit
 - [ ] cooking
@@ -156,8 +156,8 @@ Production:
 - [ ] idle
 - [ ] walk
 - [ ] swim
-- [ ] surface
-- [ ] dive
+- [x] surface（Vertical Slice目撃用4 frame）
+- [x] dive（surface animation終端として収録）
 - [ ] eat_cucumber
 - [ ] stone_skip
 - [ ] surprised
@@ -249,7 +249,9 @@ Reference:
 
 Production:
 
-- [x] Scene / TileMapLayer / Collision / 出入口Greybox（Production Tile未設定）
+- [x] Scene / TileMapLayer / Collision / 出入口
+- [x] 640x360 Production室内背景プレート（寝室、居間、台所、縁側）
+- [ ] 再利用用32x32 modular TileSetへの分解
 
 ### 外観
 - [ ] roof tiles
@@ -261,24 +263,24 @@ Production:
 - [ ] steps
 
 ### 内装
-- [ ] tatami
-- [ ] wood floor
-- [ ] hallway
-- [ ] fusuma
-- [ ] shoji
-- [ ] kitchen floor
+- [x] tatami（背景プレート）
+- [x] wood floor（背景プレート）
+- [x] hallway（背景プレート）
+- [x] fusuma（背景プレート）
+- [x] shoji（背景プレート）
+- [x] kitchen floor（背景プレート）
 
 ### Furniture
-- [ ] chabudai
-- [ ] cushion
-- [ ] fan
-- [ ] TV
-- [ ] cabinet
-- [ ] refrigerator
-- [ ] sink
-- [ ] stove
+- [x] chabudai（背景プレート）
+- [x] cushion（背景プレート）
+- [x] fan（背景プレート）
+- [x] TV（背景プレート）
+- [x] cabinet（背景プレート）
+- [x] refrigerator（背景プレート）
+- [x] sink（背景プレート）
+- [x] stove（背景プレート）
 - [ ] altar
-- [ ] futon
+- [x] futon（背景プレート）
 
 ### Props
 - [ ] wind chime
@@ -456,7 +458,7 @@ Art direction benchmark:
 ### Characters
 - [ ] protagonist production sprites
 - [ ] grandma production sprites
-- [ ] kappa production sprites
+- [ ] kappa production sprites（surface / diveのみ完成）
 
 ### Map
 - [ ] grandma house

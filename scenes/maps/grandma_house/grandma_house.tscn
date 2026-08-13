@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/location_scene.gd" id="1_location"]
 [ext_resource type="Script" path="res://scripts/maps/greybox_map_visual.gd" id="2_visual"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://scripts/maps/map_doorway.gd" id="6_door"]
 [ext_resource type="Script" path="res://scripts/events/return_home_flow.gd" id="7_return_flow"]
 [ext_resource type="Resource" path="res://resources/dialogue/grandma_evening_dinner.tres" id="8_dinner"]
+[ext_resource type="Texture2D" path="res://assets/maps/grandma_house/map_grandma_house.png" id="9_background"]
 
 [sub_resource type="RectangleShape2D" id="WallHorizontal"]
 size = Vector2(576, 16)
@@ -28,9 +29,15 @@ default_spawn_id = &"bedroom"
 
 [node name="Ground" type="TileMapLayer" parent="."]
 
+[node name="ProductionBackground" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(320, 180)
+texture = ExtResource("9_background")
+
 [node name="DetailsBack" type="TileMapLayer" parent="."]
 
 [node name="GreyboxVisual" type="Node2D" parent="."]
+visible = false
 script = ExtResource("2_visual")
 
 [node name="Collision" type="TileMapLayer" parent="."]

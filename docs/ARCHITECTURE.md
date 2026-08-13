@@ -569,7 +569,9 @@ Dialogue用InteractionArea、AnimationPlayerを分離する。
 NPC Scene固有スクリプトへ個別会話を直書きしない。
 
 祖母は`npc_id = grandma`のNPCDataと専用Sceneで構成する。Production Spriteは
-未完成のため、コード描画Placeholderを使用する。Reference SheetのCropは使用しない。
+4方向SpriteFramesを専用Sceneから汎用NPCへ注入し、向き変更時に`idle_<direction>`を
+切り替える。Production frames未設定のNPCだけコード描画Placeholderを使用する。
+Reference SheetのCropは使用しない。
 祖母の生活行動・Schedule・状態差分は後続IssueでComponent / Resourceとして追加する。
 
 ---
@@ -628,7 +630,8 @@ Actionの初期対応はFlag設定・解除とYokai stage変更に限定する�
 
 河童は`kappa`の永続IDを持ち、Vertical SliceではDay 1の川沿いでTRACE、続いてSEENを
 別Event Resourceと離れた`EventTriggerArea`で定義する。通常歩行で自然に発火し、
-目撃後は夕方へ進む。見せ方は波紋と短いPlaceholder表示のみで、
+目撃後は夕方へ進む。見せ方は波紋と非ループの4 frame `surface` Production Spriteを
+1.2秒だけ表示する。皿だけが見える状態から上半身を一瞬見せて潜る流れとし、
 派手なSpawn演出やReference SheetのCropは行わない。
 
 ---
@@ -712,13 +715,18 @@ Foregroundの`TileMapLayer`階層を先に固定する。コード描画面はPr
 配置し、既存TileMapLayer契約とCollisionを維持する。色・密度・導線の実画面評価後、
 複数Mapで再利用する要素だけを32x32 modular TileSetへ分解する。
 
+祖母の家も640x360 Production背景プレートで実画面の生活感を先に検証し、寝室・居間・
+台所・縁側のCollisionと入口契約を維持する。家具の個別操作が必要になった時点で、
+背景プレートから独立したObject Sceneへ切り出す。
+
 Riverは追加でWater `TileMapLayer`と水域Collisionを分離する。岸沿いの歩行帯に
 河童の波紋・一瞬の目撃Presenterを配置し、水面内へPlayerを侵入させない。
 家周辺東端と川の帰路を入口IDで相互接続する。
 
 川の最初のProduction Art検証も640x360背景プレートを使用し、Water `TileMapLayer`と
 Collision契約を維持する。背景には河童の波紋を描き込まず、4 frameのProduction VFXを
-PresenterがEvent発火中だけ表示する。
+PresenterがEvent発火中だけ表示する。SEEN時は同じPresenterが河童の4 frame非ループ
+`surface` Animationを同期表示し、EventManagerへScene固有の演出参照を持ち込まない。
 
 ---
 

@@ -9,13 +9,19 @@ const PLACEHOLDER_OUTLINE := Color("372d37")
 
 @export var data: NPCData
 @export var placeholder_clothing_color := Color("76546f")
+@export var sprite_frames: SpriteFrames
 
 var facing: StringName = &"down"
 
 
 func _ready() -> void:
+	var sprite := get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+	if sprite != null and sprite_frames != null:
+		sprite.sprite_frames = sprite_frames
+		sprite.visible = true
 	if data != null:
 		facing = data.default_facing
+		_update_sprite_facing()
 		var dialogue_area := get_node_or_null("InteractionArea") as DialogueInteractable
 		if dialogue_area != null:
 			dialogue_area.dialogue = data.default_dialogue
@@ -35,6 +41,7 @@ func set_facing(value: StringName) -> void:
 	if value == facing:
 		return
 	facing = value
+	_update_sprite_facing()
 	facing_changed.emit(facing)
 
 
@@ -52,6 +59,8 @@ static func _direction_to_cardinal_facing(direction: Vector2, fallback: StringNa
 
 
 func _draw() -> void:
+	if sprite_frames != null:
+		return
 	# Production sprite未制作時だけ使用するNPC Placeholder。
 	draw_circle(Vector2(0, -14), 7.0, PLACEHOLDER_SKIN)
 	draw_circle(Vector2(0, -18), 7.0, Color("74706d"))
@@ -59,6 +68,15 @@ func _draw() -> void:
 	draw_rect(Rect2(-8, -9, 16, 18), PLACEHOLDER_OUTLINE, false, 1.0)
 	draw_line(Vector2(-4, 9), Vector2(-4, 13), PLACEHOLDER_OUTLINE, 3.0)
 	draw_line(Vector2(4, 9), Vector2(4, 13), PLACEHOLDER_OUTLINE, 3.0)
+
+
+func _update_sprite_facing() -> void:
+	var sprite := get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
+	if sprite == null or sprite_frames == null:
+		return
+	var animation_name := StringName("idle_%s" % facing)
+	if sprite.sprite_frames.has_animation(animation_name):
+		sprite.play(animation_name)
 
 
 func _on_interacted(_actor: Node) -> void:

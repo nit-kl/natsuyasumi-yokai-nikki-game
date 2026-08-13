@@ -312,6 +312,10 @@ func _test_grandma_scene() -> void:
 		interaction_area.get_interaction_text(null) == "おばあちゃんと話す",
 		"Grandma interaction should use her display name",
 	)
+	var sprite := grandma.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	_expect(sprite.visible and sprite.animation == &"idle_left", "Grandma should use her configured production idle facing")
+	grandma.set_facing(&"right")
+	_expect(sprite.animation == &"idle_right", "Grandma production sprite should follow dialogue-facing changes")
 	grandma.queue_free()
 
 
@@ -375,6 +379,13 @@ func _test_location_maps() -> void:
 	_expect(house.get_node_or_null("Ground") is TileMapLayer, "House should expose the production Ground layer")
 	_expect(house.get_node_or_null("Collision") is TileMapLayer, "House should expose the production Collision layer")
 	_expect(house.get_node_or_null("NPCs/Grandma") != null, "Grandma should be placed in the house NPC layer")
+	var house_background := house.get_node_or_null("ProductionBackground") as Sprite2D
+	_expect(house_background != null and house_background.texture != null, "Grandma house should use its production interior background")
+	_expect(house_background.texture.get_size() == Vector2(640, 360), "Grandma house production background should match the base viewport")
+	_expect(not house.get_node("GreyboxVisual").visible, "Grandma house greybox visual should be disabled after production art integration")
+	var grandma := house.get_node_or_null("NPCs/Grandma") as NPC
+	_expect(grandma != null and grandma.sprite_frames != null, "Grandma should use her production sprite frames")
+	_expect(grandma.sprite_frames.get_frame_count(&"idle_down") == 1, "Grandma should provide a directional idle frame")
 	_expect(outdoor.get_node_or_null("Objects/Aburazemi") != null, "Outdoor map should contain the bug-catching target")
 	var outdoor_background := outdoor.get_node_or_null("ProductionBackground") as Sprite2D
 	_expect(outdoor_background != null and outdoor_background.texture != null, "Outdoor map should use its production background")
@@ -392,6 +403,10 @@ func _test_location_maps() -> void:
 	var ripple := river.get_node_or_null("Yokai/KappaGlimpse/Ripple") as AnimatedSprite2D
 	_expect(ripple != null and ripple.sprite_frames.get_frame_count(&"ripple") == 4, "Kappa trace should use the four-frame production ripple")
 	_expect(ripple != null and not ripple.visible, "River background should stay calm before a kappa event")
+	var kappa_surface := river.get_node_or_null("Yokai/KappaGlimpse/KappaSurface") as AnimatedSprite2D
+	_expect(kappa_surface != null and kappa_surface.sprite_frames.get_frame_count(&"surface") == 4, "Kappa sighting should use the four-frame production surface animation")
+	_expect(kappa_surface != null and not kappa_surface.sprite_frames.get_animation_loop(&"surface"), "Kappa surface animation should play only once per sighting")
+	_expect(kappa_surface != null and not kappa_surface.visible, "Kappa should remain hidden before the sighting event")
 	var spawn_point := MapSpawnPointComponent.new()
 	spawn_point.spawn_id = &"validation_entry"
 	var spawn_parent := Node2D.new()

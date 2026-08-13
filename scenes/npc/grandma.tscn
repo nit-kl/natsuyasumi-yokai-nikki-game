@@ -1,8 +1,10 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/npc/npc.tscn" id="1_npc"]
 [ext_resource type="Resource" path="res://resources/npc/grandma.tres" id="2_data"]
+[ext_resource type="SpriteFrames" path="res://resources/characters/grandma_4dir_sprite_frames.tres" id="3_frames"]
 
 [node name="Grandma" instance=ExtResource("1_npc")]
 data = ExtResource("2_data")
 placeholder_clothing_color = Color(0.42, 0.29, 0.4, 1)
+sprite_frames = ExtResource("3_frames")

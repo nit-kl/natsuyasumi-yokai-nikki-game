@@ -1,0 +1,27 @@
+[gd_resource type="SpriteFrames" load_steps=6 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/yokai/kappa/yokai_kappa_surface.png" id="1_sheet"]
+
+[sub_resource type="AtlasTexture" id="Surface0"]
+atlas = ExtResource("1_sheet")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Surface1"]
+atlas = ExtResource("1_sheet")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Surface2"]
+atlas = ExtResource("1_sheet")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Surface3"]
+atlas = ExtResource("1_sheet")
+region = Rect2(192, 0, 64, 64)
+
+[resource]
+animations = [{
+"frames": [{"duration": 1.0, "texture": SubResource("Surface0")}, {"duration": 1.0, "texture": SubResource("Surface1")}, {"duration": 1.0, "texture": SubResource("Surface2")}, {"duration": 1.0, "texture": SubResource("Surface3")}],
+"loop": false,
+"name": &"surface",
+"speed": 3.33333333333333
+}]

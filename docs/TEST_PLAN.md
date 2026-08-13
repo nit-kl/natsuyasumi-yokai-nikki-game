@@ -499,6 +499,8 @@ PlaceholderはProduction Assetではなく、祖母の歩行・生活Animation�
 6. Greybox外周と家屋をPlayerが通り抜けない
 7. ReferenceをCropしたProduction Tileが混入していない
 8. 家周辺のProduction背景が640x360で表示され、道路・玄関・川への導線とCollisionが一致する
+9. 祖母の家のProduction室内が640x360で表示され、寝室・居間・台所・縁側の導線がCollisionと一致する
+10. 祖母が会話開始時に4方向Production SpriteでPlayerの方を向く
 
 ---
 
@@ -520,6 +522,8 @@ PlaceholderはProduction Assetではなく、祖母の歩行・生活Animation�
 6. ReferenceをCropしたProduction Tileが混入していない
 7. 川のProduction背景が640x360で表示され、水域境界・岸道・帰路がCollisionと一致する
 8. 河童イベント前は波紋がなく、TRACE / SEEN時だけ4 frameの波紋が表示される
+9. SEEN時だけ河童の4 frame surface animationが一度再生され、約1.2秒で水面から消える
+10. 河童が派手にSpawnせず、皿だけの状態から静かに浮上してすぐ潜る
 
 回帰テスト:
 
