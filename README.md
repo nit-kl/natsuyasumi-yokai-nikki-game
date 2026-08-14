@@ -64,6 +64,7 @@ docs/
 ├─ SAVE_FORMAT.md
 ├─ TEST_PLAN.md
 ├─ ASSET_CATALOG.md
+├─ AUDIO_LICENSES.md
 └─ art-reference/
 ```
 

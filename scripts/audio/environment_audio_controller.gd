@@ -7,6 +7,7 @@ const SILENT_VOLUME_DB := -60.0
 
 @export var profiles: Array[EnvironmentAudioProfile] = []
 @export_range(0.0, 5.0, 0.05) var crossfade_seconds := 1.0
+@export var loop_ambience := true
 
 @onready var player_a: AudioStreamPlayer = %PlayerA
 @onready var player_b: AudioStreamPlayer = %PlayerB
@@ -19,7 +20,22 @@ func _ready() -> void:
 	_active_player = player_a
 	GameState.area_changed.connect(_on_area_changed)
 	GameClock.period_changed.connect(_on_period_changed)
+	SceneTransitionManager.transition_started.connect(_on_transition_started)
 	refresh(false)
+
+
+func _exit_tree() -> void:
+	shutdown()
+
+
+func shutdown() -> void:
+	if _fade_tween != null:
+		_fade_tween.kill()
+		_fade_tween = null
+	for player in [player_a, player_b]:
+		if is_instance_valid(player):
+			player.stop()
+			player.stream = null
 
 
 func refresh(use_crossfade: bool = true) -> void:
@@ -45,6 +61,7 @@ func _switch_stream(stream: AudioStream, volume_db: float, use_crossfade: bool) 
 	if stream == null:
 		_stop_players(use_crossfade)
 		return
+	configure_ambience_stream(stream, loop_ambience)
 	if _active_player.stream == stream:
 		_active_player.volume_db = volume_db
 		if not _active_player.playing:
@@ -67,6 +84,11 @@ func _switch_stream(stream: AudioStream, volume_db: float, use_crossfade: bool) 
 	if previous.playing:
 		_fade_tween.tween_property(previous, "volume_db", SILENT_VOLUME_DB, crossfade_seconds)
 		_fade_tween.chain().tween_callback(previous.stop)
+
+
+static func configure_ambience_stream(stream: AudioStream, should_loop: bool) -> void:
+	if stream is AudioStreamOggVorbis:
+		(stream as AudioStreamOggVorbis).loop = should_loop
 
 
 func _stop_players(use_fade: bool) -> void:
@@ -92,3 +114,7 @@ func _on_area_changed(_area_id: StringName) -> void:
 
 func _on_period_changed(_period: StringName) -> void:
 	refresh()
+
+
+func _on_transition_started(_scene_path: String) -> void:
+	shutdown()

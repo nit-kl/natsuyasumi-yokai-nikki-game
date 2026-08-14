@@ -62,7 +62,7 @@ func begin_diary_review() -> bool:
 	DiaryManager.add_fragment(COMPLETION_FRAGMENT)
 	_awaiting_diary_close = true
 	_diary_ui.refresh(_reviewed_day)
-	_diary_ui.set_open(true)
+	_diary_ui.set_open(true, false)
 	diary_review_started.emit(_reviewed_day)
 	return true
 

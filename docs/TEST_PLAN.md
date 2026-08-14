@@ -591,3 +591,105 @@ Foundation、Map遷移、帰宅フロー、一日通し、別Location Save復元
 - 日記を閉じてもDay 2へ進まず、完了Panel、入力停止、時計停止になる
 
 一括Validationは上記E2Eを含む5 Sceneを順に実行する。
+
+---
+
+## 30. Bug-catching Production Presentation — Issue #047
+
+自動Validation:
+
+- 虫Entityが24x24pxのアブラゼミProduction Spriteを使用する
+- Player Sceneが32x48pxの虫網Production Spriteと`BugCatchPresenter`を持つ
+- 虫網の基準角度がPlayerの向きへ追従する
+- 空振り時にも虫網アニメーションが開始される
+- 既存の捕獲判定、movement lock、日記記録を壊さない
+
+手動確認:
+
+1. 家周辺のセミへ近づき、上下左右と斜め方向からXを押す
+2. 虫網が向いている方向へ振られ、上向きではPlayerの背面へ回ることを確認する
+3. 範囲内ではセミが捕まり、小さな黄色の成功演出が表示される
+4. 虫がいない場所では短い風切り線が表示され、成功と区別できる
+5. 連打しても網が不自然に点滅せず、Dialogue中とF3表示中は使用できない
+6. 捕獲後の日記に`aburazemi`が一度だけ記録される
+
+---
+
+## 31. Vertical Slice Production Audio — Issue #048
+
+自動Validation:
+
+- 祖母の家、家周辺昼、家周辺夕方、川のProfileがProduction Streamを返す
+- 未制作の家周辺morningは無音を返す
+- Ogg環境音がLoop再生へ設定される
+- 河童Sceneが波紋音と気配音の`AudioStreamPlayer2D`を持つ
+- 既存のArea / 時間帯crossfadeを壊さない
+
+手動確認:
+
+1. 祖母の家でRoom Toneが小さく聞こえ、会話を邪魔しないことを確認する
+2. 家周辺を昼へ変更するとアブラゼミ、夕方へ変更するとヒグラシへcrossfadeする
+3. 家周辺の朝・夜は、未制作音源を代替音で埋めず無音になる
+4. 川へ移動すると流水音へcrossfadeし、不自然なLoop境界が目立たない
+5. 河童TRACEで波紋音、SEENで波紋音と控えめな気配音が水面位置から聞こえる
+6. 河童SEEN後に夕方へ変わっても、環境音と気配音が会話や帰宅判断を妨げない
+
+---
+
+## 32. Diary Daily-page Production UI — Issue #049
+
+自動Validation:
+
+- 日記Sceneが512x320のProductionノート紙面を使用する
+- 河童・アブラゼミの記録印が独立したProduction Textureを持つ
+- 安定IDを日本語の表示名へ変換し、未知IDは消さずfallback表示する
+- DayRecord / Save v1の形式を変更しない
+
+手動確認:
+
+1. 640x360でJを押し、開いたノートが画面内に収まり背景から読み分けられることを確認する
+2. 未記録状態では河童・虫の印が表示されず、記録後だけ対応する印が現れることを確認する
+3. 一日通しで祖母、3 Location、アブラゼミ、河童の記録が日本語で読めることを確認する
+4. 夕食後に自動表示された日記を閉じ、既存どおり一日終了へ進むことを確認する
+5. JとEscのどちらでも閉じられ、移動と時計のpause状態が正しく復元されることを確認する
+6. 紙面・文字・記録印がNearest表示でぼやけず、河童と虫を色だけでなく文字でも識別できることを確認する
+
+---
+
+## 33. Diary Cover / Page Transition — Issue #050
+
+自動Validation:
+
+- 日記Sceneが224x280のProduction表紙Textureを持つ
+- 通常閲覧は表紙から始まり、夕食後Reviewは日別ページを直接表示する
+- 表紙閲覧とページ遷移がDayRecord / Save v1を変更しない
+- 既存のReview終了・翌朝進行契約を維持する
+
+手動確認:
+
+1. 通常時にJを押し、深緑の表紙と動的な日本語タイトルが表示されることを確認する
+2. EまたはZで表紙が短く閉じるように消え、日別ページが約0.22秒で表示されることを確認する
+3. 遷移中にE/Zを連打しても点滅や二重遷移が起きないことを確認する
+4. 表紙と日別ページのどちらでもJまたはEscで閉じられ、Playerと時計が復帰することを確認する
+5. 夕食会話後は表紙を挟まず当日の日別ページが開き、閉じると既存どおり一日終了へ進むことを確認する
+6. 表紙・紙面ともNearest表示を維持し、遷移終了時に非整数Scaleが残らないことを確認する
+
+---
+
+## 34. Minimal Production HUD — Issue #051
+
+自動Validation:
+
+- HUD Sceneが208x72の状態枠、128x44の道具枠、300x48のPrompt枠を使用する
+- 時間帯・天気・既知の虫IDを日本語表示し、未知IDは消さずfallback表示する
+- Bootstrapと各Locationが同じ`gameplay_hud.tscn`を使用する
+- Foundation用の常設操作一覧をProduction HUDへ残さない
+
+手動確認:
+
+1. 640x360で左上の日数・時刻・時間帯・晴れ表示が世界を大きく隠さないことを確認する
+2. F3で05:00、10:00、16:30、19:00へ変更し、朝・昼・夕方・夜の文字が更新されることを確認する
+3. 右上に虫取り網とX操作が表示され、色だけに依存せず道具名を読めることを確認する
+4. NPCや出口へ近づいた時だけ画面下へE/Z Promptが表示され、離れると消えることを確認する
+5. 虫捕獲・空振り通知が1.6秒後に消え、近くにInteraction候補があれば元のPromptへ戻ることを確認する
+6. Dialogue、日記、DebugMenuの主要テキストをHUDが妨げず、各TextureがNearest表示されることを確認する

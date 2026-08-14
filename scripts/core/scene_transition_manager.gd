@@ -16,6 +16,8 @@ func change_scene(scene_path: String, spawn_id: StringName = &"") -> Error:
 	is_transitioning = true
 	_pending_spawn_id = spawn_id
 	transition_started.emit(scene_path)
+	# Audio playback objects need one frame to release their streams before the owning Scene is replaced.
+	await get_tree().process_frame
 	var error := get_tree().change_scene_to_file(scene_path)
 	if error != OK:
 		is_transitioning = false

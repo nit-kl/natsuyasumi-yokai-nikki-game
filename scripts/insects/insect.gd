@@ -77,6 +77,9 @@ func get_insect_id() -> StringName:
 
 
 func _draw() -> void:
+	var production_sprite := get_node_or_null("InsectSprite") as Sprite2D
+	if production_sprite != null and production_sprite.texture != null:
+		return
 	# Production insect sprite未制作時だけ使用するPlaceholder。
 	draw_circle(Vector2.ZERO, 3.0, PLACEHOLDER_COLOR)
 	draw_line(Vector2(-2, -2), Vector2(-5, -5), PLACEHOLDER_COLOR, 1.0)

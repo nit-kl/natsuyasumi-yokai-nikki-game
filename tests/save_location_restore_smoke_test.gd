@@ -45,15 +45,27 @@ class SaveLocationMonitor extends Node:
 			_fail("Load should restore facing after scene change.")
 			return
 		_cleanup()
-		get_tree().quit(0)
+		_quit_cleanly(0)
 
 
 	func _fail(message: String) -> void:
 		_cleanup()
 		push_error(message)
-		get_tree().quit(1)
+		_quit_cleanly(1)
 
 
 	func _cleanup() -> void:
 		if FileAccess.file_exists(TEST_SAVE_PATH):
 			DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_SAVE_PATH))
+
+
+	func _quit_cleanly(exit_code: int) -> void:
+		var scene := get_tree().current_scene
+		var audio := scene.get_node_or_null("LocationRuntime/EnvironmentAudio") as EnvironmentAudioController if scene != null else null
+		if audio != null:
+			audio.shutdown()
+			audio.free()
+		await get_tree().process_frame
+		await get_tree().process_frame
+		await get_tree().create_timer(0.1).timeout
+		get_tree().quit(exit_code)

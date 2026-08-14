@@ -1,39 +1,231 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/diary_ui.gd" id="1_diary"]
+[ext_resource type="Texture2D" path="res://assets/ui/diary/ui_diary_daily_page.png" id="2_page"]
+[ext_resource type="Texture2D" path="res://assets/ui/diary/icon_weather_sunny.png" id="3_weather"]
+[ext_resource type="Texture2D" path="res://assets/ui/diary/stamp_kappa.png" id="4_kappa"]
+[ext_resource type="Texture2D" path="res://assets/ui/diary/stamp_aburazemi.png" id="5_aburazemi"]
+[ext_resource type="Texture2D" path="res://assets/ui/diary/ui_diary_cover.png" id="6_cover"]
 
 [node name="DiaryUI" type="CanvasLayer"]
 layer = 40
 script = ExtResource("1_diary")
 
-[node name="Panel" type="PanelContainer" parent="."]
+[node name="Panel" type="Control" parent="."]
 unique_name_in_owner = true
-offset_left = 96.0
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Dimmer" type="ColorRect" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.055, 0.071, 0.055, 0.72)
+
+[node name="Cover" type="Control" parent="Panel"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 208.0
 offset_top = 40.0
-offset_right = 544.0
+offset_right = 432.0
 offset_bottom = 320.0
+pivot_offset = Vector2(112, 140)
+mouse_filter = 2
 
-[node name="Margin" type="MarginContainer" parent="Panel"]
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 18
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 18
+[node name="CoverArt" type="TextureRect" parent="Panel/Cover"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("6_cover")
+expand_mode = 1
+stretch_mode = 5
 
-[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
+[node name="CoverTitle" type="Label" parent="Panel/Cover"]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 57.0
+offset_right = 176.0
+offset_bottom = 124.0
+theme_override_colors/font_color = Color(0.24, 0.18, 0.10, 1)
+theme_override_font_sizes/font_size = 18
+text = "夏休み\n妖怪日記"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="TitleLabel" type="Label" parent="Panel/Margin/VBox"]
+[node name="CoverHint" type="Label" parent="Panel"]
 unique_name_in_owner = true
-text = "夏休み 1日目"
+layout_mode = 0
+offset_left = 154.0
+offset_top = 329.0
+offset_right = 486.0
+offset_bottom = 350.0
+theme_override_colors/font_color = Color(0.94, 0.91, 0.78, 1)
+theme_override_font_sizes/font_size = 11
+text = "E / Z　ページをめくる　　J / Esc　閉じる"
 horizontal_alignment = 1
 
-[node name="Separator" type="HSeparator" parent="Panel/Margin/VBox"]
-
-[node name="BodyLabel" type="Label" parent="Panel/Margin/VBox"]
+[node name="Notebook" type="TextureRect" parent="Panel"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 180)
+texture_filter = 1
+layout_mode = 0
+offset_left = 64.0
+offset_top = 20.0
+offset_right = 576.0
+offset_bottom = 340.0
+mouse_filter = 2
+texture = ExtResource("2_page")
+expand_mode = 1
+pivot_offset = Vector2(256, 160)
+
+[node name="TitleLabel" type="Label" parent="Panel/Notebook"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 38.0
+offset_top = 25.0
+offset_right = 228.0
+offset_bottom = 51.0
+theme_override_colors/font_color = Color(0.22, 0.16, 0.09, 1)
+theme_override_font_sizes/font_size = 17
+text = "夏休み 1日目"
+
+[node name="LeftHeading" type="Label" parent="Panel/Notebook"]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 61.0
+offset_right = 224.0
+offset_bottom = 82.0
+theme_override_colors/font_color = Color(0.31, 0.23, 0.13, 1)
+theme_override_font_sizes/font_size = 12
+text = "きょうの記録"
+
+[node name="BodyLabel" type="Label" parent="Panel/Notebook"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 38.0
+offset_top = 88.0
+offset_right = 239.0
+offset_bottom = 277.0
+theme_override_colors/font_color = Color(0.20, 0.17, 0.12, 1)
+theme_override_constants/line_spacing = 5
+theme_override_font_sizes/font_size = 11
 text = "日記"
 autowrap_mode = 2
 
-[node name="Hint" type="Label" parent="Panel/Margin/VBox"]
-text = "J: 閉じる"
+[node name="WeatherIcon" type="TextureRect" parent="Panel/Notebook"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 0
+offset_left = 279.0
+offset_top = 24.0
+offset_right = 311.0
+offset_bottom = 56.0
+mouse_filter = 2
+texture = ExtResource("3_weather")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="WeatherLabel" type="Label" parent="Panel/Notebook"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 317.0
+offset_top = 30.0
+offset_right = 460.0
+offset_bottom = 52.0
+theme_override_colors/font_color = Color(0.31, 0.23, 0.13, 1)
+theme_override_font_sizes/font_size = 12
+text = "きょうの天気　晴れ"
+
+[node name="RightHeading" type="Label" parent="Panel/Notebook"]
+layout_mode = 0
+offset_left = 279.0
+offset_top = 61.0
+offset_right = 462.0
+offset_bottom = 82.0
+theme_override_colors/font_color = Color(0.31, 0.23, 0.13, 1)
+theme_override_font_sizes/font_size = 12
+text = "見つけたもの"
+
+[node name="KappaStamp" type="TextureRect" parent="Panel/Notebook"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 0
+offset_left = 279.0
+offset_top = 87.0
+offset_right = 327.0
+offset_bottom = 135.0
+mouse_filter = 2
+texture = ExtResource("4_kappa")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="KappaLabel" type="Label" parent="Panel/Notebook"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 336.0
+offset_top = 92.0
+offset_right = 462.0
+offset_bottom = 130.0
+theme_override_colors/font_color = Color(0.19, 0.29, 0.10, 1)
+theme_override_font_sizes/font_size = 12
+text = "妖怪\n—"
+
+[node name="InsectStamp" type="TextureRect" parent="Panel/Notebook"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 0
+offset_left = 279.0
+offset_top = 151.0
+offset_right = 327.0
+offset_bottom = 199.0
+mouse_filter = 2
+texture = ExtResource("5_aburazemi")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="InsectLabel" type="Label" parent="Panel/Notebook"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 336.0
+offset_top = 156.0
+offset_right = 462.0
+offset_bottom = 194.0
+theme_override_colors/font_color = Color(0.32, 0.20, 0.08, 1)
+theme_override_font_sizes/font_size = 12
+text = "虫\n—"
+
+[node name="MemoLabel" type="Label" parent="Panel/Notebook"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 279.0
+offset_top = 216.0
+offset_right = 462.0
+offset_bottom = 272.0
+theme_override_colors/font_color = Color(0.24, 0.19, 0.12, 1)
+theme_override_font_sizes/font_size = 11
+text = "今日のこと\n—"
+autowrap_mode = 2
+
+[node name="Hint" type="Label" parent="Panel/Notebook"]
+layout_mode = 0
+offset_left = 350.0
+offset_top = 283.0
+offset_right = 468.0
+offset_bottom = 304.0
+theme_override_colors/font_color = Color(0.27, 0.22, 0.15, 0.82)
+theme_override_font_sizes/font_size = 10
+text = "J / Esc　閉じる"
 horizontal_alignment = 2

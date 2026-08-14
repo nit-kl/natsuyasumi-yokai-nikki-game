@@ -15,12 +15,14 @@ const DayPeriodVisualControllerComponent = preload("res://scripts/core/day_perio
 const InsectDataResource = preload("res://scripts/insects/insect_data.gd")
 const InsectController = preload("res://scripts/insects/insect.gd")
 const BugCatcherComponent = preload("res://scripts/player/bug_catcher.gd")
+const BugCatchPresenterComponent = preload("res://scripts/player/bug_catch_presenter.gd")
 const EventConditionResource = preload("res://scripts/events/event_condition.gd")
 const EventActionResource = preload("res://scripts/events/event_action.gd")
 const EventDefinitionResource = preload("res://scripts/events/event_definition.gd")
 const YokaiDataResource = preload("res://scripts/yokai/yokai_data.gd")
 const DayRecordResource = preload("res://scripts/diary/day_record.gd")
 const DiaryUIComponent = preload("res://scripts/ui/diary_ui.gd")
+const GameplayHUDComponent = preload("res://scripts/ui/foundation_hud.gd")
 const PlaytestPresetResource = preload("res://scripts/debug/playtest_preset.gd")
 const PlaytestDebugControllerComponent = preload("res://scripts/debug/playtest_debug_controller.gd")
 const EnvironmentAudioProfileResource = preload("res://scripts/audio/environment_audio_profile.gd")
@@ -43,6 +45,7 @@ func _run() -> void:
 	_test_clock_controls()
 	_test_calendar()
 	_test_input_map()
+	_test_gameplay_hud()
 	_test_player_directions()
 	_test_player_movement_state()
 	_test_player_animation_state()
@@ -117,6 +120,28 @@ func _test_input_map() -> void:
 	var debug_event := InputEventKey.new()
 	debug_event.physical_keycode = KEY_F3
 	_expect(InputMap.event_is_action(debug_event, &"debug_menu"), "F3 should open the debug menu")
+
+
+func _test_gameplay_hud() -> void:
+	_expect(GameplayHUDComponent.display_name(&"morning", GameplayHUDComponent.PERIOD_NAMES) == "朝", "Gameplay HUD should localize the day period")
+	_expect(GameplayHUDComponent.display_name(&"sunny", GameplayHUDComponent.WEATHER_NAMES) == "晴れ", "Gameplay HUD should localize the weather")
+	_expect(GameplayHUDComponent.display_name(&"unknown", {}) == "unknown", "Gameplay HUD should preserve unknown stable IDs")
+	var hud_scene: PackedScene = load("res://scenes/ui/gameplay_hud.tscn")
+	var hud := hud_scene.instantiate()
+	var status_panel := hud.get_node_or_null("StatusPanel") as TextureRect
+	var tool_panel := hud.get_node_or_null("ToolPanel") as TextureRect
+	var prompt_panel := hud.get_node_or_null("PromptPanel") as TextureRect
+	_expect(status_panel != null and status_panel.texture != null, "Gameplay HUD should use the production status panel")
+	_expect(tool_panel != null and tool_panel.texture != null, "Gameplay HUD should use the production tool panel")
+	_expect(prompt_panel != null and prompt_panel.texture != null, "Gameplay HUD should use the production interaction panel")
+	if status_panel != null and status_panel.texture != null:
+		_expect(status_panel.texture.get_size() == Vector2(208, 72), "HUD status panel should match its pixel-art canvas")
+	if tool_panel != null and tool_panel.texture != null:
+		_expect(tool_panel.texture.get_size() == Vector2(128, 44), "HUD tool panel should match its pixel-art canvas")
+	if prompt_panel != null and prompt_panel.texture != null:
+		_expect(prompt_panel.texture.get_size() == Vector2(300, 48), "HUD interaction panel should match its pixel-art canvas")
+	_expect(hud.get_node_or_null("Notice") == null, "Production HUD should not keep the foundation control legend")
+	hud.free()
 
 
 func _test_player_directions() -> void:
@@ -347,6 +372,16 @@ func _test_environment_audio() -> void:
 	_expect(profile.get_stream(&"morning") == morning_stream, "Audio profile should select the morning stream")
 	_expect(profile.get_stream(&"evening") == evening_stream, "Audio profile should select the evening stream")
 	_expect(profile.get_stream(&"night") == null, "Missing ambience assets should remain silent")
+	var house_profile: EnvironmentAudioProfile = load("res://resources/locations/grandma_house_audio_profile.tres")
+	var outdoor_profile: EnvironmentAudioProfile = load("res://resources/locations/home_outdoor_audio_profile.tres")
+	var river_profile: EnvironmentAudioProfile = load("res://resources/locations/river_audio_profile.tres")
+	_expect(house_profile.get_stream(&"morning") != null, "Grandma house should provide its production interior ambience")
+	_expect(outdoor_profile.get_stream(&"daytime") != null, "Home outdoor should provide its daytime cicada ambience")
+	_expect(outdoor_profile.get_stream(&"evening") != null, "Home outdoor should provide its evening higurashi ambience")
+	_expect(outdoor_profile.get_stream(&"morning") == null, "Unproduced outdoor morning ambience should remain silent")
+	_expect(river_profile.get_stream(&"daytime") != null, "River should provide its production water ambience")
+	EnvironmentAudioController.configure_ambience_stream(river_profile.default_stream, true)
+	_expect((river_profile.default_stream as AudioStreamOggVorbis).loop, "Production ambience should be configured to loop")
 	var audio_scene: PackedScene = load("res://scenes/audio/environment_audio.tscn")
 	var controller := audio_scene.instantiate() as EnvironmentAudioController
 	controller.profiles = [profile]
@@ -407,6 +442,10 @@ func _test_location_maps() -> void:
 	_expect(kappa_surface != null and kappa_surface.sprite_frames.get_frame_count(&"surface") == 4, "Kappa sighting should use the four-frame production surface animation")
 	_expect(kappa_surface != null and not kappa_surface.sprite_frames.get_animation_loop(&"surface"), "Kappa surface animation should play only once per sighting")
 	_expect(kappa_surface != null and not kappa_surface.visible, "Kappa should remain hidden before the sighting event")
+	var ripple_audio := river.get_node_or_null("Yokai/KappaGlimpse/RippleAudio") as AudioStreamPlayer2D
+	var kappa_cue_audio := river.get_node_or_null("Yokai/KappaGlimpse/KappaCueAudio") as AudioStreamPlayer2D
+	_expect(ripple_audio != null and ripple_audio.stream != null, "Kappa trace should include the production water ripple cue")
+	_expect(kappa_cue_audio != null and kappa_cue_audio.stream != null, "Kappa sighting should include the subtle production audio cue")
 	var spawn_point := MapSpawnPointComponent.new()
 	spawn_point.spawn_id = &"validation_entry"
 	var spawn_parent := Node2D.new()
@@ -440,6 +479,10 @@ func _test_insect_entity() -> void:
 	insect.data = load("res://resources/insects/aburazemi.tres")
 	add_child(insect)
 	_expect(insect.get_insect_id() == &"aburazemi", "Insect should expose its stable id")
+	var insect_sprite := insect.get_node_or_null("InsectSprite") as Sprite2D
+	_expect(insect_sprite != null and insect_sprite.texture != null, "Vertical Slice insect should use the aburazemi production sprite")
+	if insect_sprite != null and insect_sprite.texture != null:
+		_expect(insect_sprite.texture.get_size() == Vector2(24, 24), "Aburazemi production sprite should match its pixel-art canvas")
 	insect.choose_next_direction(0.0)
 	_expect(insect.movement_direction.is_equal_approx(Vector2.RIGHT), "Insect direction should be normalized")
 	var catch_request_count := [0]
@@ -454,6 +497,24 @@ func _test_insect_entity() -> void:
 
 
 func _test_bug_catching() -> void:
+	var player_scene: PackedScene = load("res://scenes/player/player.tscn")
+	var production_player := player_scene.instantiate()
+	add_child(production_player)
+	var presenter := production_player.get_node_or_null("BugCatchPresenter") as Node2D
+	var net_sprite := production_player.get_node_or_null("BugCatchPresenter/NetSprite") as Sprite2D
+	_expect(presenter != null, "Player scene should include the bug-catching presentation component")
+	_expect(net_sprite != null and net_sprite.texture != null, "Bug-catching presentation should use the production net sprite")
+	if net_sprite != null and net_sprite.texture != null:
+		_expect(net_sprite.texture.get_size() == Vector2(32, 48), "Bug net production sprite should match its pixel-art canvas")
+	_expect(
+		is_equal_approx(BugCatchPresenterComponent.get_net_rotation_for_direction(Vector2.RIGHT), PI / 4.0),
+		"Bug net rotation should follow the player's facing direction",
+	)
+	var production_catcher := production_player.get_node("BugCatcher") as BugCatcher
+	production_catcher.use_cooldown_seconds = 0.0
+	_expect(not production_catcher.attempt_catch(), "Using the production net without an insect should remain a miss")
+	_expect(net_sprite.visible, "Using the bug-catching tool should immediately show the net swing")
+	production_player.queue_free()
 	var actor := PlayerController.new()
 	var catcher := BugCatcherComponent.new()
 	actor.add_child(catcher)
@@ -547,6 +608,16 @@ func _test_kappa_events() -> void:
 	_expect(YokaiManager.get_stage(&"kappa") == &"SEEN", "Kappa sighting should advance stage to SEEN")
 	_expect(WorldState.has_flag(&"kappa_first_sighting_complete"), "Kappa sighting should set completion flag")
 	_expect(GameClock.time_minutes == 1020, "Kappa sighting should move the slice into evening")
+	var glimpse_scene: PackedScene = load("res://scenes/yokai/kappa_glimpse.tscn")
+	var glimpse := glimpse_scene.instantiate() as KappaGlimpsePresenter
+	add_child(glimpse)
+	glimpse.present_trace()
+	_expect(glimpse.ripple_audio.playing, "Kappa trace presentation should play the water ripple cue")
+	glimpse.present_sighting()
+	_expect(glimpse.kappa_cue_audio.playing, "Kappa sighting presentation should play the subtle audio cue")
+	glimpse.ripple_audio.stop()
+	glimpse.kappa_cue_audio.stop()
+	glimpse.queue_free()
 
 
 func _test_day_record_and_diary() -> void:
@@ -566,7 +637,22 @@ func _test_day_record_and_diary() -> void:
 	var restored := DayRecordResource.deserialize(record.serialize())
 	_expect(restored.events_seen.has(&"kappa_first_sighting"), "DayRecord round trip should preserve events")
 	var formatted := DiaryUIComponent.format_record(restored)
-	_expect(formatted.contains("grandma") and formatted.contains("kappa"), "Diary UI should format recorded facts")
+	_expect(formatted.contains("おばあちゃん") and formatted.contains("河童"), "Diary UI should format stable IDs as player-facing names")
+	var diary_scene: PackedScene = load("res://scenes/ui/diary_ui.tscn")
+	var diary := diary_scene.instantiate()
+	var cover_art := diary.get_node_or_null("Panel/Cover/CoverArt") as TextureRect
+	var notebook := diary.get_node_or_null("Panel/Notebook") as TextureRect
+	var kappa_stamp := diary.get_node_or_null("Panel/Notebook/KappaStamp") as TextureRect
+	var insect_stamp := diary.get_node_or_null("Panel/Notebook/InsectStamp") as TextureRect
+	_expect(notebook != null and notebook.texture != null, "Diary UI should use the production notebook page")
+	_expect(cover_art != null and cover_art.texture != null, "Diary UI should use the production diary cover")
+	if cover_art != null and cover_art.texture != null:
+		_expect(cover_art.texture.get_size() == Vector2(224, 280), "Diary production cover should match its pixel-art canvas")
+	if notebook != null and notebook.texture != null:
+		_expect(notebook.texture.get_size() == Vector2(512, 320), "Diary production page should match its pixel-art canvas")
+	_expect(kappa_stamp != null and kappa_stamp.texture != null, "Diary UI should include the kappa record stamp")
+	_expect(insect_stamp != null and insect_stamp.texture != null, "Diary UI should include the aburazemi record stamp")
+	diary.free()
 
 
 func _test_playtest_tools() -> void:

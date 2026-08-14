@@ -354,7 +354,7 @@ Reference:
 Production:
 
 ### Tools
-- [ ] bug net
+- [x] bug net（Vertical Slice用Production Sprite）
 - [ ] insect cage
 - [ ] observation case
 
@@ -362,7 +362,7 @@ Production:
 - [ ] kabutomushi
 - [ ] nokogiri_kuwagata
 - [ ] miyama_kuwagata
-- [ ] aburazemi
+- [x] aburazemi（Vertical Slice用Production Sprite）
 - [ ] minminzemi
 - [ ] higurashi
 - [ ] oniyanma
@@ -374,18 +374,18 @@ Production:
 
 ### VFX
 - [ ] discovery
-- [ ] net swing
-- [ ] catch success
+- [x] net swing（向き追従Tween演出）
+- [x] catch success（小さな輪・きらめきの実装演出）
 - [ ] escape
 - [ ] grass rustle
 
 Vertical Slice必須:
 
-- [ ] bug net
+- [x] bug net
 - [ ] kabutomushi
-- [ ] semi
+- [x] semi（aburazemi）
 - [ ] tonbo
-- [ ] catch success
+- [x] catch success
 
 ---
 
@@ -399,35 +399,35 @@ Reference:
 
 Production:
 
-- [ ] diary cover
-- [ ] open notebook
-- [ ] page base
+- [x] diary cover（224x280 Production Pixel Art）
+- [x] open notebook（Vertical Slice日別記録画面）
+- [x] page base（512x320 Production Pixel Art）
 - [ ] tabs
 - [ ] photo frame
-- [ ] tape
+- [x] tape（日別ページ背景に統合）
 - [ ] pencil icons
-- [ ] weather icons
-- [ ] date stamp
-- [ ] yokai stamp
+- [x] weather icons（Vertical Slice用sunny）
+- [x] date stamp（当日を動的表示）
+- [x] yokai stamp（Vertical Slice用kappa）
 - [ ] page arrow
-- [ ] page turn animation
+- [x] page turn animation（0.22秒の表紙→日別ページTween）
 
 Vertical Slice必須:
 
-- [ ] diary cover
-- [ ] daily page
-- [ ] weather icons
-- [ ] kappa note
-- [ ] insect record
+- [x] diary cover
+- [x] daily page
+- [x] weather icons（sunny）
+- [x] kappa note
+- [x] insect record（aburazemi）
 
 ---
 
 ## HUD
 
-- [ ] date/time
-- [ ] weather
-- [ ] interaction prompt
-- [ ] tool indicator
+- [x] date/time（夏休みの日数・時刻・時間帯）
+- [x] weather（sunny icon + 文字表示）
+- [x] interaction prompt（状況依存時のみ表示）
+- [x] tool indicator（Vertical Slice用虫取り網）
 
 ---
 
@@ -435,15 +435,15 @@ Vertical Slice必須:
 
 Vertical Slice:
 
-- [x] Location / 時間帯別の環境音切替制御（音源未設定）
-- [ ] summer daytime ambience
-- [ ] cicada loop
-- [ ] river loop
-- [ ] evening higurashi
-- [ ] grandma house interior
+- [x] Location / 時間帯別の環境音切替制御
+- [x] summer daytime ambience
+- [x] cicada loop
+- [x] river loop
+- [x] evening higurashi
+- [x] grandma house interior
 - [ ] bug catch SFX
-- [ ] water ripple
-- [ ] kappa subtle cue
+- [x] water ripple
+- [x] kappa subtle cue
 - [ ] page turn
 - [ ] menu confirm/cancel
 
@@ -491,7 +491,7 @@ Art direction benchmark:
 - [ ] tonbo
 
 ### UI
-- [ ] minimal HUD
+- [x] minimal HUD
 - [ ] interaction
 - [ ] diary
 

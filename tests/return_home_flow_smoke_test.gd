@@ -41,6 +41,9 @@ class ReturnHomeMonitor extends Node:
 		if not diary.is_open():
 			_fail("Finishing dinner dialogue should open the diary review.")
 			return
+		if diary.is_showing_cover():
+			_fail("The required evening review should open directly to the daily page.")
+			return
 		var record := DiaryManager.get_or_create_record(3)
 		if record.sleep_time != 1020 or not record.diary_fragments.has(&"evening_diary_written"):
 			_fail("Diary review should finalize the current day record.")
@@ -54,13 +57,28 @@ class ReturnHomeMonitor extends Node:
 			return
 		# A regular diary open/close is not a day-completion action.
 		diary.set_open(true)
+		if not diary.is_showing_cover():
+			_fail("Regular diary browsing should begin at the cover.")
+			return
 		diary.set_open(false)
 		if CalendarManager.day_index != 4:
 			_fail("Regular diary browsing must not advance the day.")
 			return
-		get_tree().quit(0)
+		_quit_cleanly(0)
 
 
 	func _fail(message: String) -> void:
 		push_error(message)
-		get_tree().quit(1)
+		_quit_cleanly(1)
+
+
+	func _quit_cleanly(exit_code: int) -> void:
+		var scene := get_tree().current_scene
+		var audio := scene.get_node_or_null("LocationRuntime/EnvironmentAudio") as EnvironmentAudioController if scene != null else null
+		if audio != null:
+			audio.shutdown()
+			audio.free()
+		await get_tree().process_frame
+		await get_tree().process_frame
+		await get_tree().create_timer(0.1).timeout
+		get_tree().quit(exit_code)

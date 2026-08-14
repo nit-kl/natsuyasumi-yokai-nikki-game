@@ -356,6 +356,11 @@ Godot 2Dプロジェクトとして、安全に拡張できる基盤を作る。
 #044 River production art integration
 #045 Grandma house and grandma production art integration
 #046 Kappa surface production art integration
+#047 Bug-catching production presentation integration
+#048 Vertical Slice production audio integration
+#049 Diary daily-page production UI integration
+#050 Diary cover and page-transition production integration
+#051 Minimal production HUD integration
 ```
 
 ---

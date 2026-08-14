@@ -643,6 +643,12 @@ Signalを購読する`DayRecordRecorder`から記録し、各Entityへ日記依�
 
 `DiaryManager`は日別Recordの所有・重複排除・serializeを担当する。
 `DiaryUI`は現在日の事実をノート形式で表示し、文章生成やEvent条件を持たない。
+Production UIでは512x320の開いたノート背景に、安定IDから変換した表示名と
+天気・河童・虫の独立した記録印を重ねる。背景画像へ文字を焼き込まず、未知IDは
+保存値をそのままfallback表示するため、Save schemaと記録責務は変更しない。
+通常のJキー閲覧は224x280の閉じた表紙から始まり、`interact`で日別ページへ進む。
+表紙から紙面への短いTweenは`DiaryUI`内の表示状態だけを変更し、DayRecordには
+書き込まない。夕食後の必須Reviewは操作を一段増やさないよう日別ページを直接開く。
 
 Save v1既定fieldの`world`、`yokai_states`、`event_history`、`diary.days`へ接続する。
 既存Schema内の実装なのでsave_versionは1を維持する。
@@ -773,3 +779,47 @@ Save v1 Schemaは変更しない。
 祖母の家の`ReturnHomeFlow`はVertical Slice終了モードを持ち、夕食後の日記を閉じた時に
 Day 2へ進めず`vertical_slice_complete` flagを保存する。完了Panelを表示し、Playerと時計を
 停止する。CalendarManagerとSave v1 SchemaにはVertical Slice固有条件を追加しない。
+
+---
+
+## 41. Bug-catching Production Presentation — Issue #047
+
+捕獲判定は既存の`BugCatcher`へ維持し、虫網の表示・振りアニメーション・成功／空振りの
+小さな視覚フィードバックはPlayer配下の`BugCatchPresenter`がSignalを購読して担当する。
+演出からInventory、日記、Save状態は直接変更しない。
+
+Vertical Sliceの虫Entityは独立制作したアブラゼミのProduction Spriteを使用する。
+Reference SheetのCropは行わず、Texture FilterはNearest、MipmapはOFFとする。
+虫網はPlayerの向きへ追従し、上向きではPlayerの背面、それ以外では前面に表示する。
+成功演出は小さな輪ときらめき、空振りは短い風切り線に留める。
+
+---
+
+## 42. Vertical Slice Production Audio — Issue #048
+
+`EnvironmentAudioProfile`へProduction音源を割り当て、既存の2 Player crossfade構造を維持する。
+環境Loopは`EnvironmentAudioController`が`AudioStreamOggVorbis.loop`を有効化し、
+import設定へ実行時仕様を依存させない。
+
+- 祖母の家: 小さな室内のRoom Toneを全時間帯のdefaultとして使用
+- 家周辺: daytimeはアブラゼミ、eveningはヒグラシ、未制作のmorning / nightは無音
+- 川: 流水音を全時間帯のdefaultとして使用
+
+河童の水面音はLocation環境音と分離し、`KappaGlimpsePresenter`配下の
+`AudioStreamPlayer2D`がTRACEで波紋音、SEENで波紋音と控えめな気配音を同期再生する。
+音源の権利・加工履歴は`docs/AUDIO_LICENSES.md`を正とする。
+
+---
+
+## 43. Minimal Production HUD — Issue #051
+
+`GameplayHUD`はLocation共通Runtimeに置き、日付・時刻・時間帯・当日の天気・現在の道具だけを
+常時表示する。目的地、Quest marker、Event候補は表示しない。天気は現在の`DayRecord.weather`を
+読み取るだけで、HUDから日記やSave状態を変更しない。
+
+操作Promptは有効なInteraction候補がある間だけ画面下へ表示する。虫取りの成功・空振り通知は
+同じPrompt枠を1.6秒だけ借り、終了後に現在のInteraction候補へ戻す。Foundation専用の常設操作一覧は
+削除し、Bootstrapも共通`gameplay_hud.tscn`をinstanceして本編との表示契約を共有する。
+
+Vertical Sliceでは虫取り網だけが利用可能なためTool indicatorは`BugCatcher`の存在時だけ表示する。
+将来の複数道具切替はInventory / Tool Manager導入IssueでSignal接続し、このHUDへ所持品責務を加えない。

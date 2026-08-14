@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/insects/insect.gd" id="1_insect"]
+[ext_resource type="Texture2D" path="res://assets/sprites/insects/aburazemi/insect_aburazemi.png" id="2_aburazemi"]
 
 [sub_resource type="CircleShape2D" id="Circle_body"]
 radius = 4.0
@@ -11,8 +12,9 @@ collision_mask = 2
 motion_mode = 1
 script = ExtResource("1_insect")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-visible = false
+[node name="InsectSprite" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("2_aburazemi")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("Circle_body")

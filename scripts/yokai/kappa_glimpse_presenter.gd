@@ -7,12 +7,23 @@ extends Node2D
 
 @onready var ripple: AnimatedSprite2D = %Ripple
 @onready var kappa_surface: AnimatedSprite2D = %KappaSurface
+@onready var ripple_audio: AudioStreamPlayer2D = %RippleAudio
+@onready var kappa_cue_audio: AudioStreamPlayer2D = %KappaCueAudio
 
 
 func _ready() -> void:
 	EventManager.event_started.connect(_on_event_started)
 	ripple.visible = false
 	kappa_surface.visible = false
+
+
+func _exit_tree() -> void:
+	if is_instance_valid(ripple_audio):
+		ripple_audio.stop()
+		ripple_audio.stream = null
+	if is_instance_valid(kappa_cue_audio):
+		kappa_cue_audio.stop()
+		kappa_cue_audio.stream = null
 
 
 func _on_event_started(event: EventDefinition) -> void:
@@ -23,6 +34,7 @@ func _on_event_started(event: EventDefinition) -> void:
 
 
 func present_trace() -> void:
+	ripple_audio.play()
 	ripple.frame = 0
 	ripple.play(&"ripple")
 	ripple.visible = true
@@ -32,6 +44,8 @@ func present_trace() -> void:
 
 
 func present_sighting() -> void:
+	ripple_audio.play()
+	kappa_cue_audio.play()
 	ripple.frame = 0
 	ripple.play(&"ripple")
 	ripple.visible = true

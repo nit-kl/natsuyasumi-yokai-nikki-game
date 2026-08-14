@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/player/pixel_camera.tscn" id="2_camera"]
@@ -6,6 +6,8 @@
 [ext_resource type="Script" path="res://scripts/player/bug_catcher.gd" id="4_bug_catcher"]
 [ext_resource type="Script" path="res://scripts/player/player_animation.gd" id="5_animation"]
 [ext_resource type="SpriteFrames" path="res://resources/characters/protagonist_4dir_sprite_frames.tres" id="6_frames"]
+[ext_resource type="Script" path="res://scripts/player/bug_catch_presenter.gd" id="7_bug_presenter"]
+[ext_resource type="Texture2D" path="res://assets/sprites/props/bug_net/prop_bug_net.png" id="8_bug_net"]
 
 [sub_resource type="CapsuleShape2D" id="Capsule_player"]
 radius = 6.0
@@ -50,6 +52,17 @@ script = ExtResource("4_bug_catcher")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BugCatcher"]
 shape = SubResource("Circle_bug_catcher")
+
+[node name="BugCatchPresenter" type="Node2D" parent="."]
+position = Vector2(0, -7)
+script = ExtResource("7_bug_presenter")
+
+[node name="NetSprite" type="Sprite2D" parent="BugCatchPresenter"]
+unique_name_in_owner = true
+texture_filter = 1
+position = Vector2(13, -19)
+texture = ExtResource("8_bug_net")
+visible = false
 
 [node name="ShadowSprite" type="Sprite2D" parent="."]
 visible = false

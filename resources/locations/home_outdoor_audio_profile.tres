@@ -1,8 +1,12 @@
-[gd_resource type="Resource" script_class="EnvironmentAudioProfile" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="EnvironmentAudioProfile" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/audio/environment_audio_profile.gd" id="1_profile"]
+[ext_resource type="AudioStream" path="res://assets/audio/ambience/amb_home_outdoor_daytime.ogg" id="2_daytime"]
+[ext_resource type="AudioStream" path="res://assets/audio/ambience/amb_home_outdoor_evening.ogg" id="3_evening"]
 
 [resource]
 script = ExtResource("1_profile")
 area_id = &"home_outdoor"
-volume_db = -8.0
+daytime_stream = ExtResource("2_daytime")
+evening_stream = ExtResource("3_evening")
+volume_db = -10.0
