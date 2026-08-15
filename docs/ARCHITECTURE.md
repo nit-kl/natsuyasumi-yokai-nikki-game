@@ -1097,3 +1097,20 @@ bedroom
 新規IDは`bedroom`、`engawa_yard`、`paddy_road`、`irrigation_shade`、`river_entrance`とする。
 Main Sceneは`bedroom`へ変更し、夕方は同じLocation列を逆向きに戻る。河童Event ID、Yokai stage、
 ReturnHomeFlow、Save versionは変更しない。
+
+---
+
+## 62. Grandma House Living-room Production Integration — Issue #070
+
+`grandma_house`は寝室を含む旧背景から、独立Production Asset
+`assets/maps/grandma_house_living/map_grandma_house_living.png`へ切り替える。`area_id`、Doorwayの
+遷移先、Spawn ID、祖母NPC、ReturnHomeFlow、Save v1契約は維持し、既存Saveの`grandma_house`を
+同じSceneへ復元する。
+
+Physics CollisionとNavigationは居間・台所背景の家具配置から再構築する。ちゃぶ台、テレビ台、
+食器棚、台所、食卓、障子は足元を塞ぎ、左室から玄関、ちゃぶ台周囲、台所入口を接続する。
+中央植木は見た目全体ではなく床へ接する足元だけをCollisionにし、台所への狭い生活動線を残す。
+
+祖母は新しいちゃぶ台左側を朝夕の定位置とし、ちゃぶ台南側・右側・台所入口を既存の
+`GrandmaIndoorRoutine`で巡回する。前景Occluderは新背景と同じTextureを参照し、ちゃぶ台、植木、
+食卓、左右障子の足元を境にPlayer・祖母との前後関係を切り替える。

@@ -6,7 +6,7 @@ const REQUIRED_TEXTURES := {
 	"res://assets/maps/paddy_road/map_paddy_road.png": Vector2(640, 360),
 	"res://assets/maps/irrigation_shade/map_irrigation_shade.png": Vector2(640, 360),
 	"res://assets/maps/river_entrance/map_river_entrance.png": Vector2(640, 360),
-	"res://assets/maps/grandma_house/map_grandma_house.png": Vector2(640, 360),
+	"res://assets/maps/grandma_house_living/map_grandma_house_living.png": Vector2(640, 360),
 	"res://assets/maps/home_outdoor/map_home_outdoor.png": Vector2(640, 360),
 	"res://assets/maps/river/map_river.png": Vector2(640, 360),
 	"res://assets/sprites/characters/protagonist/chr_protagonist_walk_4dir.png": Vector2(256, 256),

@@ -9,13 +9,15 @@ func _ready() -> void:
 
 class GrandmaHouseGeometryMonitor extends Node:
 	const HOUSE_SCENE := "res://scenes/maps/grandma_house/grandma_house.tscn"
+	const LIVING_BACKGROUND := "res://assets/maps/grandma_house_living/map_grandma_house_living.png"
 	const BEDROOM_SPAWN := Vector2(142.0, 174.0)
-	const GRANDMA_POSITION := Vector2(244.0, 164.0)
+	const GRANDMA_POSITION := Vector2(208.0, 164.0)
 	const ENTRANCE_TARGET := Vector2(320.0, 290.0)
-	const KITCHEN_ENTRANCE := Vector2(462.0, 212.0)
-	const BED_CENTER := Vector2(75.0, 168.0)
-	const TABLE_CENTER := Vector2(319.0, 173.0)
-	const DINING_CHAIR := Vector2(533.0, 238.0)
+	const KITCHEN_ENTRANCE := Vector2(458.0, 212.0)
+	const LEFT_DRESSER := Vector2(35.0, 110.0)
+	const REMOVED_BED_FOOTPRINT := Vector2(75.0, 168.0)
+	const TABLE_CENTER := Vector2(288.0, 173.0)
+	const DINING_CHAIR := Vector2(533.0, 246.0)
 	const MAX_MOVE_FRAMES := 480
 
 
@@ -32,8 +34,12 @@ class GrandmaHouseGeometryMonitor extends Node:
 		var collision_root := house.get_node_or_null("WorldCollision") as StaticBody2D
 		var old_collision := house.get_node_or_null("GreyboxWalls")
 		var region := house.get_node("NavigationRegion2D") as NavigationRegion2D
+		var background := house.get_node("ProductionBackground") as Sprite2D
 		if collision_root == null or old_collision != null:
 			_fail("Grandma house should use Production WorldCollision instead of GreyboxWalls.")
+			return
+		if background.texture == null or background.texture.resource_path != LIVING_BACKGROUND:
+			_fail("Grandma house should use the bedroom-free living-room Production background.")
 			return
 		if region.navigation_polygon == null or region.navigation_polygon.get_polygon_count() <= 4:
 			_fail("Grandma house navigation should be baked around Production furniture obstacles.")
@@ -45,17 +51,16 @@ class GrandmaHouseGeometryMonitor extends Node:
 		if grandma.global_position != GRANDMA_POSITION or _point_hits_world(grandma.global_position):
 			_fail("Grandma should stand in the clear aisle left of the center table.")
 			return
-		if not _point_hits_world(BED_CENTER) or not _point_hits_world(TABLE_CENTER) \
+		if not _point_hits_world(LEFT_DRESSER) or not _point_hits_world(TABLE_CENTER) \
 			or not _point_hits_world(DINING_CHAIR):
 			_fail("Visible furniture footprints should have Production collision.")
 			return
-		if _point_hits_world(Vector2(175.0, 218.0)):
-			_fail("The removed bedroom fan footprint should remain walkable.")
+		if _point_hits_world(REMOVED_BED_FOOTPRINT):
+			_fail("The former bedroom footprint should be walkable in the living-room layout.")
 			return
 		var navigation_map := player.get_world_2d().navigation_map
-		var bed_nearest := NavigationServer2D.map_get_closest_point(navigation_map, BED_CENTER)
 		var table_nearest := NavigationServer2D.map_get_closest_point(navigation_map, TABLE_CENTER)
-		if bed_nearest.distance_to(BED_CENTER) < 20.0 or table_nearest.distance_to(TABLE_CENTER) < 20.0:
+		if table_nearest.distance_to(TABLE_CENTER) < 20.0:
 			_fail("Baked navigation should keep the Player center away from furniture.")
 			return
 		var path := NavigationServer2D.map_get_path(navigation_map, BEDROOM_SPAWN, ENTRANCE_TARGET, true)
@@ -64,7 +69,7 @@ class GrandmaHouseGeometryMonitor extends Node:
 			return
 		var kitchen_path := NavigationServer2D.map_get_path(navigation_map, GRANDMA_POSITION, KITCHEN_ENTRANCE, true)
 		if kitchen_path.size() < 2 or kitchen_path[kitchen_path.size() - 1].distance_to(KITCHEN_ENTRANCE) > 3.0:
-			_fail("The living room should connect to the visible kitchen entrance below the plant.")
+			_fail("The living room should connect to the visible kitchen entrance below the plant (path=%s nearest=%s)." % [kitchen_path, NavigationServer2D.map_get_closest_point(navigation_map, KITCHEN_ENTRANCE)])
 			return
 		if _point_hits_world(Vector2(425.0, 205.0)):
 			_fail("The visible passage in front of the center plant should remain walkable.")

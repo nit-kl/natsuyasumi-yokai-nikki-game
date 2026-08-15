@@ -379,6 +379,7 @@ Godot 2Dプロジェクトとして、安全に拡張できる基盤を作る。
 #067 Grandma house table depth and kitchen passage correction
 #068 Area-based deterministic insect spawning
 #069 Vertical Slice area subdivision and production backgrounds
+#070 Grandma house living-room Production integration
 ```
 
 ---

@@ -532,6 +532,20 @@ Art direction benchmark:
 | 田んぼ道 | `assets/maps/paddy_road/map_paddy_road.png` | `assets/maps/paddy_road/map_paddy_road_source.png` | 使用中 |
 | 用水路の木陰 | `assets/maps/irrigation_shade/map_irrigation_shade.png` | `assets/maps/irrigation_shade/map_irrigation_shade_source.png` | 使用中 |
 | 川入口 | `assets/maps/river_entrance/map_river_entrance.png` | `assets/maps/river_entrance/map_river_entrance_source.png` | 使用中 |
-| 居間・台所候補 | `assets/maps/grandma_house_living/map_grandma_house_living.png` | `assets/maps/grandma_house_living/map_grandma_house_living_source.png` | 未接続。既存NPC・帰宅Flowを維持するため後続Issue候補 |
+| 居間・台所 | `assets/maps/grandma_house_living/map_grandma_house_living.png` | `assets/maps/grandma_house_living/map_grandma_house_living_source.png` | Issue #070で`grandma_house`へ接続済み |
 
-既存の`grandma_house`と`river`背景は継続使用する。Production Sceneは`*_source.png`を参照しない。
+既存の`river`背景は継続使用する。旧`grandma_house`背景は制作履歴として保持し、Production Sceneは
+Issue #070以降`grandma_house_living`を使用する。Production Sceneは`*_source.png`を参照しない。
+
+---
+
+## 11. Grandma House Living-room Production Integration — Issue #070
+
+- [x] 居間・台所Production背景を`grandma_house`へ接続
+- [x] 寝室・扇風機を含む旧背景参照をProduction Sceneから除去
+- [x] 新背景に対応するPhysics CollisionとNavigation
+- [x] ちゃぶ台、植木、食卓、障子のForeground Occluder
+- [x] 祖母の朝夕定位置と室内巡回地点を新レイアウトへ調整
+
+旧`assets/maps/grandma_house/map_grandma_house.png`は既存制作履歴として保持するが、現行
+`grandma_house.tscn`からは参照しない。Source画像は引き続きProduction Sceneへ直接接続しない。

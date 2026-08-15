@@ -9,9 +9,9 @@ func _ready() -> void:
 
 class GrandmaIndoorRoutineMonitor extends Node:
 	const HOUSE_SCENE := "res://scenes/maps/grandma_house/grandma_house.tscn"
-	const HOME_POSITION := Vector2(244.0, 164.0)
-	const TABLE_SOUTH := Vector2(320.0, 217.0)
-	const KITCHEN_ENTRANCE := Vector2(462.0, 212.0)
+	const HOME_POSITION := Vector2(208.0, 164.0)
+	const TABLE_SOUTH := Vector2(288.0, 222.0)
+	const KITCHEN_ENTRANCE := Vector2(458.0, 212.0)
 	const MAX_MOVE_FRAMES := 720
 
 
