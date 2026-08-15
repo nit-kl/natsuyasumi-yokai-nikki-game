@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/player/pixel_camera.tscn" id="2_camera"]
@@ -8,6 +8,12 @@
 [ext_resource type="SpriteFrames" path="res://resources/characters/protagonist_4dir_sprite_frames.tres" id="6_frames"]
 [ext_resource type="Script" path="res://scripts/player/bug_catch_presenter.gd" id="7_bug_presenter"]
 [ext_resource type="Texture2D" path="res://assets/sprites/props/bug_net/prop_bug_net.png" id="8_bug_net"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sfx_bug_net_swing.ogg" id="9_swing_sfx"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sfx_bug_catch_success.ogg" id="10_success_sfx"]
+[ext_resource type="Script" path="res://scripts/player/click_move_controller.gd" id="11_click_move"]
+[ext_resource type="Script" path="res://scripts/player/click_destination_marker.gd" id="12_click_marker"]
+[ext_resource type="Script" path="res://scripts/player/click_action_controller.gd" id="13_click_action"]
+[ext_resource type="Script" path="res://scripts/player/click_target_hover_controller.gd" id="14_click_hover"]
 
 [sub_resource type="CapsuleShape2D" id="Capsule_player"]
 radius = 6.0
@@ -34,6 +40,32 @@ script = ExtResource("5_animation")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 6)
 shape = SubResource("Capsule_player")
+
+[node name="NavigationAgent" type="NavigationAgent2D" parent="."]
+unique_name_in_owner = true
+path_desired_distance = 8.0
+target_desired_distance = 6.0
+radius = 6.0
+
+[node name="ClickMoveController" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("11_click_move")
+
+[node name="ClickActionController" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("13_click_action")
+
+[node name="ClickDestinationMarker" type="Node2D" parent="."]
+unique_name_in_owner = true
+top_level = true
+z_index = 6
+script = ExtResource("12_click_marker")
+
+[node name="ClickTargetHover" type="Node2D" parent="."]
+unique_name_in_owner = true
+top_level = true
+z_index = 7
+script = ExtResource("14_click_hover")
 
 [node name="InteractionDetector" type="Area2D" parent="."]
 collision_layer = 0
@@ -63,6 +95,18 @@ texture_filter = 1
 position = Vector2(13, -19)
 texture = ExtResource("8_bug_net")
 visible = false
+
+[node name="SwingAudio" type="AudioStreamPlayer2D" parent="BugCatchPresenter"]
+unique_name_in_owner = true
+stream = ExtResource("9_swing_sfx")
+volume_db = -9.0
+max_distance = 220.0
+
+[node name="SuccessAudio" type="AudioStreamPlayer2D" parent="BugCatchPresenter"]
+unique_name_in_owner = true
+stream = ExtResource("10_success_sfx")
+volume_db = -7.0
+max_distance = 220.0
 
 [node name="ShadowSprite" type="Sprite2D" parent="."]
 visible = false

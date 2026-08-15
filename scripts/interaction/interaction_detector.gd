@@ -38,7 +38,20 @@ func try_interact() -> bool:
 	refresh_candidate()
 	if not is_instance_valid(current_candidate):
 		return false
-	var interacted_candidate := current_candidate
+	return _perform_interaction(current_candidate)
+
+
+func try_interact_target(target: Node, max_actor_distance: float) -> bool:
+	if _actor == null or bool(_actor.get("movement_locked")) or GameState.is_paused:
+		return false
+	if not is_valid_interactable(target, _actor):
+		return false
+	if _actor.global_position.distance_to((target as Node2D).global_position) > max_actor_distance:
+		return false
+	return _perform_interaction(target)
+
+
+func _perform_interaction(interacted_candidate: Node) -> bool:
 	interacted_candidate.interact(_actor)
 	if not is_instance_valid(interacted_candidate):
 		return true

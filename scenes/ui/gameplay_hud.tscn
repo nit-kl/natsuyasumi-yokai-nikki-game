@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/foundation_hud.gd" id="1_hud"]
 [ext_resource type="Texture2D" path="res://assets/ui/hud/ui_hud_status_panel.png" id="2_status"]
@@ -6,6 +6,30 @@
 [ext_resource type="Texture2D" path="res://assets/ui/hud/ui_hud_prompt_panel.png" id="4_prompt"]
 [ext_resource type="Texture2D" path="res://assets/ui/diary/icon_weather_sunny.png" id="5_weather"]
 [ext_resource type="Texture2D" path="res://assets/sprites/props/bug_net/prop_bug_net.png" id="6_net"]
+
+[sub_resource type="StyleBoxFlat" id="StyleDiaryNormal"]
+bg_color = Color(0.18, 0.28, 0.16, 0.94)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.74, 0.64, 0.38, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleDiaryHover"]
+bg_color = Color(0.27, 0.39, 0.20, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.94, 0.79, 0.40, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleDiaryPressed"]
+bg_color = Color(0.12, 0.21, 0.11, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.62, 0.72, 0.39, 1)
 
 [node name="GameplayHUD" type="CanvasLayer"]
 layer = 5
@@ -85,6 +109,22 @@ mouse_filter = 2
 texture = ExtResource("3_tool")
 expand_mode = 1
 
+[node name="DiaryButton" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 226.0
+offset_top = 10.0
+offset_right = 294.0
+offset_bottom = 40.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.94, 0.88, 0.68, 1)
+theme_override_colors/font_hover_color = Color(1, 0.93, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(0.82, 0.91, 0.62, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleDiaryNormal")
+theme_override_styles/hover = SubResource("StyleDiaryHover")
+theme_override_styles/pressed = SubResource("StyleDiaryPressed")
+text = "日記"
+
 [node name="ToolIcon" type="TextureRect" parent="ToolPanel"]
 texture_filter = 1
 offset_left = 7.0
@@ -103,7 +143,7 @@ offset_right = 119.0
 offset_bottom = 34.0
 theme_override_colors/font_color = Color(0.94, 0.88, 0.68, 1)
 theme_override_font_sizes/font_size = 10
-text = "X  虫取り網"
+text = "虫をクリック / X"
 
 [node name="PromptPanel" type="TextureRect" parent="."]
 unique_name_in_owner = true
@@ -125,7 +165,7 @@ offset_right = 283.0
 offset_bottom = 35.0
 theme_override_colors/font_color = Color(0.24, 0.18, 0.10, 1)
 theme_override_font_sizes/font_size = 11
-text = "E / Z　調べる"
+text = "左クリック / E / Z　調べる"
 horizontal_alignment = 1
 
 [node name="NoticeTimer" type="Timer" parent="."]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=21 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/location_scene.gd" id="1_location"]
 [ext_resource type="Script" path="res://scripts/maps/greybox_map_visual.gd" id="2_visual"]
@@ -8,15 +8,16 @@
 [ext_resource type="PackedScene" path="res://scenes/yokai/kappa_glimpse.tscn" id="6_kappa"]
 [ext_resource type="Script" path="res://scripts/events/event_trigger_area.gd" id="7_event_trigger"]
 [ext_resource type="Texture2D" path="res://assets/maps/river/map_river.png" id="8_background"]
+[ext_resource type="NavigationPolygon" path="res://resources/navigation/river_navigation.tres" id="9_navigation"]
+[ext_resource type="Script" path="res://scripts/maps/foreground_occluder_2d.gd" id="10_occluder"]
+[ext_resource type="Script" path="res://scripts/insects/insect_area_spawner.gd" id="11_insect_spawner"]
+[ext_resource type="Resource" path="res://resources/insects/spawn_profiles/river_aburazemi.tres" id="12_insect_profile"]
 
 [sub_resource type="RectangleShape2D" id="BoundaryHorizontal"]
 size = Vector2(640, 16)
 
 [sub_resource type="RectangleShape2D" id="BoundaryVertical"]
-size = Vector2(16, 360)
-
-[sub_resource type="RectangleShape2D" id="WaterCollision"]
-size = Vector2(640, 152)
+size = Vector2(16, 162)
 
 [sub_resource type="RectangleShape2D" id="DoorArea"]
 size = Vector2(48, 72)
@@ -39,6 +40,13 @@ texture_filter = 1
 position = Vector2(320, 180)
 texture = ExtResource("8_background")
 
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = ExtResource("9_navigation")
+
+[node name="NavigationBakeBounds" type="Polygon2D" parent="."]
+visible = false
+polygon = PackedVector2Array(8, 190, 632, 190, 632, 352, 8, 352)
+
 [node name="Water" type="TileMapLayer" parent="."]
 
 [node name="DetailsBack" type="TileMapLayer" parent="."]
@@ -50,43 +58,69 @@ layout = 2
 
 [node name="Collision" type="TileMapLayer" parent="."]
 
-[node name="GreyboxCollision" type="StaticBody2D" parent="."]
+[node name="WorldCollision" type="StaticBody2D" parent="."]
+groups = ["navigation_bake_source"]
 collision_layer = 2
 collision_mask = 0
 
-[node name="Top" type="CollisionShape2D" parent="GreyboxCollision"]
-position = Vector2(320, -8)
+[node name="BottomBoundary" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(320, 360)
 shape = SubResource("BoundaryHorizontal")
+metadata/navigation_bake_exclude = true
 
-[node name="Bottom" type="CollisionShape2D" parent="GreyboxCollision"]
-position = Vector2(320, 368)
-shape = SubResource("BoundaryHorizontal")
-
-[node name="Left" type="CollisionShape2D" parent="GreyboxCollision"]
-position = Vector2(-8, 180)
+[node name="LeftBoundary" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(0, 271)
 shape = SubResource("BoundaryVertical")
+metadata/navigation_bake_exclude = true
 
-[node name="Right" type="CollisionShape2D" parent="GreyboxCollision"]
-position = Vector2(648, 180)
+[node name="RightBoundary" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(640, 271)
 shape = SubResource("BoundaryVertical")
+metadata/navigation_bake_exclude = true
 
-[node name="WaterBoundary" type="CollisionShape2D" parent="GreyboxCollision"]
-position = Vector2(320, 124)
-shape = SubResource("WaterCollision")
+[node name="RiverWater" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(8, 0, 632, 0, 632, 220, 596, 220, 578, 226, 542, 222, 520, 230, 488, 226, 460, 234, 430, 228, 400, 232, 368, 224, 340, 230, 310, 224, 280, 232, 250, 226, 218, 232, 190, 224, 160, 230, 132, 224, 104, 232, 72, 226, 48, 234, 8, 230)
+
+[node name="LeftShrub" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(8, 230, 48, 234, 55, 252, 55, 310, 8, 320)
+
+[node name="LeftHydrangea" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(78, 284, 128, 284, 140, 318, 78, 320)
+
+[node name="RightRocks" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(540, 270, 632, 270, 632, 306, 590, 300, 560, 312, 530, 304)
+
+[node name="BottomVegetation" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(8, 312, 48, 312, 60, 304, 100, 304, 120, 310, 150, 300, 190, 300, 220, 296, 250, 302, 280, 298, 310, 302, 340, 298, 370, 302, 400, 298, 430, 302, 460, 292, 500, 298, 530, 288, 560, 296, 590, 286, 632, 292, 632, 352, 8, 352)
 
 [node name="Objects" type="Node2D" parent="."]
 
 [node name="ReturnHome" type="Area2D" parent="Objects"]
-position = Vector2(24, 264)
+position = Vector2(64, 264)
 collision_layer = 4
 collision_mask = 0
 script = ExtResource("5_door")
 interaction_text = "家の方へ戻る"
-destination_scene = "res://scenes/maps/village/home_outdoor.tscn"
-destination_spawn_id = &"river_path"
+destination_scene = "res://scenes/maps/river/river_entrance.tscn"
+destination_spawn_id = &"from_river"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/ReturnHome"]
 shape = SubResource("DoorArea")
+
+[node name="InsectSpawner" type="Node" parent="Objects"]
+script = ExtResource("11_insect_spawner")
+profile = ExtResource("12_insect_profile")
+
+[node name="SpawnPoints" type="Node2D" parent="Objects/InsectSpawner"]
+
+[node name="LeftBank" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
+position = Vector2(192, 264)
+
+[node name="CenterBank" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
+position = Vector2(352, 280)
+
+[node name="RightBank" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
+position = Vector2(520, 264)
 
 [node name="NPCs" type="Node2D" parent="."]
 
@@ -120,7 +154,7 @@ shape = SubResource("SightingTriggerArea")
 [node name="SpawnPoints" type="Node2D" parent="."]
 
 [node name="HomePath" type="Marker2D" parent="SpawnPoints"]
-position = Vector2(72, 264)
+position = Vector2(96, 264)
 script = ExtResource("4_spawn")
 spawn_id = &"home_path"
 facing = &"right"
@@ -132,5 +166,31 @@ spawn_id = &"kappa_bank"
 facing = &"up"
 
 [node name="Foreground" type="TileMapLayer" parent="."]
+
+[node name="ForegroundOccluders" type="Node2D" parent="."]
+
+[node name="LeftShrub" type="Polygon2D" parent="ForegroundOccluders"]
+texture_filter = 1
+texture = ExtResource("8_background")
+polygon = PackedVector2Array(0, 208, 70, 208, 70, 278, 56, 302, 0, 322)
+uv = PackedVector2Array(0, 208, 70, 208, 70, 278, 56, 302, 0, 322)
+script = ExtResource("10_occluder")
+occlusion_y = 322.0
+
+[node name="LeftHydrangea" type="Polygon2D" parent="ForegroundOccluders"]
+texture_filter = 1
+texture = ExtResource("8_background")
+polygon = PackedVector2Array(72, 278, 154, 278, 154, 352, 72, 352)
+uv = PackedVector2Array(72, 278, 154, 278, 154, 352, 72, 352)
+script = ExtResource("10_occluder")
+occlusion_y = 352.0
+
+[node name="BottomFence" type="Polygon2D" parent="ForegroundOccluders"]
+texture_filter = 1
+texture = ExtResource("8_background")
+polygon = PackedVector2Array(140, 288, 190, 288, 220, 290, 250, 292, 280, 290, 310, 294, 340, 290, 370, 294, 400, 290, 430, 294, 460, 284, 500, 290, 530, 280, 560, 288, 590, 278, 640, 284, 640, 352, 140, 352)
+uv = PackedVector2Array(140, 288, 190, 288, 220, 290, 250, 292, 280, 290, 310, 294, 340, 290, 370, 294, 400, 290, 430, 294, 460, 284, 500, 290, 530, 280, 560, 288, 590, 278, 640, 284, 640, 352, 140, 352)
+script = ExtResource("10_occluder")
+occlusion_y = 352.0
 
 [node name="LocationRuntime" parent="." instance=ExtResource("3_runtime")]

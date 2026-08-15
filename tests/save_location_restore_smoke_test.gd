@@ -11,7 +11,7 @@ class SaveLocationMonitor extends Node:
 	const TEST_SAVE_PATH := "user://save_location_restore_test.json"
 	const HOUSE_SCENE := "res://scenes/maps/grandma_house/grandma_house.tscn"
 	const RIVER_SCENE := "res://scenes/maps/river/river.tscn"
-	const SAVED_POSITION := Vector2(224, 160)
+	const SAVED_POSITION := Vector2(224, 184)
 
 
 	func run() -> void:

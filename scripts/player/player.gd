@@ -25,9 +25,13 @@ var movement_locked: bool = false
 var is_moving: bool = false
 var is_running: bool = false
 
+@onready var click_move_controller := get_node_or_null("%ClickMoveController") as ClickMoveController
+@onready var click_action_controller := get_node_or_null("%ClickActionController") as ClickActionController
+
 
 func _ready() -> void:
 	GameState.register_player(self)
+	refresh_depth_order()
 	var interaction_detector := get_node_or_null("InteractionDetector")
 	if interaction_detector != null:
 		interaction_detector.candidate_changed.connect(_on_interaction_candidate_changed)
@@ -45,15 +49,30 @@ func _exit_tree() -> void:
 
 func _physics_process(_delta: float) -> void:
 	if movement_locked or GameState.is_paused:
+		if click_action_controller != null:
+			click_action_controller.cancel_action()
+		if click_move_controller != null:
+			click_move_controller.cancel_movement()
 		_apply_movement(Vector2.ZERO, false)
 		return
 	var input_direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	if not input_direction.is_zero_approx():
+		if click_action_controller != null:
+			click_action_controller.cancel_action()
+		if click_move_controller != null:
+			click_move_controller.cancel_movement()
+	elif click_move_controller != null:
+		input_direction = click_move_controller.get_movement_direction()
 	_apply_movement(input_direction, Input.is_action_pressed("run"))
 
 
 func set_movement_locked(value: bool) -> void:
 	movement_locked = value
 	if movement_locked:
+		if click_action_controller != null:
+			click_action_controller.cancel_action()
+		if click_move_controller != null:
+			click_move_controller.cancel_movement()
 		_apply_movement(Vector2.ZERO, false)
 
 
@@ -73,6 +92,18 @@ func _apply_movement(direction: Vector2, wants_to_run: bool) -> void:
 		is_running = next_is_running
 		movement_changed.emit(is_moving, is_running)
 	move_and_slide()
+	refresh_depth_order()
+
+
+func refresh_depth_order() -> void:
+	z_index = roundi(_get_foot_y())
+
+
+func _get_foot_y() -> float:
+	var collision := get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if collision == null or collision.shape == null:
+		return global_position.y
+	return collision.to_global(Vector2(0.0, collision.shape.get_rect().end.y)).y
 
 
 func _set_facing(value: StringName) -> void:

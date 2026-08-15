@@ -52,7 +52,7 @@ class ReturnHomeMonitor extends Node:
 		if CalendarManager.day_index != 4 or GameClock.time_minutes != 420:
 			_fail("Closing the review should advance to the next morning.")
 			return
-		if not is_instance_valid(GameState.player) or GameState.player.global_position != Vector2(112, 136):
+		if not is_instance_valid(GameState.player) or GameState.player.global_position != Vector2(142, 174):
 			_fail("Next morning should place the player in the bedroom.")
 			return
 		# A regular diary open/close is not a day-completion action.

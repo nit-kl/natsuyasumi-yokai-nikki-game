@@ -251,6 +251,8 @@ Production:
 
 - [x] Scene / TileMapLayer / Collision / 出入口
 - [x] 640x360 Production室内背景プレート（寝室、居間、台所、縁側）
+- [x] 寝室独立エリア背景（1672x941 Source / 640x360 Production）
+- [x] 居間・台所分割用背景（1672x941 Source / 640x360 Production、後続差し替え候補）
 - [ ] 再利用用32x32 modular TileSetへの分解
 
 ### 外観
@@ -273,7 +275,7 @@ Production:
 ### Furniture
 - [x] chabudai（背景プレート）
 - [x] cushion（背景プレート）
-- [x] fan（背景プレート）
+- [ ] fan（寝室内の通路を妨げるため撤去）
 - [x] TV（背景プレート）
 - [x] cabinet（背景プレート）
 - [x] refrigerator（背景プレート）
@@ -303,6 +305,7 @@ Production:
 
 - [x] Scene / Water Layer / Collision / 帰路
 - [x] 640x360 Production背景プレート（水面、浅瀬、川岸、土道、草花）
+- [x] 川入口独立エリア背景（1672x941 Source / 640x360 Production）
 - [x] ripple VFX（4 frame）
 - [ ] 再利用用32x32 modular TileSetへの分解
 
@@ -331,6 +334,9 @@ Production:
 
 - [x] Scene / TileMapLayer / Collision / 出入口
 - [x] 640x360 Production背景プレート（家、田舎道、田んぼ、用水路、庭）
+- [x] 縁側・庭独立エリア背景（1672x941 Source / 640x360 Production）
+- [x] 田んぼ道独立エリア背景（1672x941 Source / 640x360 Production）
+- [x] 用水路・木陰独立エリア背景（1672x941 Source / 640x360 Production）
 - [ ] 再利用用32x32 modular TileSetへの分解
 - [ ] rice field
 - [ ] dirt road
@@ -363,6 +369,7 @@ Production:
 - [ ] nokogiri_kuwagata
 - [ ] miyama_kuwagata
 - [x] aburazemi（Vertical Slice用Production Sprite）
+- [x] aburazemi area spawn profiles（家周辺0〜2、川0〜1、Day 1最低1匹）
 - [ ] minminzemi
 - [ ] higurashi
 - [ ] oniyanma
@@ -431,6 +438,15 @@ Vertical Slice必須:
 
 ---
 
+## Dialogue
+
+- [x] dialogue panel（560x132 Production Pixel Art）
+- [x] speaker name tag（会話枠へ統合）
+- [x] choice button（240x42、focus / hover / pressed状態）
+- [ ] character portrait
+
+---
+
 # 8. Audio
 
 Vertical Slice:
@@ -441,11 +457,11 @@ Vertical Slice:
 - [x] river loop
 - [x] evening higurashi
 - [x] grandma house interior
-- [ ] bug catch SFX
+- [x] bug catch SFX（swing / success）
 - [x] water ripple
 - [x] kappa subtle cue
-- [ ] page turn
-- [ ] menu confirm/cancel
+- [x] page turn
+- [x] UI confirm/cancel（短いmono Ogg、会話決定・日記を閉じる操作）
 
 ---
 
@@ -456,46 +472,66 @@ Art direction benchmark:
 - [x] 家周辺・主人公・田園・用水路の代表画面（Production Tile / Spriteではない）
 
 ### Characters
-- [ ] protagonist production sprites
-- [ ] grandma production sprites
-- [ ] kappa production sprites（surface / diveのみ完成）
+- [x] protagonist production sprites（Vertical Slice用4方向）
+- [x] grandma production sprites（Vertical Slice用4方向）
+- [x] kappa production sprites（Vertical Slice用surface / dive）
 
 ### Map
-- [ ] grandma house
-- [ ] house exterior
-- [ ] road
-- [ ] river
-- [ ] bridge
+- [x] grandma house（640x360背景プレート）
+- [x] house exterior（家周辺背景プレートへ統合）
+- [x] road（家周辺・川背景プレートへ統合）
+- [x] river（640x360背景プレート）
+- [ ] bridge（現Vertical Slice経路では未使用）
 
 ### Nature
-- [ ] tree
-- [ ] grass
-- [ ] rice
-- [ ] rocks
-- [ ] flower
-- [ ] hydrangea
+- [x] tree（背景プレートへ統合）
+- [x] grass（背景プレートへ統合）
+- [x] rice（家周辺背景プレートへ統合）
+- [x] rocks（背景プレートへ統合）
+- [x] flower（背景プレートへ統合）
+- [x] hydrangea（背景プレートへ統合）
 
 ### Props
-- [ ] utility pole
-- [ ] guard rail
-- [ ] bicycle
-- [ ] bug net
-- [ ] insect cage
-- [ ] fan
-- [ ] wind chime
-- [ ] mosquito coil
+- [x] utility pole（家周辺背景プレートへ統合）
+- [ ] guard rail（現Vertical Slice経路では未使用）
+- [ ] bicycle（現Vertical Sliceでは未使用）
+- [x] bug net（Player操作用Production Sprite）
+- [ ] insect cage（現Vertical Sliceでは未使用）
+- [ ] fan（寝室内の通路を妨げるため撤去）
+- [x] wind chime（祖母の家背景プレートへ統合）
+- [x] mosquito coil（祖母の家背景プレートへ統合）
 
 ### Creatures
-- [ ] kabutomushi
-- [ ] semi
-- [ ] tonbo
+- [ ] kabutomushi（現Vertical Sliceでは未使用）
+- [x] semi（aburazemi Production Sprite）
+- [ ] tonbo（現Vertical Sliceでは未使用）
 
 ### UI
 - [x] minimal HUD
-- [ ] interaction
-- [ ] diary
+- [x] interaction（状況依存Prompt）
+- [x] diary（表紙・日別ページ・記録印）
 
 ### Time
-- [ ] morning palette
-- [ ] daytime palette
-- [ ] evening palette
+- [x] morning palette（soft golden）
+- [x] daytime palette（light summer warmth）
+- [x] evening palette（nostalgic orange）
+- [x] night palette（readable blue-gray）
+
+---
+
+## 10. Vertical Slice Area Subdivision — Issue #069
+
+新規背景はReference SheetのCropではなく、既存Production画面とReferenceを画風・密度の基準として
+独立生成した背景である。`*_source.png`は生成原寸（1672x941）、Sceneが参照する同名の
+`map_*.png`はNearestで640x360へ縮小したProduction版とする。
+
+| Area | Production asset | Source asset | Scene usage |
+|---|---|---|---|
+| 寝室 | `assets/maps/bedroom/map_bedroom.png` | `assets/maps/bedroom/map_bedroom_source.png` | 使用中 |
+| 縁側・庭 | `assets/maps/engawa_yard/map_engawa_yard.png` | `assets/maps/engawa_yard/map_engawa_yard_source.png` | 使用中 |
+| 田んぼ道 | `assets/maps/paddy_road/map_paddy_road.png` | `assets/maps/paddy_road/map_paddy_road_source.png` | 使用中 |
+| 用水路の木陰 | `assets/maps/irrigation_shade/map_irrigation_shade.png` | `assets/maps/irrigation_shade/map_irrigation_shade_source.png` | 使用中 |
+| 川入口 | `assets/maps/river_entrance/map_river_entrance.png` | `assets/maps/river_entrance/map_river_entrance_source.png` | 使用中 |
+| 居間・台所候補 | `assets/maps/grandma_house_living/map_grandma_house_living.png` | `assets/maps/grandma_house_living/map_grandma_house_living_source.png` | 未接続。既存NPC・帰宅Flowを維持するため後続Issue候補 |
+
+既存の`grandma_house`と`river`背景は継続使用する。Production Sceneは`*_source.png`を参照しない。

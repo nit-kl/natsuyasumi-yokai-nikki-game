@@ -1,0 +1,94 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/maps/location_scene.gd" id="1_location"]
+[ext_resource type="PackedScene" path="res://scenes/maps/common/location_runtime.tscn" id="2_runtime"]
+[ext_resource type="Script" path="res://scripts/maps/map_spawn_point.gd" id="3_spawn"]
+[ext_resource type="Script" path="res://scripts/maps/map_doorway.gd" id="4_door"]
+[ext_resource type="Texture2D" path="res://assets/maps/river_entrance/map_river_entrance.png" id="5_background"]
+[ext_resource type="Script" path="res://scripts/insects/insect_area_spawner.gd" id="6_spawner"]
+[ext_resource type="Resource" path="res://resources/insects/spawn_profiles/outdoor_aburazemi.tres" id="7_profile"]
+[sub_resource type="NavigationPolygon" id="Navigation"]
+vertices = PackedVector2Array(16, 150, 624, 150, 624, 260, 16, 260)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(8, 142, 632, 142, 632, 268, 8, 268)])
+agent_radius = 7.0
+[sub_resource type="RectangleShape2D" id="BoundaryHorizontal"]
+size = Vector2(640, 16)
+[sub_resource type="RectangleShape2D" id="BoundaryVertical"]
+size = Vector2(16, 142)
+[sub_resource type="RectangleShape2D" id="DoorArea"]
+size = Vector2(48, 64)
+[node name="RiverEntrance" type="Node2D"]
+script = ExtResource("1_location")
+area_id = &"river_entrance"
+default_spawn_id = &"from_shade"
+[node name="Ground" type="TileMapLayer" parent="."]
+[node name="ProductionBackground" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(320, 180)
+texture = ExtResource("5_background")
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("Navigation")
+[node name="Collision" type="TileMapLayer" parent="."]
+[node name="WorldCollision" type="StaticBody2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+[node name="Top" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(320, 134)
+shape = SubResource("BoundaryHorizontal")
+[node name="Bottom" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(320, 276)
+shape = SubResource("BoundaryHorizontal")
+[node name="Left" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(0, 205)
+shape = SubResource("BoundaryVertical")
+[node name="Right" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(640, 205)
+shape = SubResource("BoundaryVertical")
+[node name="Objects" type="Node2D" parent="."]
+[node name="BackToShade" type="Area2D" parent="Objects"]
+position = Vector2(24, 215)
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("4_door")
+interaction_text = "用水路沿いへ戻る"
+destination_scene = "res://scenes/maps/village/irrigation_shade.tscn"
+destination_spawn_id = &"from_river"
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/BackToShade"]
+shape = SubResource("DoorArea")
+[node name="ToRiverDepths" type="Area2D" parent="Objects"]
+position = Vector2(616, 215)
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("4_door")
+interaction_text = "川沿いを進む"
+destination_scene = "res://scenes/maps/river/river.tscn"
+destination_spawn_id = &"home_path"
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/ToRiverDepths"]
+shape = SubResource("DoorArea")
+[node name="InsectSpawner" type="Node" parent="Objects"]
+script = ExtResource("6_spawner")
+profile = ExtResource("7_profile")
+[node name="SpawnPoints" type="Node2D" parent="Objects/InsectSpawner"]
+[node name="WestHydrangea" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
+position = Vector2(170, 225)
+[node name="BridgeGrass" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
+position = Vector2(330, 245)
+[node name="EastBank" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
+position = Vector2(500, 220)
+[node name="NPCs" type="Node2D" parent="."]
+[node name="Yokai" type="Node2D" parent="."]
+[node name="EventTriggers" type="Node2D" parent="."]
+[node name="SpawnPoints" type="Node2D" parent="."]
+[node name="FromShade" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(64, 215)
+script = ExtResource("3_spawn")
+spawn_id = &"from_shade"
+facing = &"right"
+[node name="FromRiver" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(576, 215)
+script = ExtResource("3_spawn")
+spawn_id = &"from_river"
+facing = &"left"
+[node name="Foreground" type="TileMapLayer" parent="."]
+[node name="LocationRuntime" parent="." instance=ExtResource("2_runtime")]

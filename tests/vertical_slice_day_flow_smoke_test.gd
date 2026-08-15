@@ -9,13 +9,19 @@ func _ready() -> void:
 
 class VerticalSliceDayMonitor extends Node:
 	const HOUSE_SCENE := "res://scenes/maps/grandma_house/grandma_house.tscn"
-	const OUTDOOR_SCENE := "res://scenes/maps/village/home_outdoor.tscn"
+	const BEDROOM_SCENE := "res://scenes/maps/bedroom/bedroom.tscn"
+	const ENGAWA_SCENE := "res://scenes/maps/village/engawa_yard.tscn"
+	const PADDY_SCENE := "res://scenes/maps/village/paddy_road.tscn"
+	const IRRIGATION_SCENE := "res://scenes/maps/village/irrigation_shade.tscn"
+	const RIVER_ENTRANCE_SCENE := "res://scenes/maps/river/river_entrance.tscn"
 	const RIVER_SCENE := "res://scenes/maps/river/river.tscn"
 
 
 	func run() -> void:
 		_reset_slice_state()
-		if not await _open_scene(HOUSE_SCENE, &"bedroom"):
+		if not await _open_scene(BEDROOM_SCENE, &"wake_up"):
+			return
+		if not await _open_scene(HOUSE_SCENE, &"bedroom_entry"):
 			return
 		var house := get_tree().current_scene
 		var grandma := house.get_node("NPCs/Grandma") as NPC
@@ -37,7 +43,7 @@ class VerticalSliceDayMonitor extends Node:
 			return
 		house_dialogue.finish_dialogue()
 
-		if not await _open_scene(OUTDOOR_SCENE, &"house_exit"):
+		if not await _open_scene(ENGAWA_SCENE, &"house_exit"):
 			return
 		var outdoor := get_tree().current_scene
 		var insect := outdoor.get_node("Objects/Aburazemi") as Insect
@@ -48,6 +54,12 @@ class VerticalSliceDayMonitor extends Node:
 			_fail("The outdoor aburazemi should be catchable in the day flow.")
 			return
 
+		if not await _open_scene(PADDY_SCENE, &"from_home"):
+			return
+		if not await _open_scene(IRRIGATION_SCENE, &"from_paddy"):
+			return
+		if not await _open_scene(RIVER_ENTRANCE_SCENE, &"from_shade"):
+			return
 		if not await _open_scene(RIVER_SCENE, &"home_path"):
 			return
 		var river := get_tree().current_scene
@@ -63,7 +75,13 @@ class VerticalSliceDayMonitor extends Node:
 			_fail("The kappa glimpse should turn the slice toward evening.")
 			return
 
-		if not await _open_scene(OUTDOOR_SCENE, &"river_path"):
+		if not await _open_scene(RIVER_ENTRANCE_SCENE, &"from_river"):
+			return
+		if not await _open_scene(IRRIGATION_SCENE, &"from_river"):
+			return
+		if not await _open_scene(PADDY_SCENE, &"from_shade"):
+			return
+		if not await _open_scene(ENGAWA_SCENE, &"from_fields"):
 			return
 		if not await _open_scene(HOUSE_SCENE, &"entrance"):
 			return
@@ -104,12 +122,13 @@ class VerticalSliceDayMonitor extends Node:
 			_fail("Could not open %s." % path)
 			return false
 		await get_tree().process_frame
+		await get_tree().process_frame
 		return true
 
 
 	func _validate_completed_slice(house: Node) -> void:
 		var record := DiaryManager.get_or_create_record(1)
-		var expected_locations: Array[StringName] = [&"grandma_house", &"home_outdoor", &"river"]
+		var expected_locations: Array[StringName] = [&"bedroom", &"grandma_house", &"engawa_yard", &"paddy_road", &"irrigation_shade", &"river_entrance", &"river"]
 		for location_id in expected_locations:
 			if not record.visited_locations.has(location_id):
 				_fail("Day record is missing location %s." % location_id)

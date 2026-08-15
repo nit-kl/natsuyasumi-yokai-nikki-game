@@ -10,8 +10,13 @@ enum DiaryView {
 }
 
 const DISPLAY_NAMES := {
+	&"bedroom": "寝室",
 	&"grandma_house": "祖母の家",
 	&"home_outdoor": "家のまわり",
+	&"engawa_yard": "縁側と庭",
+	&"paddy_road": "田んぼ道",
+	&"irrigation_shade": "用水路の木陰",
+	&"river_entrance": "川の入口",
 	&"river": "川辺",
 	&"grandma": "おばあちゃん",
 	&"kappa": "河童",
@@ -26,8 +31,11 @@ const WEATHER_NAMES := {
 }
 
 @onready var panel: Control = %Panel
+@onready var page_turn_audio: AudioStreamPlayer = %PageTurnAudio
+@onready var cancel_audio: AudioStreamPlayer = %CancelAudio
 @onready var cover: Control = %Cover
-@onready var cover_hint: Label = %CoverHint
+@onready var cover_hint: Button = %CoverHint
+@onready var close_button: Button = %CloseButton
 @onready var notebook: TextureRect = %Notebook
 @onready var title_label: Label = %TitleLabel
 @onready var body_label: Label = %BodyLabel
@@ -47,6 +55,9 @@ var _page_turn_tween: Tween
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	add_to_group("diary_ui")
+	cover_hint.pressed.connect(_on_page_turn_pressed)
+	close_button.pressed.connect(_on_close_pressed)
 	panel.visible = false
 	_show_cover()
 
@@ -59,10 +70,13 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("open_diary") and not GameState.is_paused:
 		if not panel.visible and is_instance_valid(GameState.player) and GameState.player.movement_locked:
 			return
-		set_open(not panel.visible)
+		if panel.visible:
+			_close_with_feedback()
+		else:
+			set_open(true)
 		get_viewport().set_input_as_handled()
 	elif panel.visible and event.is_action_pressed("pause"):
-		set_open(false)
+		_close_with_feedback()
 		get_viewport().set_input_as_handled()
 
 
@@ -98,6 +112,21 @@ func is_open() -> bool:
 
 func is_showing_cover() -> bool:
 	return panel.visible and _current_view == DiaryView.COVER
+
+
+func _close_with_feedback() -> void:
+	cancel_audio.play()
+	set_open(false)
+
+
+func _on_page_turn_pressed() -> void:
+	if panel.visible and _current_view == DiaryView.COVER and not _is_transitioning:
+		_show_daily_page(true)
+
+
+func _on_close_pressed() -> void:
+	if panel.visible:
+		_close_with_feedback()
 
 
 func refresh(day_index: int = CalendarManager.day_index) -> void:
@@ -162,6 +191,7 @@ func _show_daily_page(animated: bool) -> void:
 		notebook.scale = Vector2.ONE
 		return
 	_is_transitioning = true
+	page_turn_audio.play()
 	cover.visible = true
 	cover.modulate = Color.WHITE
 	cover.scale = Vector2.ONE

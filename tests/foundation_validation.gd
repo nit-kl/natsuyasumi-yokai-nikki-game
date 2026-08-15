@@ -14,6 +14,7 @@ const DayPeriodPaletteResource = preload("res://scripts/core/day_period_palette.
 const DayPeriodVisualControllerComponent = preload("res://scripts/core/day_period_visual_controller.gd")
 const InsectDataResource = preload("res://scripts/insects/insect_data.gd")
 const InsectController = preload("res://scripts/insects/insect.gd")
+const InsectSpawnProfileResource = preload("res://scripts/insects/insect_spawn_profile.gd")
 const BugCatcherComponent = preload("res://scripts/player/bug_catcher.gd")
 const BugCatchPresenterComponent = preload("res://scripts/player/bug_catch_presenter.gd")
 const EventConditionResource = preload("res://scripts/events/event_condition.gd")
@@ -62,6 +63,7 @@ func _run() -> void:
 	_test_return_home_rules()
 	_test_location_catalog()
 	_test_insect_entity()
+	_test_insect_spawn_profiles()
 	_test_bug_catching()
 	_test_world_and_yokai_state()
 	_test_event_manager()
@@ -198,6 +200,16 @@ func _test_player_animation_state() -> void:
 	var player := player_scene.instantiate()
 	add_child(player)
 	var animation_controller := player.get_node("AnimatedSprite2D") as PlayerAnimationController
+	var navigation_agent := player.get_node_or_null("NavigationAgent") as NavigationAgent2D
+	var click_move := player.get_node_or_null("ClickMoveController") as ClickMoveController
+	var click_action := player.get_node_or_null("ClickActionController") as ClickActionController
+	var destination_marker := player.get_node_or_null("ClickDestinationMarker") as ClickDestinationMarker
+	var target_hover := player.get_node_or_null("ClickTargetHover") as ClickTargetHoverController
+	_expect(navigation_agent != null, "Player scene should include click-navigation pathfinding")
+	_expect(click_move != null, "Player scene should include the click movement controller")
+	_expect(click_action != null, "Player scene should include click-to-approach actions")
+	_expect(destination_marker != null, "Player scene should include the click destination marker")
+	_expect(target_hover != null, "Player scene should include target hover feedback")
 	_expect(animation_controller != null, "Player scene should include the animation controller")
 	if animation_controller != null:
 		animation_controller.set_visual_state(&"down_right", true, false)
@@ -276,6 +288,15 @@ func _test_dialogue_resources() -> void:
 func _test_dialogue_flow() -> void:
 	var controller: DialogueController = load("res://scenes/ui/dialogue_ui.tscn").instantiate()
 	add_child(controller)
+	var confirm_audio := controller.get_node_or_null("ConfirmAudio") as AudioStreamPlayer
+	_expect(confirm_audio != null and confirm_audio.stream != null, "Dialogue confirmation should have a production audio cue")
+	if confirm_audio != null and confirm_audio.stream != null:
+		_expect(confirm_audio.stream.get_length() < 0.5, "UI confirmation cue should stay short")
+		_expect(not (confirm_audio.stream as AudioStreamOggVorbis).loop, "UI confirmation cue should not loop")
+	var dialogue_panel := controller.get_node_or_null("Panel") as TextureRect
+	_expect(dialogue_panel != null and dialogue_panel.texture != null, "Dialogue UI should use the production paper panel")
+	if dialogue_panel != null and dialogue_panel.texture != null:
+		_expect(dialogue_panel.texture.get_size() == Vector2(560, 132), "Dialogue production panel should match its pixel-art canvas")
 	var actor := PlayerController.new()
 	add_child(actor)
 	var line_a := DialogueLineData.new()
@@ -298,14 +319,23 @@ func _test_dialogue_flow() -> void:
 	_expect(controller.current_line_index == 0, "Dialogue should start from the first line")
 	controller.advance()
 	_expect(controller.current_line_index == 1, "Advance should show the next line")
+	_expect(confirm_audio.playing, "Advancing dialogue should play the confirmation cue")
+	_expect(controller.choices_container.get_child_count() == 1, "Choice line should create its production choice button")
+	if controller.choices_container.get_child_count() == 1:
+		var production_choice := controller.choices_container.get_child(0) as Button
+		_expect(production_choice.custom_minimum_size == Vector2(240, 42), "Dialogue choice should match its production frame")
+		_expect(production_choice.get_theme_stylebox("normal") is StyleBoxTexture, "Dialogue choice should use the production texture style")
 	controller.advance()
 	_expect(controller.current_line_index == 1, "Choice line should not advance without a choice")
-	_expect(controller.choose(0), "Valid choice should be accepted")
-	_expect(controller.current_line_index == 2, "Choice should branch to configured line")
+	var choice_button := controller.choices_container.get_child(0) as Button
+	choice_button.pressed.emit()
+	_expect(confirm_audio.playing, "Choosing a dialogue option should play the confirmation cue")
+	_expect(controller.current_line_index == 2, "Clicking a valid choice should branch to its configured line")
 	controller.advance()
 	_expect(not controller.is_active(), "Dialogue should finish after the last line")
 	_expect(not actor.movement_locked, "Dialogue finish should unlock actor movement")
 	_expect(not GameClock.is_paused, "Dialogue finish should restore the previous clock pause state")
+	confirm_audio.stop()
 	controller.queue_free()
 	actor.queue_free()
 
@@ -350,6 +380,13 @@ func _test_day_period_palette() -> void:
 	_expect(palette.get_color(&"daytime") == palette.daytime, "Daytime should use daytime palette color")
 	_expect(palette.get_color(&"evening") == palette.evening, "Evening should use evening palette color")
 	_expect(palette.get_color(&"night") == palette.night, "Night should use night palette color")
+	_expect(palette.get_color(&"unknown") == palette.daytime, "Unknown periods should fall back to daytime")
+	var production: DayPeriodPalette = load("res://resources/locations/default_day_period_palette.tres")
+	_expect(production.morning.is_equal_approx(Color("fff0d2")), "Production morning should use the soft golden tint")
+	_expect(production.daytime.is_equal_approx(Color("fffaf2")), "Production daytime should retain a slight summer warmth")
+	_expect(production.evening.is_equal_approx(Color("f2ae7d")), "Production evening should use the nostalgic orange tint")
+	_expect(production.night.is_equal_approx(Color("7888ad")), "Production night should use the readable blue-gray tint")
+	_expect(production.night.r >= 0.45 and production.night.g >= 0.5, "Production night should remain bright enough for exploration")
 
 
 func _test_day_period_visual_controller() -> void:
@@ -359,6 +396,13 @@ func _test_day_period_visual_controller() -> void:
 	add_child(controller)
 	controller.apply_period(&"evening", true)
 	_expect(controller.color == controller.palette.evening, "Visual controller should apply period color")
+	controller.transition_seconds = 3.0
+	controller.apply_period(&"evening")
+	_expect(controller._transition_tween == null, "Visual controller should skip no-op period transitions")
+	controller.apply_period(&"night")
+	_expect(controller._transition_tween != null, "Visual controller should tween between different production periods")
+	controller.apply_period(&"morning", true)
+	_expect(controller._transition_tween == null and controller.color == controller.palette.morning, "Immediate period changes should cancel an active transition cleanly")
 	controller.queue_free()
 
 
@@ -421,16 +465,20 @@ func _test_location_maps() -> void:
 	var grandma := house.get_node_or_null("NPCs/Grandma") as NPC
 	_expect(grandma != null and grandma.sprite_frames != null, "Grandma should use her production sprite frames")
 	_expect(grandma.sprite_frames.get_frame_count(&"idle_down") == 1, "Grandma should provide a directional idle frame")
-	_expect(outdoor.get_node_or_null("Objects/Aburazemi") != null, "Outdoor map should contain the bug-catching target")
+	_expect(outdoor.get_node_or_null("Objects/InsectSpawner") is InsectAreaSpawner, "Outdoor map should generate its bug-catching target from an area profile")
 	var outdoor_background := outdoor.get_node_or_null("ProductionBackground") as Sprite2D
 	_expect(outdoor_background != null and outdoor_background.texture != null, "Outdoor map should use its production background")
 	_expect(outdoor_background.texture.get_size() == Vector2(640, 360), "Outdoor production background should match the base viewport")
 	_expect(not outdoor.get_node("GreyboxVisual").visible, "Outdoor greybox visual should be disabled after production art integration")
-	_expect(outdoor.get_node_or_null("GreyboxCollision/IrrigationWest") is CollisionShape2D, "Outdoor irrigation channel should block the rice-field side")
-	_expect(outdoor.get_node_or_null("GreyboxCollision/IrrigationEast") is CollisionShape2D, "Outdoor irrigation channel should block the garden side")
+	_expect(outdoor.get_node_or_null("WorldCollision/IrrigationWest") is CollisionPolygon2D, "Outdoor irrigation channel should follow the production rice-field side")
+	_expect(outdoor.get_node_or_null("WorldCollision/IrrigationEast") is CollisionPolygon2D, "Outdoor irrigation channel should follow the production garden side")
+	var outdoor_navigation := outdoor.get_node_or_null("NavigationRegion2D") as NavigationRegion2D
+	_expect(outdoor_navigation != null and outdoor_navigation.navigation_polygon.get_polygon_count() > 8, "Outdoor navigation should be baked around production geometry")
 	_expect(river.get_node_or_null("Water") is TileMapLayer, "River should expose a separate production Water layer")
 	_expect(river.get_node_or_null("Yokai/KappaGlimpse") != null, "River should contain the subtle kappa presenter")
-	_expect(river.get_node_or_null("GreyboxCollision/WaterBoundary") is CollisionShape2D, "River water should have a greybox boundary")
+	_expect(river.get_node_or_null("WorldCollision/RiverWater") is CollisionPolygon2D, "River water boundary should follow the production shoreline")
+	var river_navigation := river.get_node_or_null("NavigationRegion2D") as NavigationRegion2D
+	_expect(river_navigation != null and river_navigation.navigation_polygon != null, "River navigation should use a production resource")
 	var river_background := river.get_node_or_null("ProductionBackground") as Sprite2D
 	_expect(river_background != null and river_background.texture != null, "River map should use its production background")
 	_expect(river_background.texture.get_size() == Vector2(640, 360), "River production background should match the base viewport")
@@ -466,8 +514,13 @@ func _test_return_home_rules() -> void:
 
 
 func _test_location_catalog() -> void:
+	_expect(LocationCatalogData.get_scene_path(&"bedroom").ends_with("bedroom.tscn"), "Save location catalog should resolve the bedroom")
 	_expect(LocationCatalogData.get_scene_path(&"grandma_house").ends_with("grandma_house.tscn"), "Save location catalog should resolve grandma house")
 	_expect(LocationCatalogData.get_scene_path(&"home_outdoor").ends_with("home_outdoor.tscn"), "Save location catalog should resolve home outdoor")
+	_expect(LocationCatalogData.get_scene_path(&"engawa_yard").ends_with("engawa_yard.tscn"), "Save location catalog should resolve the engawa yard")
+	_expect(LocationCatalogData.get_scene_path(&"paddy_road").ends_with("paddy_road.tscn"), "Save location catalog should resolve the paddy road")
+	_expect(LocationCatalogData.get_scene_path(&"irrigation_shade").ends_with("irrigation_shade.tscn"), "Save location catalog should resolve the irrigation shade")
+	_expect(LocationCatalogData.get_scene_path(&"river_entrance").ends_with("river_entrance.tscn"), "Save location catalog should resolve the river entrance")
 	_expect(LocationCatalogData.get_scene_path(&"river").ends_with("river.tscn"), "Save location catalog should resolve river")
 	_expect(not LocationCatalogData.has_area(&"unknown_area"), "Unknown save locations should be rejected")
 
@@ -496,16 +549,91 @@ func _test_insect_entity() -> void:
 	insect.queue_free()
 
 
+func _test_insect_spawn_profiles() -> void:
+	var home_profile: InsectSpawnProfileResource = load("res://resources/insects/spawn_profiles/home_outdoor_aburazemi.tres")
+	var river_profile: InsectSpawnProfileResource = load("res://resources/insects/spawn_profiles/river_aburazemi.tres")
+	_expect(home_profile != null and home_profile.is_valid_profile(), "Home outdoor should use a valid insect spawn profile")
+	_expect(river_profile != null and river_profile.is_valid_profile(), "River should use a valid insect spawn profile")
+	if home_profile != null:
+		var rng := RandomNumberGenerator.new()
+		rng.seed = 1
+		_expect(home_profile.get_spawn_count(rng, 1) >= 1, "Day 1 should guarantee at least one tutorial insect")
+		_expect(home_profile.suppress_after_daily_catch, "Caught species should not respawn on same-day area re-entry")
+	var outdoor: Node = load("res://scenes/maps/village/home_outdoor.tscn").instantiate()
+	var river: Node = load("res://scenes/maps/river/river.tscn").instantiate()
+	_expect(outdoor.get_node_or_null("Objects/InsectSpawner") is InsectAreaSpawner, "Home outdoor should own an area insect spawner")
+	_expect(outdoor.get_node("Objects/InsectSpawner/SpawnPoints").get_child_count() >= 3, "Home outdoor should provide multiple habitat spawn points")
+	_expect(river.get_node_or_null("Objects/InsectSpawner") is InsectAreaSpawner, "River should own an area insect spawner")
+	_expect(river.get_node("Objects/InsectSpawner/SpawnPoints").get_child_count() >= 3, "River should provide multiple habitat spawn points")
+	outdoor.free()
+	river.free()
+	DiaryManager.reset_state()
+	CalendarManager.debug_set_day(1)
+	var first_location := _make_insect_spawn_test_location(home_profile)
+	var first_spawner := first_location.get_node("Objects/InsectSpawner") as InsectAreaSpawner
+	var first_spawn := first_spawner.spawn_for_current_day()
+	var first_positions: Array[Vector2] = []
+	for insect in first_spawn:
+		first_positions.append(insect.position)
+	var second_location := _make_insect_spawn_test_location(home_profile)
+	var second_spawner := second_location.get_node("Objects/InsectSpawner") as InsectAreaSpawner
+	var second_spawn := second_spawner.spawn_for_current_day()
+	var second_positions: Array[Vector2] = []
+	for insect in second_spawn:
+		second_positions.append(insect.position)
+	_expect(not first_spawn.is_empty(), "Day 1 area spawning should produce the guaranteed tutorial insect")
+	_expect(first_positions == second_positions, "Same day and area should reproduce stable insect placement")
+	DiaryManager.record_insect(&"aburazemi")
+	var caught_location := _make_insect_spawn_test_location(home_profile)
+	var caught_spawner := caught_location.get_node("Objects/InsectSpawner") as InsectAreaSpawner
+	_expect(caught_spawner.spawn_for_current_day().is_empty(), "A caught species should not respawn on same-day area re-entry")
+	first_location.free()
+	second_location.free()
+	caught_location.free()
+	DiaryManager.reset_state()
+
+
+func _make_insect_spawn_test_location(profile: InsectSpawnProfileResource) -> LocationScene:
+	var location := LocationScene.new()
+	location.area_id = &"spawn_test_area"
+	var objects := Node2D.new()
+	objects.name = "Objects"
+	location.add_child(objects)
+	var spawner := InsectAreaSpawner.new()
+	spawner.name = "InsectSpawner"
+	spawner.profile = profile
+	objects.add_child(spawner)
+	var points := Node2D.new()
+	points.name = "SpawnPoints"
+	spawner.add_child(points)
+	for index in range(3):
+		var point := Marker2D.new()
+		point.name = "Habitat%d" % index
+		point.position = Vector2(32.0 + index * 24.0, 64.0)
+		points.add_child(point)
+	return location
+
+
 func _test_bug_catching() -> void:
 	var player_scene: PackedScene = load("res://scenes/player/player.tscn")
 	var production_player := player_scene.instantiate()
 	add_child(production_player)
 	var presenter := production_player.get_node_or_null("BugCatchPresenter") as Node2D
 	var net_sprite := production_player.get_node_or_null("BugCatchPresenter/NetSprite") as Sprite2D
+	var swing_audio := production_player.get_node_or_null("BugCatchPresenter/SwingAudio") as AudioStreamPlayer2D
+	var success_audio := production_player.get_node_or_null("BugCatchPresenter/SuccessAudio") as AudioStreamPlayer2D
 	_expect(presenter != null, "Player scene should include the bug-catching presentation component")
 	_expect(net_sprite != null and net_sprite.texture != null, "Bug-catching presentation should use the production net sprite")
 	if net_sprite != null and net_sprite.texture != null:
 		_expect(net_sprite.texture.get_size() == Vector2(32, 48), "Bug net production sprite should match its pixel-art canvas")
+	_expect(swing_audio != null and swing_audio.stream != null, "Bug net swing should have a production audio cue")
+	_expect(success_audio != null and success_audio.stream != null, "Successful bug catch should have a production audio cue")
+	if swing_audio != null and swing_audio.stream != null:
+		_expect(swing_audio.stream.get_length() < 1.0, "Bug net swing cue should stay short")
+		_expect(not (swing_audio.stream as AudioStreamOggVorbis).loop, "Bug net swing cue should not loop")
+	if success_audio != null and success_audio.stream != null:
+		_expect(success_audio.stream.get_length() < 1.0, "Bug catch success cue should stay short")
+		_expect(not (success_audio.stream as AudioStreamOggVorbis).loop, "Bug catch success cue should not loop")
 	_expect(
 		is_equal_approx(BugCatchPresenterComponent.get_net_rotation_for_direction(Vector2.RIGHT), PI / 4.0),
 		"Bug net rotation should follow the player's facing direction",
@@ -514,6 +642,9 @@ func _test_bug_catching() -> void:
 	production_catcher.use_cooldown_seconds = 0.0
 	_expect(not production_catcher.attempt_catch(), "Using the production net without an insect should remain a miss")
 	_expect(net_sprite.visible, "Using the bug-catching tool should immediately show the net swing")
+	_expect(swing_audio.playing, "Using the bug-catching tool should play its swing cue")
+	swing_audio.stop()
+	success_audio.stop()
 	production_player.queue_free()
 	var actor := PlayerController.new()
 	var catcher := BugCatcherComponent.new()
@@ -640,6 +771,8 @@ func _test_day_record_and_diary() -> void:
 	_expect(formatted.contains("おばあちゃん") and formatted.contains("河童"), "Diary UI should format stable IDs as player-facing names")
 	var diary_scene: PackedScene = load("res://scenes/ui/diary_ui.tscn")
 	var diary := diary_scene.instantiate()
+	var page_turn_audio := diary.get_node_or_null("PageTurnAudio") as AudioStreamPlayer
+	var cancel_audio := diary.get_node_or_null("CancelAudio") as AudioStreamPlayer
 	var cover_art := diary.get_node_or_null("Panel/Cover/CoverArt") as TextureRect
 	var notebook := diary.get_node_or_null("Panel/Notebook") as TextureRect
 	var kappa_stamp := diary.get_node_or_null("Panel/Notebook/KappaStamp") as TextureRect
@@ -652,6 +785,14 @@ func _test_day_record_and_diary() -> void:
 		_expect(notebook.texture.get_size() == Vector2(512, 320), "Diary production page should match its pixel-art canvas")
 	_expect(kappa_stamp != null and kappa_stamp.texture != null, "Diary UI should include the kappa record stamp")
 	_expect(insect_stamp != null and insect_stamp.texture != null, "Diary UI should include the aburazemi record stamp")
+	_expect(page_turn_audio != null and page_turn_audio.stream != null, "Diary page transition should have a production audio cue")
+	if page_turn_audio != null and page_turn_audio.stream != null:
+		_expect(page_turn_audio.stream.get_length() < 1.0, "Diary page-turn cue should stay short")
+		_expect(not (page_turn_audio.stream as AudioStreamOggVorbis).loop, "Diary page-turn cue should not loop")
+	_expect(cancel_audio != null and cancel_audio.stream != null, "Closing the diary should have a production cancel cue")
+	if cancel_audio != null and cancel_audio.stream != null:
+		_expect(cancel_audio.stream.get_length() < 0.5, "UI cancel cue should stay short")
+		_expect(not (cancel_audio.stream as AudioStreamOggVorbis).loop, "UI cancel cue should not loop")
 	diary.free()
 
 

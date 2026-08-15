@@ -25,6 +25,7 @@ const INSECT_NAMES := {
 @onready var prompt_panel: TextureRect = %PromptPanel
 @onready var interaction_label: Label = %InteractionLabel
 @onready var notice_timer: Timer = %NoticeTimer
+@onready var diary_button: Button = %DiaryButton
 
 var _candidate_target: Node
 var _candidate_prompt := ""
@@ -37,6 +38,7 @@ func _ready() -> void:
 	GameClock.period_changed.connect(_refresh)
 	DiaryManager.record_changed.connect(_on_record_changed)
 	notice_timer.timeout.connect(_on_notice_timeout)
+	diary_button.pressed.connect(_on_diary_button_pressed)
 	var player := GameState.player
 	if is_instance_valid(player):
 		player.interaction_candidate_changed.connect(_on_interaction_candidate_changed)
@@ -106,4 +108,15 @@ func _refresh_prompt() -> void:
 	var has_candidate := is_instance_valid(_candidate_target) and not _candidate_prompt.is_empty()
 	prompt_panel.visible = has_candidate
 	if has_candidate:
-		interaction_label.text = "E / Z　%s" % _candidate_prompt
+		interaction_label.text = "左クリック / E / Z　%s" % _candidate_prompt
+
+
+func _on_diary_button_pressed() -> void:
+	if GameState.is_paused:
+		return
+	var player := GameState.player
+	if is_instance_valid(player) and player.movement_locked:
+		return
+	var diary := get_tree().get_first_node_in_group("diary_ui") as DiaryUI
+	if diary != null and not diary.is_open():
+		diary.set_open(true)

@@ -44,10 +44,23 @@ func can_use_tool() -> bool:
 func attempt_catch() -> bool:
 	if not can_use_tool():
 		return false
-	_cooldown_remaining = use_cooldown_seconds
-	tool_used.emit()
 	_nearby_insects = _nearby_insects.filter(is_instance_valid)
 	var insect := select_nearest_insect(_nearby_insects, global_position)
+	return _perform_attempt(insect)
+
+
+func attempt_catch_target(insect: Insect) -> bool:
+	if not can_use_tool() or not is_instance_valid(insect) or insect.state == Insect.State.CAUGHT:
+		return false
+	_nearby_insects = _nearby_insects.filter(is_instance_valid)
+	if not _nearby_insects.has(insect):
+		return false
+	return _perform_attempt(insect)
+
+
+func _perform_attempt(insect: Insect) -> bool:
+	_cooldown_remaining = use_cooldown_seconds
+	tool_used.emit()
 	if insect == null or not insect.request_catch(_actor):
 		catch_missed.emit()
 		return false

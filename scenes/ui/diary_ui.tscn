@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/diary_ui.gd" id="1_diary"]
 [ext_resource type="Texture2D" path="res://assets/ui/diary/ui_diary_daily_page.png" id="2_page"]
@@ -6,10 +6,22 @@
 [ext_resource type="Texture2D" path="res://assets/ui/diary/stamp_kappa.png" id="4_kappa"]
 [ext_resource type="Texture2D" path="res://assets/ui/diary/stamp_aburazemi.png" id="5_aburazemi"]
 [ext_resource type="Texture2D" path="res://assets/ui/diary/ui_diary_cover.png" id="6_cover"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sfx_page_turn.ogg" id="7_page_sfx"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sfx_ui_cancel.ogg" id="8_cancel_sfx"]
 
 [node name="DiaryUI" type="CanvasLayer"]
 layer = 40
 script = ExtResource("1_diary")
+
+[node name="PageTurnAudio" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("7_page_sfx")
+volume_db = -9.0
+
+[node name="CancelAudio" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("8_cancel_sfx")
+volume_db = -11.0
 
 [node name="Panel" type="Control" parent="."]
 unique_name_in_owner = true
@@ -66,17 +78,20 @@ text = "夏休み\n妖怪日記"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="CoverHint" type="Label" parent="Panel"]
+[node name="CoverHint" type="Button" parent="Panel"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 154.0
-offset_top = 329.0
-offset_right = 486.0
-offset_bottom = 350.0
+offset_left = 218.0
+offset_top = 322.0
+offset_right = 422.0
+offset_bottom = 352.0
+mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0.94, 0.91, 0.78, 1)
+theme_override_colors/font_hover_color = Color(1, 0.86, 0.42, 1)
+theme_override_colors/font_pressed_color = Color(0.78, 0.86, 0.55, 1)
 theme_override_font_sizes/font_size = 11
-text = "E / Z　ページをめくる　　J / Esc　閉じる"
-horizontal_alignment = 1
+text = "ページをめくる　(E / Z)"
+flat = true
 
 [node name="Notebook" type="TextureRect" parent="Panel"]
 unique_name_in_owner = true
@@ -227,5 +242,20 @@ offset_right = 468.0
 offset_bottom = 304.0
 theme_override_colors/font_color = Color(0.27, 0.22, 0.15, 0.82)
 theme_override_font_sizes/font_size = 10
-text = "J / Esc　閉じる"
+text = "右上の「閉じる」で終了"
 horizontal_alignment = 2
+
+[node name="CloseButton" type="Button" parent="Panel"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 548.0
+offset_top = 10.0
+offset_right = 628.0
+offset_bottom = 40.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.94, 0.91, 0.78, 1)
+theme_override_colors/font_hover_color = Color(1, 0.86, 0.42, 1)
+theme_override_colors/font_pressed_color = Color(0.78, 0.86, 0.55, 1)
+theme_override_font_sizes/font_size = 11
+text = "閉じる"
+flat = true

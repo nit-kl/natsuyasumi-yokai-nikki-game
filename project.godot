@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="夏休み妖怪日記"
-run/main_scene="res://scenes/maps/grandma_house/grandma_house.tscn"
+run/main_scene="res://scenes/maps/bedroom/bedroom.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [autoload]

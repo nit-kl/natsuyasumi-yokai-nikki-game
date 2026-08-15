@@ -1,0 +1,106 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/maps/location_scene.gd" id="1_location"]
+[ext_resource type="PackedScene" path="res://scenes/maps/common/location_runtime.tscn" id="2_runtime"]
+[ext_resource type="Script" path="res://scripts/maps/map_spawn_point.gd" id="3_spawn"]
+[ext_resource type="Script" path="res://scripts/maps/map_doorway.gd" id="4_door"]
+[ext_resource type="Texture2D" path="res://assets/maps/bedroom/map_bedroom.png" id="5_background"]
+
+[sub_resource type="NavigationPolygon" id="Navigation"]
+vertices = PackedVector2Array(260, 240, 616, 240, 616, 336, 260, 336, 570, 136, 616, 136)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 5, 1, 0)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(260, 136, 616, 136, 616, 336, 260, 336)])
+agent_radius = 7.0
+
+[sub_resource type="RectangleShape2D" id="BoundaryHorizontal"]
+size = Vector2(640, 16)
+
+[sub_resource type="RectangleShape2D" id="BoundaryVertical"]
+size = Vector2(16, 288)
+
+[sub_resource type="RectangleShape2D" id="DoorArea"]
+size = Vector2(40, 64)
+
+[node name="Bedroom" type="Node2D"]
+script = ExtResource("1_location")
+area_id = &"bedroom"
+default_spawn_id = &"wake_up"
+
+[node name="Ground" type="TileMapLayer" parent="."]
+
+[node name="ProductionBackground" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(320, 180)
+texture = ExtResource("5_background")
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("Navigation")
+
+[node name="Collision" type="TileMapLayer" parent="."]
+
+[node name="WorldCollision" type="StaticBody2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="Top" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(320, 56)
+shape = SubResource("BoundaryHorizontal")
+
+[node name="Bottom" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(320, 344)
+shape = SubResource("BoundaryHorizontal")
+
+[node name="Left" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(8, 200)
+shape = SubResource("BoundaryVertical")
+
+[node name="Right" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(632, 200)
+shape = SubResource("BoundaryVertical")
+
+[node name="Futon" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(112, 196, 244, 196, 244, 324, 112, 324)
+
+[node name="LeftFurniture" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(0, 80, 154, 80, 154, 244, 0, 244)
+
+[node name="BackShelf" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(170, 56, 264, 56, 264, 160, 170, 160)
+
+[node name="RightPlant" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(544, 242, 632, 242, 632, 344, 544, 344)
+
+[node name="Objects" type="Node2D" parent="."]
+
+[node name="ToLivingRoom" type="Area2D" parent="Objects"]
+position = Vector2(608, 190)
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("4_door")
+interaction_text = "居間へ行く"
+destination_scene = "res://scenes/maps/grandma_house/grandma_house.tscn"
+destination_spawn_id = &"bedroom_entry"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/ToLivingRoom"]
+shape = SubResource("DoorArea")
+
+[node name="NPCs" type="Node2D" parent="."]
+[node name="Yokai" type="Node2D" parent="."]
+[node name="EventTriggers" type="Node2D" parent="."]
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="WakeUp" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(360, 252)
+script = ExtResource("3_spawn")
+spawn_id = &"wake_up"
+facing = &"right"
+
+[node name="LivingEntry" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(576, 190)
+script = ExtResource("3_spawn")
+spawn_id = &"living_entry"
+facing = &"left"
+
+[node name="Foreground" type="TileMapLayer" parent="."]
+[node name="LocationRuntime" parent="." instance=ExtResource("2_runtime")]

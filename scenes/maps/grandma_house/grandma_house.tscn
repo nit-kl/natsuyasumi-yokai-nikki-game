@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/location_scene.gd" id="1_location"]
 [ext_resource type="Script" path="res://scripts/maps/greybox_map_visual.gd" id="2_visual"]
@@ -9,15 +9,21 @@
 [ext_resource type="Script" path="res://scripts/events/return_home_flow.gd" id="7_return_flow"]
 [ext_resource type="Resource" path="res://resources/dialogue/grandma_evening_dinner.tres" id="8_dinner"]
 [ext_resource type="Texture2D" path="res://assets/maps/grandma_house/map_grandma_house.png" id="9_background"]
+[ext_resource type="NavigationPolygon" path="res://resources/navigation/grandma_house_navigation.tres" id="10_navigation"]
+[ext_resource type="Script" path="res://scripts/maps/foreground_occluder_2d.gd" id="11_occluder"]
+[ext_resource type="Script" path="res://scripts/npc/grandma_indoor_routine.gd" id="12_grandma_routine"]
 
-[sub_resource type="RectangleShape2D" id="WallHorizontal"]
-size = Vector2(576, 16)
+[sub_resource type="RectangleShape2D" id="BoundaryTop"]
+size = Vector2(608, 16)
 
-[sub_resource type="RectangleShape2D" id="WallVertical"]
-size = Vector2(16, 296)
+[sub_resource type="RectangleShape2D" id="BoundarySide"]
+size = Vector2(16, 236)
 
-[sub_resource type="RectangleShape2D" id="WallBottom"]
-size = Vector2(256, 16)
+[sub_resource type="RectangleShape2D" id="BoundaryBottomSide"]
+size = Vector2(248, 16)
+
+[sub_resource type="RectangleShape2D" id="BoundaryBottomCenter"]
+size = Vector2(126, 16)
 
 [sub_resource type="RectangleShape2D" id="DoorArea"]
 size = Vector2(64, 24)
@@ -34,6 +40,13 @@ texture_filter = 1
 position = Vector2(320, 180)
 texture = ExtResource("9_background")
 
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = ExtResource("10_navigation")
+
+[node name="NavigationBakeBounds" type="Polygon2D" parent="."]
+visible = false
+polygon = PackedVector2Array(16, 96, 624, 96, 624, 306, 390, 306, 390, 316, 264, 316, 264, 306, 16, 306)
+
 [node name="DetailsBack" type="TileMapLayer" parent="."]
 
 [node name="GreyboxVisual" type="Node2D" parent="."]
@@ -42,29 +55,82 @@ script = ExtResource("2_visual")
 
 [node name="Collision" type="TileMapLayer" parent="."]
 
-[node name="GreyboxWalls" type="StaticBody2D" parent="."]
+[node name="WorldCollision" type="StaticBody2D" parent="."]
+groups = ["navigation_bake_source"]
 collision_layer = 2
 collision_mask = 0
 
-[node name="Top" type="CollisionShape2D" parent="GreyboxWalls"]
-position = Vector2(320, 32)
-shape = SubResource("WallHorizontal")
+[node name="TopBoundary" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(320, 88)
+shape = SubResource("BoundaryTop")
+metadata/navigation_bake_exclude = true
 
-[node name="Left" type="CollisionShape2D" parent="GreyboxWalls"]
-position = Vector2(32, 180)
-shape = SubResource("WallVertical")
+[node name="LeftBoundary" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(8, 197)
+shape = SubResource("BoundarySide")
+metadata/navigation_bake_exclude = true
 
-[node name="Right" type="CollisionShape2D" parent="GreyboxWalls"]
-position = Vector2(608, 180)
-shape = SubResource("WallVertical")
+[node name="RightBoundary" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(632, 197)
+shape = SubResource("BoundarySide")
+metadata/navigation_bake_exclude = true
 
-[node name="BottomLeft" type="CollisionShape2D" parent="GreyboxWalls"]
-position = Vector2(160, 328)
-shape = SubResource("WallBottom")
+[node name="BottomLeftBoundary" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(140, 314)
+shape = SubResource("BoundaryBottomSide")
+metadata/navigation_bake_exclude = true
 
-[node name="BottomRight" type="CollisionShape2D" parent="GreyboxWalls"]
-position = Vector2(480, 328)
-shape = SubResource("WallBottom")
+[node name="BottomCenterBoundary" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(327, 324)
+shape = SubResource("BoundaryBottomCenter")
+metadata/navigation_bake_exclude = true
+
+[node name="BottomRightBoundary" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(507, 314)
+shape = SubResource("BoundaryBottomSide")
+metadata/navigation_bake_exclude = true
+
+[node name="BedroomDresser" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(16, 88, 58, 88, 58, 134, 16, 134)
+
+[node name="BedroomBed" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(24, 132, 126, 132, 126, 205, 24, 205)
+
+[node name="BedroomShelf" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(158, 88, 211, 88, 211, 143, 158, 143)
+
+[node name="BedroomDivider" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(198, 88, 214, 88, 214, 188, 198, 188)
+
+[node name="TelevisionUnit" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(220, 88, 309, 88, 309, 134, 220, 134)
+
+[node name="CenterCabinet" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(356, 88, 408, 88, 408, 144, 356, 144)
+
+[node name="CenterTable" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(262, 136, 376, 136, 376, 210, 262, 210)
+
+[node name="KitchenDivider" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(432, 88, 448, 88, 448, 190, 432, 190)
+
+[node name="CenterPlant" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(402, 148, 449, 148, 449, 190, 402, 190)
+
+[node name="KitchenCounter" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(456, 88, 624, 88, 624, 136, 456, 136)
+
+[node name="DiningTable" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(476, 132, 600, 132, 600, 220, 476, 220)
+
+[node name="DiningFrontChair" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(514, 210, 552, 210, 552, 258, 514, 258)
+
+[node name="LeftShojiWall" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(16, 226, 264, 226, 264, 274, 16, 274)
+
+[node name="RightShojiWall" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(390, 226, 624, 226, 624, 274, 390, 274)
 
 [node name="Objects" type="Node2D" parent="."]
 
@@ -74,16 +140,42 @@ collision_layer = 4
 collision_mask = 0
 script = ExtResource("6_door")
 interaction_text = "外へ出る"
-destination_scene = "res://scenes/maps/village/home_outdoor.tscn"
+destination_scene = "res://scenes/maps/village/engawa_yard.tscn"
 destination_spawn_id = &"house_exit"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/ExitToOutdoor"]
 shape = SubResource("DoorArea")
 
+[node name="EnterBedroom" type="Area2D" parent="Objects"]
+position = Vector2(142, 174)
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("6_door")
+interaction_text = "寝室へ入る"
+destination_scene = "res://scenes/maps/bedroom/bedroom.tscn"
+destination_spawn_id = &"living_entry"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/EnterBedroom"]
+shape = SubResource("DoorArea")
+
 [node name="NPCs" type="Node2D" parent="."]
 
 [node name="Grandma" parent="NPCs" instance=ExtResource("4_grandma")]
-position = Vector2(352, 136)
+position = Vector2(244, 164)
+
+[node name="GrandmaRoutinePoints" type="Node2D" parent="NPCs"]
+
+[node name="TableLeft" type="Marker2D" parent="NPCs/GrandmaRoutinePoints"]
+position = Vector2(244, 164)
+
+[node name="TableSouth" type="Marker2D" parent="NPCs/GrandmaRoutinePoints"]
+position = Vector2(320, 217)
+
+[node name="TableRight" type="Marker2D" parent="NPCs/GrandmaRoutinePoints"]
+position = Vector2(386, 212)
+
+[node name="KitchenEntrance" type="Marker2D" parent="NPCs/GrandmaRoutinePoints"]
+position = Vector2(462, 212)
 
 [node name="Yokai" type="Node2D" parent="."]
 
@@ -92,9 +184,15 @@ position = Vector2(352, 136)
 [node name="SpawnPoints" type="Node2D" parent="."]
 
 [node name="Bedroom" type="Marker2D" parent="SpawnPoints"]
-position = Vector2(112, 136)
+position = Vector2(142, 174)
 script = ExtResource("5_spawn")
 spawn_id = &"bedroom"
+facing = &"right"
+
+[node name="BedroomEntry" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(178, 174)
+script = ExtResource("5_spawn")
+spawn_id = &"bedroom_entry"
 facing = &"right"
 
 [node name="Entrance" type="Marker2D" parent="SpawnPoints"]
@@ -104,6 +202,48 @@ spawn_id = &"entrance"
 facing = &"up"
 
 [node name="Foreground" type="TileMapLayer" parent="."]
+
+[node name="ForegroundOccluders" type="Node2D" parent="."]
+
+[node name="CenterTable" type="Polygon2D" parent="ForegroundOccluders"]
+texture_filter = 1
+texture = ExtResource("9_background")
+polygon = PackedVector2Array(277, 133, 360, 133, 376, 151, 376, 198, 352, 198, 352, 222, 291, 222, 291, 199, 260, 199, 260, 151)
+uv = PackedVector2Array(277, 133, 360, 133, 376, 151, 376, 198, 352, 198, 352, 222, 291, 222, 291, 199, 260, 199, 260, 151)
+script = ExtResource("11_occluder")
+occlusion_y = 222.0
+
+[node name="CenterPlant" type="Polygon2D" parent="ForegroundOccluders"]
+texture_filter = 1
+texture = ExtResource("9_background")
+polygon = PackedVector2Array(411, 143, 439, 143, 452, 161, 449, 220, 401, 220, 401, 178)
+uv = PackedVector2Array(411, 143, 439, 143, 452, 161, 449, 220, 401, 220, 401, 178)
+script = ExtResource("11_occluder")
+occlusion_y = 210.0
+
+[node name="DiningSet" type="Polygon2D" parent="ForegroundOccluders"]
+texture_filter = 1
+texture = ExtResource("9_background")
+polygon = PackedVector2Array(489, 132, 574, 132, 574, 158, 600, 158, 600, 220, 554, 220, 554, 258, 514, 258, 514, 221, 476, 221, 476, 158, 489, 158)
+uv = PackedVector2Array(489, 132, 574, 132, 574, 158, 600, 158, 600, 220, 554, 220, 554, 258, 514, 258, 514, 221, 476, 221, 476, 158, 489, 158)
+script = ExtResource("11_occluder")
+occlusion_y = 258.0
+
+[node name="LeftShoji" type="Polygon2D" parent="ForegroundOccluders"]
+texture_filter = 1
+texture = ExtResource("9_background")
+polygon = PackedVector2Array(16, 221, 264, 221, 264, 274, 16, 274)
+uv = PackedVector2Array(16, 221, 264, 221, 264, 274, 16, 274)
+script = ExtResource("11_occluder")
+occlusion_y = 274.0
+
+[node name="RightShoji" type="Polygon2D" parent="ForegroundOccluders"]
+texture_filter = 1
+texture = ExtResource("9_background")
+polygon = PackedVector2Array(390, 221, 624, 221, 624, 274, 390, 274)
+uv = PackedVector2Array(390, 221, 624, 221, 624, 274, 390, 274)
+script = ExtResource("11_occluder")
+occlusion_y = 274.0
 
 [node name="LocationRuntime" parent="." instance=ExtResource("3_runtime")]
 
@@ -144,3 +284,8 @@ diary_ui_path = NodePath("../LocationRuntime/DiaryUI")
 bedroom_spawn_path = NodePath("../SpawnPoints/Bedroom")
 completion_panel_path = NodePath("../VerticalSliceCompletion/Panel")
 end_vertical_slice_after_review = true
+
+[node name="GrandmaIndoorRoutine" type="Node" parent="."]
+script = ExtResource("12_grandma_routine")
+npc_path = NodePath("../NPCs/Grandma")
+waypoint_root_path = NodePath("../NPCs/GrandmaRoutinePoints")

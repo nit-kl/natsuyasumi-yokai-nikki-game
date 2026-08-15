@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="EnvironmentAudioProfile" load_steps=3 format=3]
+[ext_resource type="Script" path="res://scripts/audio/environment_audio_profile.gd" id="1_profile"]
+[ext_resource type="AudioStream" path="res://assets/audio/ambience/amb_river_flow.ogg" id="2_river"]
+[resource]
+script = ExtResource("1_profile")
+area_id = &"river_entrance"
+default_stream = ExtResource("2_river")
+volume_db = -12.0

@@ -21,7 +21,7 @@ class TransitionMonitor extends Node:
 			_finish_with_error("Outdoor scene was not installed after transition.")
 			return
 		var player := GameState.player
-		if not is_instance_valid(player) or player.global_position != Vector2(320, 148):
+		if not is_instance_valid(player) or player.global_position != Vector2(328, 176):
 			_finish_with_error("Player was not placed at the requested outdoor spawn.")
 			return
 		_quit_cleanly(0)

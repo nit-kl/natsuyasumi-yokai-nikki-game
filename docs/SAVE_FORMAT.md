@@ -73,6 +73,22 @@ Save形式には必ずVersionを持たせる。
 
 原則として移動速度などの設定値は保存しない。
 
+Vertical Sliceの安定`scene_id`:
+
+```text
+bedroom
+grandma_house
+home_outdoor        # 既存Save互換用
+engawa_yard
+paddy_road
+irrigation_shade
+river_entrance
+river
+```
+
+エリア細分化後も`save_version = 1`を維持する。既存`grandma_house`、`home_outdoor`、`river`は
+Catalogから削除せず、旧Saveを引き続き復元できる。
+
 ---
 
 ## 5. Inventory

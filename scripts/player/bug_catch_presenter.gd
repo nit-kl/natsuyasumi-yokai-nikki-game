@@ -13,6 +13,8 @@ const SUCCESS_COLOR := Color("ffe27a")
 const MISS_COLOR := Color("d7edf0")
 
 @onready var net_sprite: Sprite2D = %NetSprite
+@onready var swing_audio: AudioStreamPlayer2D = %SwingAudio
+@onready var success_audio: AudioStreamPlayer2D = %SuccessAudio
 
 var _actor: CharacterBody2D
 var _catcher: BugCatcher
@@ -46,6 +48,7 @@ func _play_swing() -> void:
 		_swing_tween.kill()
 	var direction: Vector2 = _actor.get_facing_vector(_actor.facing)
 	var base_rotation := get_net_rotation_for_direction(direction)
+	swing_audio.play()
 	z_index = -1 if direction.y < -0.25 else 2
 	net_sprite.visible = true
 	rotation = base_rotation + SWING_START_OFFSET
@@ -77,6 +80,8 @@ func _play_feedback(succeeded: bool) -> void:
 	queue_redraw()
 	_feedback_tween = create_tween()
 	_feedback_tween.tween_interval(FEEDBACK_DELAY_SECONDS)
+	if succeeded:
+		_feedback_tween.tween_callback(success_audio.play)
 	_feedback_tween.tween_method(_set_feedback_strength, 1.0, 0.0, FEEDBACK_SECONDS)
 
 

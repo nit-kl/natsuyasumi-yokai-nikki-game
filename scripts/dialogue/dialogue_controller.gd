@@ -5,11 +5,12 @@ signal dialogue_started(dialogue_id: StringName)
 signal line_changed(line_index: int, line: DialogueLine)
 signal dialogue_finished(dialogue_id: StringName)
 
-@onready var panel: PanelContainer = %Panel
+@onready var panel: TextureRect = %Panel
 @onready var speaker_label: Label = %SpeakerLabel
 @onready var body_label: Label = %BodyLabel
 @onready var continue_label: Label = %ContinueLabel
 @onready var choices_container: VBoxContainer = %ChoicesContainer
+@onready var confirm_audio: AudioStreamPlayer = %ConfirmAudio
 
 var current_dialogue: DialogueResource
 var current_line_index: int = -1
@@ -19,6 +20,7 @@ var _clock_was_paused: bool = false
 
 func _ready() -> void:
 	add_to_group("dialogue_controller")
+	panel.gui_input.connect(_on_panel_gui_input)
 	panel.visible = false
 
 
@@ -55,6 +57,7 @@ func advance() -> void:
 	var line := get_current_line()
 	if line != null and line.has_choices():
 		return
+	confirm_audio.play()
 	go_to_line(current_line_index + 1)
 
 
@@ -65,6 +68,7 @@ func choose(choice_index: int) -> bool:
 	var choice := line.choices[choice_index]
 	if choice == null or not choice.is_valid():
 		return false
+	confirm_audio.play()
 	var next_index := choice.next_line_index
 	if next_index < 0:
 		next_index = current_line_index + 1
@@ -122,6 +126,7 @@ func _show_current_line() -> void:
 			if choice == null or not choice.is_valid():
 				continue
 			var button := Button.new()
+			button.custom_minimum_size = Vector2(240.0, 42.0)
 			button.text = choice.text
 			button.set_meta("choice_index", index)
 			button.pressed.connect(choose.bind(index))
@@ -148,3 +153,13 @@ func _clear_choices() -> void:
 func _set_actor_locked(value: bool) -> void:
 	if is_instance_valid(actor) and actor.has_method("set_movement_locked"):
 		actor.set_movement_locked(value)
+
+
+func _on_panel_gui_input(event: InputEvent) -> void:
+	if not is_active() or GameState.is_paused:
+		return
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		var line := get_current_line()
+		if line != null and not line.has_choices():
+			advance()
+		panel.accept_event()

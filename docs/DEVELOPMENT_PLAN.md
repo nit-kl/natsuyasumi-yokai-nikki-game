@@ -361,6 +361,24 @@ Godot 2Dプロジェクトとして、安全に拡張できる基盤を作る。
 #049 Diary daily-page production UI integration
 #050 Diary cover and page-transition production integration
 #051 Minimal production HUD integration
+#052 Bug-catching and diary page-turn production SFX
+#053 Dialogue production UI integration
+#054 Production day-period palette tuning
+#055 UI confirm and cancel production SFX
+#056 Vertical Slice final playtest and Production asset audit
+#057 Mouse click movement foundation
+#058 Mouse click approach and action queue
+#059 Mouse-first dialogue and diary UI
+#060 Subtle click-target hover feedback
+#061 Grandma house Production gameplay geometry
+#062 Home outdoor Production gameplay geometry
+#063 River Production gameplay geometry
+#064 Three-map gameplay geometry visual tuning
+#065 Production foreground occlusion
+#066 Grandma indoor living routine
+#067 Grandma house table depth and kitchen passage correction
+#068 Area-based deterministic insect spawning
+#069 Vertical Slice area subdivision and production backgrounds
 ```
 
 ---

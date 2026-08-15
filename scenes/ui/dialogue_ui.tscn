@@ -1,40 +1,107 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/dialogue/dialogue_controller.gd" id="1_dialogue"]
+[ext_resource type="Texture2D" path="res://assets/ui/dialogue/ui_dialogue_panel.png" id="2_panel"]
+[ext_resource type="Texture2D" path="res://assets/ui/dialogue/ui_dialogue_choice.png" id="3_choice"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sfx_ui_confirm.ogg" id="4_confirm_sfx"]
+
+[sub_resource type="StyleBoxTexture" id="StyleChoiceNormal"]
+texture = ExtResource("3_choice")
+texture_margin_left = 12.0
+texture_margin_top = 8.0
+texture_margin_right = 12.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleChoiceHover"]
+texture = ExtResource("3_choice")
+texture_margin_left = 12.0
+texture_margin_top = 8.0
+texture_margin_right = 12.0
+texture_margin_bottom = 8.0
+modulate_color = Color(1, 0.91, 0.65, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleChoicePressed"]
+texture = ExtResource("3_choice")
+texture_margin_left = 12.0
+texture_margin_top = 8.0
+texture_margin_right = 12.0
+texture_margin_bottom = 8.0
+modulate_color = Color(0.82, 0.88, 0.66, 1)
+
+[sub_resource type="Theme" id="ThemeChoices"]
+Button/colors/font_color = Color(0.24, 0.18, 0.1, 1)
+Button/colors/font_focus_color = Color(0.19, 0.25, 0.08, 1)
+Button/colors/font_hover_color = Color(0.19, 0.25, 0.08, 1)
+Button/colors/font_pressed_color = Color(0.19, 0.25, 0.08, 1)
+Button/font_sizes/font_size = 11
+Button/styles/focus = SubResource("StyleChoiceHover")
+Button/styles/hover = SubResource("StyleChoiceHover")
+Button/styles/normal = SubResource("StyleChoiceNormal")
+Button/styles/pressed = SubResource("StyleChoicePressed")
 
 [node name="DialogueController" type="CanvasLayer"]
 layer = 50
 script = ExtResource("1_dialogue")
 
-[node name="Panel" type="PanelContainer" parent="."]
+[node name="ConfirmAudio" type="AudioStreamPlayer" parent="."]
 unique_name_in_owner = true
-offset_left = 64.0
-offset_top = 224.0
-offset_right = 576.0
-offset_bottom = 344.0
+stream = ExtResource("4_confirm_sfx")
+volume_db = -11.0
 
-[node name="Margin" type="MarginContainer" parent="Panel"]
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 10
-
-[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
-
-[node name="SpeakerLabel" type="Label" parent="Panel/Margin/VBox"]
+[node name="Panel" type="TextureRect" parent="."]
 unique_name_in_owner = true
+texture_filter = 1
+offset_left = 40.0
+offset_top = 216.0
+offset_right = 600.0
+offset_bottom = 348.0
+mouse_filter = 0
+texture = ExtResource("2_panel")
+expand_mode = 1
+
+[node name="SpeakerLabel" type="Label" parent="Panel"]
+unique_name_in_owner = true
+mouse_filter = 2
+offset_left = 23.0
+offset_top = 8.0
+offset_right = 143.0
+offset_bottom = 32.0
+theme_override_colors/font_color = Color(0.95, 0.88, 0.68, 1)
+theme_override_font_sizes/font_size = 12
 text = "話者"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="BodyLabel" type="Label" parent="Panel/Margin/VBox"]
+[node name="BodyLabel" type="Label" parent="Panel"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 42)
+mouse_filter = 2
+offset_left = 25.0
+offset_top = 43.0
+offset_right = 526.0
+offset_bottom = 99.0
+theme_override_colors/font_color = Color(0.20, 0.16, 0.10, 1)
+theme_override_constants/line_spacing = 4
+theme_override_font_sizes/font_size = 13
 text = "会話本文"
 autowrap_mode = 2
 
-[node name="ChoicesContainer" type="VBoxContainer" parent="Panel/Margin/VBox"]
+[node name="ContinueLabel" type="Label" parent="Panel"]
 unique_name_in_owner = true
-
-[node name="ContinueLabel" type="Label" parent="Panel/Margin/VBox"]
-unique_name_in_owner = true
-text = "E / Z: 次へ"
+mouse_filter = 2
+offset_left = 415.0
+offset_top = 102.0
+offset_right = 527.0
+offset_bottom = 123.0
+theme_override_colors/font_color = Color(0.33, 0.25, 0.14, 0.82)
+theme_override_font_sizes/font_size = 10
+text = "左クリック / E / Z　次へ"
 horizontal_alignment = 2
+
+[node name="ChoicesContainer" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+offset_left = 360.0
+offset_top = 124.0
+offset_right = 600.0
+offset_bottom = 212.0
+theme = SubResource("ThemeChoices")
+theme_override_constants/separation = 2

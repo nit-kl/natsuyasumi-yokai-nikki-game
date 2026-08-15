@@ -17,5 +17,6 @@ func get_interaction_text(_actor: Node) -> String:
 
 func interact(actor: Node) -> void:
 	if npc != null and actor is Node2D:
+		npc.stop_movement()
 		npc.face_toward(actor.global_position)
 	super.interact(actor)

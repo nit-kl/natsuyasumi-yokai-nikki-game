@@ -2,6 +2,7 @@ class_name NPC
 extends CharacterBody2D
 
 signal facing_changed(facing: StringName)
+signal movement_changed(is_moving: bool)
 signal interacted(npc_id: StringName)
 
 const PLACEHOLDER_SKIN := Color("e4ad73")
@@ -12,9 +13,11 @@ const PLACEHOLDER_OUTLINE := Color("372d37")
 @export var sprite_frames: SpriteFrames
 
 var facing: StringName = &"down"
+var is_moving := false
 
 
 func _ready() -> void:
+	refresh_depth_order()
 	var sprite := get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
 	if sprite != null and sprite_frames != null:
 		sprite.sprite_frames = sprite_frames
@@ -50,6 +53,33 @@ func face_toward(world_position: Vector2) -> void:
 	set_facing(_direction_to_cardinal_facing(direction, facing))
 
 
+func move_with_velocity(desired_velocity: Vector2) -> void:
+	velocity = desired_velocity
+	var next_is_moving := not velocity.is_zero_approx()
+	if next_is_moving:
+		face_toward(global_position + velocity)
+	_set_is_moving(next_is_moving)
+	move_and_slide()
+	refresh_depth_order()
+
+
+func stop_movement() -> void:
+	velocity = Vector2.ZERO
+	_set_is_moving(false)
+	refresh_depth_order()
+
+
+func refresh_depth_order() -> void:
+	z_index = roundi(_get_foot_y())
+
+
+func _get_foot_y() -> float:
+	var collision := get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if collision == null or collision.shape == null:
+		return global_position.y
+	return collision.to_global(Vector2(0.0, collision.shape.get_rect().end.y)).y
+
+
 static func _direction_to_cardinal_facing(direction: Vector2, fallback: StringName = &"down") -> StringName:
 	if direction.is_zero_approx():
 		return fallback
@@ -74,9 +104,18 @@ func _update_sprite_facing() -> void:
 	var sprite := get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
 	if sprite == null or sprite_frames == null:
 		return
-	var animation_name := StringName("idle_%s" % facing)
+	var movement_name := "walk" if is_moving else "idle"
+	var animation_name := StringName("%s_%s" % [movement_name, facing])
 	if sprite.sprite_frames.has_animation(animation_name):
 		sprite.play(animation_name)
+
+
+func _set_is_moving(value: bool) -> void:
+	if value == is_moving:
+		return
+	is_moving = value
+	_update_sprite_facing()
+	movement_changed.emit(is_moving)
 
 
 func _on_interacted(_actor: Node) -> void:

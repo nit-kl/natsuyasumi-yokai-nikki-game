@@ -1,10 +1,10 @@
 class_name DayPeriodPalette
 extends Resource
 
-@export var morning := Color("f8e5c0")
-@export var daytime := Color.WHITE
-@export var evening := Color("efa474")
-@export var night := Color("7181ad")
+@export var morning := Color("fff0d2")
+@export var daytime := Color("fffaf2")
+@export var evening := Color("f2ae7d")
+@export var night := Color("7888ad")
 
 
 func get_color(period: StringName) -> Color:

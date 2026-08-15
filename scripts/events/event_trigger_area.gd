@@ -18,7 +18,7 @@ func try_trigger(actor: Node) -> bool:
 	if not EventManager.trigger_event(event_id):
 		return false
 	_completed = true
-	monitoring = false
+	set_deferred("monitoring", false)
 	event_triggered.emit(event_id)
 	return true
 
