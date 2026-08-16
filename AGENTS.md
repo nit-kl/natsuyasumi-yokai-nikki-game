@@ -280,3 +280,54 @@ Issueを完了扱いにする条件:
 - 大量のクエストUIを追加しない
 - Reference SheetをそのままProduction Sprite化しない
 - Vertical Slice完成前にSteam対応へ進まない
+
+---
+
+## Cursor Cloud specific instructions
+
+Godot 4.7.1-stable のヘッドレス対応バイナリが `/usr/local/bin/godot` に導入済み
+（`godot --version` → `4.7.1.stable.official`）。起動時のupdate scriptで
+`godot --headless --import .` が実行され、`.godot/` の生成キャッシュを最新の
+チェックアウトへ再インポートする（`.godot/` はGit管理外）。
+
+### Lint / パース検証
+
+```bash
+godot --headless --editor --quit
+```
+
+スクリプトのパースエラー・インポートエラーがここで表面化する（正常時はエラーなしで終了する）。
+
+### 自動テスト
+
+`tools/*.ps1` はWindows用でGodotのパスをハードコードしているため、VMでは使わず
+`godot` を直接呼ぶこと。各テストScene（`tests/*.tscn`）は成功でexit 0、失敗でexit 1を返す。
+`tools/run_vertical_slice_validation.ps1` に列挙された16 Sceneを順に実行する:
+
+```bash
+for s in tests/foundation_validation.tscn tests/map_transition_smoke_test.tscn \
+  tests/return_home_flow_smoke_test.tscn tests/vertical_slice_day_flow_smoke_test.tscn \
+  tests/vertical_slice_production_audit.tscn tests/click_move_smoke_test.tscn \
+  tests/click_action_smoke_test.tscn tests/click_target_hover_smoke_test.tscn \
+  tests/mouse_ui_smoke_test.tscn tests/grandma_house_geometry_smoke_test.tscn \
+  tests/home_outdoor_geometry_smoke_test.tscn tests/river_geometry_smoke_test.tscn \
+  tests/foreground_occlusion_smoke_test.tscn tests/grandma_indoor_routine_smoke_test.tscn \
+  tests/save_location_restore_smoke_test.tscn tests/area_subdivision_smoke_test.tscn; do
+    godot --headless --path /workspace "$s" || echo "FAILED: $s"
+done
+```
+
+### ゲーム実行（開発モード）
+
+VMには仮想ディスプレイ `:1` があるので、ウィンドウ表示で起動できる:
+
+```bash
+DISPLAY=:1 godot --path /workspace
+```
+
+- Main Sceneは `scenes/maps/bedroom/bedroom.tscn`（Day 1 07:00の寝室から開始）。
+- GPUが無いためGL Compatibilityは `llvmpipe`（ソフトウェアOpenGL）で動作する。描画は正常だが重い処理は遅い。
+- サウンドカードが無いためALSAが失敗し audio は dummy driver へfallbackする。
+  ログのALSAエラーは想定通りで、ゲーム進行やテスト結果には影響しない。
+- 操作: WASD/矢印=移動、E/Z=調べる・会話送り、左クリック=クリック移動、X=虫取り網、
+  J=日記、F3=DebugMenu。
