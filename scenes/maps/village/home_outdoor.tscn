@@ -41,11 +41,11 @@ script = ExtResource("11_walk_path")
 
 [node name="UpperRoad" type="Line2D" parent="WalkPathNetwork"]
 visible = false
-points = PackedVector2Array(64, 184, 250, 184, 328, 176, 420, 184, 568, 184, 604, 184)
+points = PackedVector2Array(64, 176, 180, 176, 250, 176, 328, 176, 420, 176, 500, 176, 548, 176)
 
 [node name="GardenRoute" type="Line2D" parent="WalkPathNetwork"]
 visible = false
-points = PackedVector2Array(250, 184, 250, 260, 250, 300, 270, 343, 330, 343, 400, 343, 400, 310, 402, 270)
+points = PackedVector2Array(250, 176, 250, 220, 250, 260, 250, 300, 268, 342, 340, 342)
 
 [node name="NavigationBakeBounds" type="Polygon2D" parent="."]
 visible = false
@@ -101,7 +101,7 @@ polygon = PackedVector2Array(164, 122, 184, 122, 184, 146, 164, 146)
 polygon = PackedVector2Array(470, 112, 502, 112, 502, 140, 470, 140)
 
 [node name="RiverApproachWater" type="CollisionPolygon2D" parent="WorldCollision"]
-polygon = PackedVector2Array(608, 154, 632, 154, 632, 168, 608, 168)
+polygon = PackedVector2Array(572, 140, 632, 140, 632, 198, 572, 198)
 
 [node name="IrrigationWest" type="CollisionPolygon2D" parent="WorldCollision"]
 polygon = PackedVector2Array(8, 198, 234, 198, 234, 246, 8, 246)
@@ -133,7 +133,7 @@ destination_spawn_id = &"entrance"
 shape = SubResource("DoorArea")
 
 [node name="GoToRiver" type="Area2D" parent="Objects"]
-position = Vector2(604, 184)
+position = Vector2(548, 176)
 collision_layer = 4
 collision_mask = 0
 script = ExtResource("5_door")
@@ -151,13 +151,13 @@ profile = ExtResource("7_insect_profile")
 [node name="SpawnPoints" type="Node2D" parent="Objects/InsectSpawner"]
 
 [node name="GardenPath" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
-position = Vector2(402, 270)
+position = Vector2(340, 342)
 
 [node name="BridgeApproach" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
-position = Vector2(270, 260)
+position = Vector2(250, 260)
 
 [node name="UpperRoad" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
-position = Vector2(420, 184)
+position = Vector2(420, 176)
 
 [node name="NPCs" type="Node2D" parent="."]
 
@@ -174,13 +174,13 @@ spawn_id = &"house_exit"
 facing = &"down"
 
 [node name="RoadWest" type="Marker2D" parent="SpawnPoints"]
-position = Vector2(64, 184)
+position = Vector2(64, 176)
 script = ExtResource("4_spawn")
 spawn_id = &"road_west"
 facing = &"right"
 
 [node name="RiverPath" type="Marker2D" parent="SpawnPoints"]
-position = Vector2(568, 184)
+position = Vector2(500, 176)
 script = ExtResource("4_spawn")
 spawn_id = &"river_path"
 facing = &"left"

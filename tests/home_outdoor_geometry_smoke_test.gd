@@ -13,7 +13,7 @@ class HomeOutdoorGeometryMonitor extends Node:
 	const UPPER_ROAD := Vector2(180.0, 184.0)
 	const BRIDGE := Vector2(248.0, 220.0)
 	const LOWER_PATH := Vector2(250.0, 300.0)
-	const INSECT_PATHS := [Vector2(402.0, 270.0), Vector2(270.0, 260.0), Vector2(420.0, 184.0)]
+	const INSECT_PATHS := [Vector2(340.0, 342.0), Vector2(250.0, 260.0), Vector2(420.0, 176.0)]
 	const HOUSE_FOUNDATION := Vector2(240.0, 130.0)
 	const CANAL := Vector2(160.0, 220.0)
 	const RICE_PADDY := Vector2(100.0, 280.0)

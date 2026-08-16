@@ -49,7 +49,7 @@ script = ExtResource("13_walk_path")
 
 [node name="RiverbankStroll" type="Line2D" parent="WalkPathNetwork"]
 visible = false
-points = PackedVector2Array(64, 264, 96, 264, 132, 277, 192, 264, 264, 248, 352, 280, 400, 240, 424, 248, 520, 264, 576, 264)
+points = PackedVector2Array(96, 264, 150, 268, 192, 264, 264, 248, 310, 252, 360, 248, 400, 240, 424, 248, 520, 264, 576, 264)
 
 [node name="NavigationBakeBounds" type="Polygon2D" parent="."]
 visible = false
@@ -104,7 +104,7 @@ polygon = PackedVector2Array(8, 312, 48, 312, 60, 304, 100, 304, 120, 310, 150, 
 [node name="Objects" type="Node2D" parent="."]
 
 [node name="ReturnHome" type="Area2D" parent="Objects"]
-position = Vector2(64, 264)
+position = Vector2(96, 264)
 collision_layer = 4
 collision_mask = 0
 script = ExtResource("5_door")
@@ -125,7 +125,7 @@ profile = ExtResource("12_insect_profile")
 position = Vector2(192, 264)
 
 [node name="CenterBank" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
-position = Vector2(352, 280)
+position = Vector2(310, 252)
 
 [node name="RightBank" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
 position = Vector2(520, 264)

@@ -13,9 +13,9 @@ class AreaSubdivisionMonitor extends Node:
 	const CASES := [
 		{"path": "res://scenes/maps/bedroom/bedroom.tscn", "area": &"bedroom", "spawn": &"wake_up", "position": Vector2(360, 252)},
 		{"path": "res://scenes/maps/village/engawa_yard.tscn", "area": &"engawa_yard", "spawn": &"house_exit", "position": Vector2(320, 184)},
-		{"path": "res://scenes/maps/village/paddy_road.tscn", "area": &"paddy_road", "spawn": &"from_home", "position": Vector2(64, 205)},
-		{"path": "res://scenes/maps/village/irrigation_shade.tscn", "area": &"irrigation_shade", "spawn": &"from_paddy", "position": Vector2(64, 205)},
-		{"path": "res://scenes/maps/river/river_entrance.tscn", "area": &"river_entrance", "spawn": &"from_shade", "position": Vector2(64, 215)},
+		{"path": "res://scenes/maps/village/paddy_road.tscn", "area": &"paddy_road", "spawn": &"from_home", "position": Vector2(160, 202)},
+		{"path": "res://scenes/maps/village/irrigation_shade.tscn", "area": &"irrigation_shade", "spawn": &"from_paddy", "position": Vector2(180, 204)},
+		{"path": "res://scenes/maps/river/river_entrance.tscn", "area": &"river_entrance", "spawn": &"from_shade", "position": Vector2(180, 220)},
 	]
 
 

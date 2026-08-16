@@ -56,7 +56,7 @@ points = PackedVector2Array(142, 174, 208, 174, 208, 220, 220, 220, 220, 272, 32
 
 [node name="LivingRoute" type="Line2D" parent="WalkPathNetwork"]
 visible = false
-points = PackedVector2Array(208, 164, 208, 174, 208, 220, 288, 222, 348, 220, 370, 212, 458, 212)
+points = PackedVector2Array(208, 164, 208, 174, 208, 220, 288, 222, 348, 220, 400, 220, 458, 212)
 
 [node name="NavigationBakeBounds" type="Polygon2D" parent="."]
 visible = false
@@ -181,7 +181,7 @@ position = Vector2(208, 164)
 position = Vector2(288, 222)
 
 [node name="TableRight" type="Marker2D" parent="NPCs/GrandmaRoutinePoints"]
-position = Vector2(370, 212)
+position = Vector2(400, 220)
 
 [node name="KitchenEntrance" type="Marker2D" parent="NPCs/GrandmaRoutinePoints"]
 position = Vector2(458, 212)

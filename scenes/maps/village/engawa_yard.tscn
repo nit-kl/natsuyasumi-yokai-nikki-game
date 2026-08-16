@@ -40,13 +40,13 @@ navigation_polygon = SubResource("Navigation")
 script = ExtResource("8_walk_path")
 [node name="HouseToFields" type="Line2D" parent="WalkPathNetwork"]
 visible = false
-points = PackedVector2Array(320, 150, 320, 184, 320, 205, 420, 205, 520, 198, 576, 220, 576, 260, 608, 260)
+points = PackedVector2Array(320, 160, 320, 184, 320, 205, 380, 205, 440, 202, 500, 200, 530, 216, 560, 244, 588, 248, 608, 250)
 [node name="GardenStroll" type="Line2D" parent="WalkPathNetwork"]
 visible = false
-points = PackedVector2Array(320, 205, 270, 220, 220, 245, 176, 250, 140, 280, 96, 296)
+points = PackedVector2Array(320, 205, 270, 220, 220, 245, 176, 250, 140, 280, 98, 295)
 [node name="GardenFenceVisit" type="Line2D" parent="WalkPathNetwork"]
 visible = false
-points = PackedVector2Array(420, 205, 440, 225, 456, 240)
+points = PackedVector2Array(440, 202, 432, 218)
 [node name="Collision" type="TileMapLayer" parent="."]
 [node name="WorldCollision" type="StaticBody2D" parent="."]
 collision_layer = 2
@@ -63,6 +63,24 @@ shape = SubResource("BoundaryVertical")
 [node name="Right" type="CollisionShape2D" parent="WorldCollision"]
 position = Vector2(632, 236)
 shape = SubResource("BoundaryVertical")
+[node name="HouseLeft" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(16, 16, 292, 16, 292, 148, 16, 148)
+[node name="HouseRight" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(348, 16, 624, 16, 624, 148, 348, 148)
+[node name="WestTrees" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(16, 148, 70, 148, 70, 280, 16, 280)
+[node name="StoneLantern" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(70, 148, 110, 148, 110, 180, 70, 180)
+[node name="Hydrangeas" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(70, 200, 150, 200, 150, 236, 70, 236)
+[node name="Mailbox" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(70, 312, 100, 312, 100, 336, 70, 336)
+[node name="GardenFence" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(440, 240, 520, 240, 520, 320, 440, 320)
+[node name="RicePaddy" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(572, 148, 632, 148, 632, 208, 572, 208)
+[node name="RightRocks" type="CollisionPolygon2D" parent="WorldCollision"]
+polygon = PackedVector2Array(488, 156, 536, 156, 536, 184, 488, 184)
 
 [node name="Objects" type="Node2D" parent="."]
 [node name="EnterHouse" type="Area2D" parent="Objects"]
@@ -76,7 +94,7 @@ destination_spawn_id = &"entrance"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/EnterHouse"]
 shape = SubResource("DoorArea")
 [node name="ToPaddyRoad" type="Area2D" parent="Objects"]
-position = Vector2(608, 260)
+position = Vector2(608, 250)
 collision_layer = 4
 collision_mask = 0
 script = ExtResource("4_door")
@@ -92,9 +110,9 @@ profile = ExtResource("7_profile")
 [node name="Hydrangea" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
 position = Vector2(176, 250)
 [node name="GardenFence" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
-position = Vector2(456, 268)
+position = Vector2(432, 218)
 [node name="TreeShade" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
-position = Vector2(96, 296)
+position = Vector2(98, 295)
 
 [node name="NPCs" type="Node2D" parent="."]
 [node name="Yokai" type="Node2D" parent="."]
@@ -106,7 +124,7 @@ script = ExtResource("3_spawn")
 spawn_id = &"house_exit"
 facing = &"down"
 [node name="FromFields" type="Marker2D" parent="SpawnPoints"]
-position = Vector2(576, 260)
+position = Vector2(588, 248)
 script = ExtResource("3_spawn")
 spawn_id = &"from_fields"
 facing = &"left"

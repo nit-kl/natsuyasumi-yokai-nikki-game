@@ -974,8 +974,9 @@ Dialogue、帰宅Flow、Save schemaは変更しない。川も同じProduction G
 ## 54. Home Outdoor Production Gameplay Geometry — Issue #062
 
 家周辺Sceneの`GreyboxCollision`と格子状Navigationを廃止し、背景Plate上の上側土道、中央橋、下側庭道を
-主要な歩行面として定義する。`WorldCollision`は家の基礎、石灯籠、郵便受け、樽、水路流入口、左右の用水路、
-水田、トウモロコシ畑、庭の植栽区画を単純Polygonで表現する。橋の物理幅29pxに対して7pxのagent radiusを
+主要な歩行面として定義する。`WorldCollision`は家の基礎、石灯籠、郵便受け、樽、右側の流れ、左右の用水路、
+水田、トウモロコシ畑、庭の植栽区画を単純Polygonで表現する。上側土道は水面より手前の乾いた地面に置き、
+庭道は植栽区画の外を回る。橋の物理幅29pxに対して7pxのagent radiusを
 差し引き、Player中心用の15px幅Navigationを確保する。
 
 `NavigationBakeBounds`と`tools/bake_2d_navigation.gd`を祖母宅と共用し、生成済み
@@ -1031,7 +1032,7 @@ Production背景は1枚絵のまま維持し、前景化が必要な部分だけ
 
 `NPC`は汎用的な`move_with_velocity()`と`stop_movement()`を持ち、移動方向に応じた4方向の`walk_*`／`idle_*` Animation切替だけを担当する。行き先や時間帯はNPC基底へ持ち込まない。祖母Sceneは`NavigationAgent2D`と5pxの屋内用足元Collisionを持ち、World CollisionとPlayer Bodyを避ける。
 
-祖母宅Scene固有の`GrandmaIndoorRoutine`が`GrandmaRoutinePoints`配下のMarkerを順番に選び、28px/sで「ちゃぶ台左→ちゃぶ台南側→ちゃぶ台右側→キッチン入口」を巡る。各地点では4秒程度立ち止まり、常に歩き続ける印象を避ける。Playerが36px以内へ近づいた時、祖母へのクリック接近が予約された時、Dialogue・日記などでClockまたはGameがPauseした時は即座に停止する。
+祖母宅Scene固有の`GrandmaIndoorRoutine`が`GrandmaRoutinePoints`配下のMarkerを順番に選び、28px/sで「ちゃぶ台左→ちゃぶ台南側→中央植木の南側→キッチン入口」を巡る。各地点では4秒程度立ち止まり、常に歩き続ける印象を避ける。Playerが36px以内へ近づいた時、祖母へのクリック接近が予約された時、Dialogue・日記などでClockまたはGameがPauseした時は即座に停止する。
 
 夕方・夜は既存の夕食会話を安定して開始できるよう、祖母をちゃぶ台左の定位置へNavigationで戻して停止する。翌朝へ進んだ場合は生活移動を再開できる。中央植木のCollisionは葉全体ではなく床に接する根元を塞ぐ形とし、植木と障子の間にPlayerと祖母が通れるNavigation幅を確保する。キッチン内は食卓と設備で歩行床がほぼないため、生活地点は見えている入口までとする。
 
@@ -1161,3 +1162,13 @@ Marker生成位置はWorld Collisionとの非重複テストと640x360実画面�
 Markerの点だけでなくPlayer足元半径7pxがWorld Collisionへ重ならないことを自動検証する。
 背景変更で撤去したオブジェクトのCollisionを残さず、移動したオブジェクトのCollisionは新しい足元へ合わせる。
 Visual Regression基準の更新には`tools/capture_marker_first_baselines.ps1`を使用する。
+
+---
+
+## 66. Walkable Surface Alignment
+
+散歩道は背景上の畳、板間、土道、橋、乾いた川岸だけを通る。水面、水田、密な植栽、木の根元、岩、柵、家具の足元へは線を置かない。
+
+`paddy_road`、`irrigation_shade`、`river_entrance`、`engawa_yard`は外周Collisionだけでなく、水面・水田・木・岩・柵・家屋足元の`CollisionPolygon2D`を持つ。Markerテストは2px表示範囲とPlayer足元半径7pxの両方で、これらのCollisionと散歩道が重ならないことを検証する。
+
+出入口、Spawn、虫候補、河童Event、祖母の生活地点は散歩道上へ置く。画面端の植生や水面へ到達するための仮経路は作らない。
