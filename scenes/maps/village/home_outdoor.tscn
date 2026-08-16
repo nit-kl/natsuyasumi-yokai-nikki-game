@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/location_scene.gd" id="1_location"]
 [ext_resource type="Script" path="res://scripts/maps/greybox_map_visual.gd" id="2_visual"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" path="res://assets/maps/home_outdoor/map_home_outdoor.png" id="8_background"]
 [ext_resource type="NavigationPolygon" path="res://resources/navigation/home_outdoor_navigation.tres" id="9_navigation"]
 [ext_resource type="Script" path="res://scripts/maps/foreground_occluder_2d.gd" id="10_occluder"]
+[ext_resource type="Script" path="res://scripts/maps/walk_path_network_2d.gd" id="11_walk_path"]
 
 [sub_resource type="RectangleShape2D" id="BoundaryHorizontal"]
 size = Vector2(640, 16)
@@ -35,6 +36,17 @@ texture = ExtResource("8_background")
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = ExtResource("9_navigation")
 
+[node name="WalkPathNetwork" type="Node2D" parent="."]
+script = ExtResource("11_walk_path")
+
+[node name="UpperRoad" type="Line2D" parent="WalkPathNetwork"]
+visible = false
+points = PackedVector2Array(64, 184, 250, 184, 328, 176, 420, 184, 568, 184, 604, 184)
+
+[node name="GardenRoute" type="Line2D" parent="WalkPathNetwork"]
+visible = false
+points = PackedVector2Array(250, 184, 250, 260, 250, 300, 270, 343, 330, 343, 400, 343, 400, 310, 402, 270)
+
 [node name="NavigationBakeBounds" type="Polygon2D" parent="."]
 visible = false
 polygon = PackedVector2Array(8, 154, 632, 154, 632, 352, 8, 352)
@@ -54,7 +66,7 @@ collision_layer = 2
 collision_mask = 0
 
 [node name="TopBoundary" type="CollisionShape2D" parent="WorldCollision"]
-position = Vector2(320, 146)
+position = Vector2(320, 136)
 shape = SubResource("BoundaryHorizontal")
 metadata/navigation_bake_exclude = true
 
@@ -74,19 +86,19 @@ shape = SubResource("BoundaryVertical")
 metadata/navigation_bake_exclude = true
 
 [node name="HouseFoundationLeft" type="CollisionPolygon2D" parent="WorldCollision"]
-polygon = PackedVector2Array(176, 146, 300, 146, 300, 170, 176, 170)
+polygon = PackedVector2Array(222, 112, 318, 112, 318, 140, 222, 140)
 
 [node name="HouseFoundationRight" type="CollisionPolygon2D" parent="WorldCollision"]
-polygon = PackedVector2Array(356, 146, 480, 146, 480, 170, 356, 170)
+polygon = PackedVector2Array(342, 112, 454, 112, 454, 140, 342, 140)
 
 [node name="StoneLantern" type="CollisionPolygon2D" parent="WorldCollision"]
-polygon = PackedVector2Array(88, 146, 116, 146, 116, 174, 88, 174)
+polygon = PackedVector2Array(90, 116, 114, 116, 114, 140, 90, 140)
 
 [node name="Mailbox" type="CollisionPolygon2D" parent="WorldCollision"]
-polygon = PackedVector2Array(140, 146, 162, 146, 162, 174, 140, 174)
+polygon = PackedVector2Array(164, 122, 184, 122, 184, 146, 164, 146)
 
 [node name="Barrels" type="CollisionPolygon2D" parent="WorldCollision"]
-polygon = PackedVector2Array(464, 146, 504, 146, 504, 166, 464, 166)
+polygon = PackedVector2Array(470, 112, 502, 112, 502, 140, 470, 140)
 
 [node name="RiverApproachWater" type="CollisionPolygon2D" parent="WorldCollision"]
 polygon = PackedVector2Array(608, 154, 632, 154, 632, 168, 608, 168)

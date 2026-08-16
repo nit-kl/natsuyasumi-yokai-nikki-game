@@ -58,6 +58,8 @@ func deserialize(data: Dictionary) -> bool:
 	var saved_position: Variant = player_data.get("position", [])
 	if is_instance_valid(GameState.player) and saved_position is Array and saved_position.size() == 2:
 		GameState.player.global_position = Vector2(float(saved_position[0]), float(saved_position[1]))
+		if GameState.player.has_method("snap_to_walk_path"):
+			GameState.player.snap_to_walk_path()
 	if is_instance_valid(GameState.player) and GameState.player.has_method("set_facing"):
 		GameState.player.set_facing(StringName(player_data.get("facing", "down")))
 	WorldState.deserialize(data.get("world", {}))

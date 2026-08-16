@@ -16,7 +16,7 @@ class RiverGeometryMonitor extends Node:
 	const WATER_CENTER := Vector2(416.0, 128.0)
 	const SHORE_WATER := Vector2(320.0, 220.0)
 	const LEFT_SHRUB := Vector2(30.0, 270.0)
-	const RIGHT_ROCKS := Vector2(580.0, 280.0)
+	const RIGHT_ROCKS := Vector2(580.0, 310.0)
 	const BOTTOM_FENCE := Vector2(320.0, 330.0)
 	const FENCE_EDGE := Vector2(320.0, 302.0)
 	const MAX_MOVE_FRAMES := 480

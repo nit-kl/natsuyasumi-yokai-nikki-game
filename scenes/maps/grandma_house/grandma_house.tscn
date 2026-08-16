@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3]
+[gd_scene load_steps=21 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/location_scene.gd" id="1_location"]
 [ext_resource type="Script" path="res://scripts/maps/greybox_map_visual.gd" id="2_visual"]
@@ -12,6 +12,7 @@
 [ext_resource type="NavigationPolygon" path="res://resources/navigation/grandma_house_navigation.tres" id="10_navigation"]
 [ext_resource type="Script" path="res://scripts/maps/foreground_occluder_2d.gd" id="11_occluder"]
 [ext_resource type="Script" path="res://scripts/npc/grandma_indoor_routine.gd" id="12_grandma_routine"]
+[ext_resource type="Script" path="res://scripts/maps/walk_path_network_2d.gd" id="13_walk_path"]
 
 [sub_resource type="RectangleShape2D" id="BoundaryTop"]
 size = Vector2(608, 16)
@@ -45,6 +46,17 @@ texture = ExtResource("9_background")
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = ExtResource("10_navigation")
+
+[node name="WalkPathNetwork" type="Node2D" parent="."]
+script = ExtResource("13_walk_path")
+
+[node name="BedroomToEngawa" type="Line2D" parent="WalkPathNetwork"]
+visible = false
+points = PackedVector2Array(142, 174, 208, 174, 208, 220, 220, 220, 220, 272, 320, 272, 320, 304)
+
+[node name="LivingRoute" type="Line2D" parent="WalkPathNetwork"]
+visible = false
+points = PackedVector2Array(208, 164, 208, 174, 208, 220, 288, 222, 348, 220, 370, 212, 458, 212)
 
 [node name="NavigationBakeBounds" type="Polygon2D" parent="."]
 visible = false

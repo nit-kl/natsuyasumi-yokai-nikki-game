@@ -19,6 +19,9 @@ var _dwell_remaining := 0.0
 var _returning_home := false
 var _settled_for_evening := false
 var _ready_to_move := false
+var _walk_path: Node
+var _path_points := PackedVector2Array()
+var _path_index := 0
 
 
 func _ready() -> void:
@@ -50,6 +53,14 @@ func _physics_process(delta: float) -> void:
 	if _target_index < 0:
 		_select_next_destination()
 		return
+	if _walk_path != null and not _path_points.is_empty():
+		while _path_index < _path_points.size() and _npc.global_position.distance_to(_path_points[_path_index]) <= 1.0:
+			_path_index += 1
+		if _path_index >= _path_points.size():
+			_arrive_at_destination()
+			return
+		_npc.move_toward_path_point(_path_points[_path_index], walk_speed, delta)
+		return
 	if _navigation_agent.is_navigation_finished():
 		_arrive_at_destination()
 		return
@@ -65,6 +76,12 @@ func go_to_waypoint(index: int) -> bool:
 	_settled_for_evening = false
 	_dwell_remaining = 0.0
 	_navigation_agent.target_position = _waypoints[index].global_position
+	_walk_path = get_tree().get_first_node_in_group(&"walk_path_network")
+	_path_points.clear()
+	_path_index = 0
+	if _walk_path != null and _walk_path.has_paths():
+		_path_points = _walk_path.find_route(_npc.global_position, _waypoints[index].global_position)
+		_path_index = 1 if _path_points.size() > 1 else 0
 	destination_changed.emit(StringName(_waypoints[index].name))
 	return true
 

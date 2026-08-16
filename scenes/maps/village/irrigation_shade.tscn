@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/location_scene.gd" id="1_location"]
 [ext_resource type="PackedScene" path="res://scenes/maps/common/location_runtime.tscn" id="2_runtime"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" path="res://assets/maps/irrigation_shade/map_irrigation_shade.png" id="5_background"]
 [ext_resource type="Script" path="res://scripts/insects/insect_area_spawner.gd" id="6_spawner"]
 [ext_resource type="Resource" path="res://resources/insects/spawn_profiles/outdoor_aburazemi.tres" id="7_profile"]
+[ext_resource type="Script" path="res://scripts/maps/walk_path_network_2d.gd" id="8_walk_path"]
 [sub_resource type="NavigationPolygon" id="Navigation"]
 vertices = PackedVector2Array(16, 135, 624, 135, 624, 255, 16, 255)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
@@ -29,6 +30,11 @@ position = Vector2(320, 180)
 texture = ExtResource("5_background")
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("Navigation")
+[node name="WalkPathNetwork" type="Node2D" parent="."]
+script = ExtResource("8_walk_path")
+[node name="CanalStroll" type="Line2D" parent="WalkPathNetwork"]
+visible = false
+points = PackedVector2Array(24, 205, 64, 205, 120, 200, 160, 210, 240, 195, 330, 180, 410, 195, 490, 224, 540, 210, 576, 205, 616, 205)
 [node name="Collision" type="TileMapLayer" parent="."]
 [node name="WorldCollision" type="StaticBody2D" parent="."]
 collision_layer = 2

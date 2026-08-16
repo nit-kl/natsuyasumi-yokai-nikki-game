@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/location_scene.gd" id="1_location"]
 [ext_resource type="PackedScene" path="res://scenes/maps/common/location_runtime.tscn" id="2_runtime"]
 [ext_resource type="Script" path="res://scripts/maps/map_spawn_point.gd" id="3_spawn"]
 [ext_resource type="Script" path="res://scripts/maps/map_doorway.gd" id="4_door"]
 [ext_resource type="Texture2D" path="res://assets/maps/bedroom/map_bedroom.png" id="5_background"]
+[ext_resource type="Script" path="res://scripts/maps/walk_path_network_2d.gd" id="6_walk_path"]
 
 [sub_resource type="NavigationPolygon" id="Navigation"]
 vertices = PackedVector2Array(260, 240, 616, 240, 616, 336, 260, 336, 570, 136, 616, 136)
@@ -36,6 +37,13 @@ texture = ExtResource("5_background")
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("Navigation")
 
+[node name="WalkPathNetwork" type="Node2D" parent="."]
+script = ExtResource("6_walk_path")
+
+[node name="MainPath" type="Line2D" parent="WalkPathNetwork"]
+visible = false
+points = PackedVector2Array(360, 252, 400, 244, 468, 218, 520, 200, 576, 190, 608, 190)
+
 [node name="Collision" type="TileMapLayer" parent="."]
 
 [node name="WorldCollision" type="StaticBody2D" parent="."]
@@ -66,9 +74,6 @@ polygon = PackedVector2Array(0, 80, 154, 80, 154, 244, 0, 244)
 
 [node name="BackShelf" type="CollisionPolygon2D" parent="WorldCollision"]
 polygon = PackedVector2Array(170, 56, 264, 56, 264, 160, 170, 160)
-
-[node name="RightPlant" type="CollisionPolygon2D" parent="WorldCollision"]
-polygon = PackedVector2Array(544, 242, 632, 242, 632, 344, 544, 344)
 
 [node name="Objects" type="Node2D" parent="."]
 

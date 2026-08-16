@@ -27,6 +27,8 @@ func _place_player_at_entry() -> void:
 	if spawn_point == null:
 		return
 	player.global_position = spawn_point.global_position.round()
+	if player.has_method("snap_to_walk_path"):
+		player.snap_to_walk_path()
 	if player.has_method("set_facing"):
 		player.set_facing(spawn_point.facing)
 

@@ -56,7 +56,7 @@ class ClickActionMonitor extends Node:
 			_fail("Clicking the exit should queue an approach interaction.")
 			return
 		if not await _wait_until(func() -> bool: return GameState.current_area_id == &"engawa_yard"):
-			_fail("Clicking the exit should approach it and change to the outdoor map.")
+			_fail("Clicking the exit should approach it and change to the outdoor map (player=%s destination=%s moving=%s action=%s)." % [player.global_position, click_move.destination, click_move.is_active, click_action.is_active])
 			return
 		await get_tree().physics_frame
 		await get_tree().physics_frame

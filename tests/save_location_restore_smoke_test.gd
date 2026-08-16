@@ -12,6 +12,7 @@ class SaveLocationMonitor extends Node:
 	const HOUSE_SCENE := "res://scenes/maps/grandma_house/grandma_house.tscn"
 	const RIVER_SCENE := "res://scenes/maps/river/river.tscn"
 	const SAVED_POSITION := Vector2(224, 184)
+	const EXPECTED_RESTORED_POSITION := Vector2(208, 184)
 
 
 	func run() -> void:
@@ -38,8 +39,8 @@ class SaveLocationMonitor extends Node:
 		if GameState.current_area_id != &"grandma_house":
 			_fail("Load should restore the saved house scene.")
 			return
-		if not is_instance_valid(GameState.player) or GameState.player.global_position != SAVED_POSITION:
-			_fail("Load should restore the saved player position after scene change.")
+		if not is_instance_valid(GameState.player) or GameState.player.global_position != EXPECTED_RESTORED_POSITION:
+			_fail("Load should project legacy free-roam positions onto the nearest stroll path.")
 			return
 		if GameState.player.facing != &"left":
 			_fail("Load should restore facing after scene change.")

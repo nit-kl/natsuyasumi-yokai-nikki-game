@@ -47,13 +47,13 @@ func _exit_tree() -> void:
 		GameState.player = null
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if movement_locked or GameState.is_paused:
 		if click_action_controller != null:
 			click_action_controller.cancel_action()
 		if click_move_controller != null:
 			click_move_controller.cancel_movement()
-		_apply_movement(Vector2.ZERO, false)
+		_apply_movement(Vector2.ZERO, false, delta)
 		return
 	var input_direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	if not input_direction.is_zero_approx():
@@ -63,7 +63,7 @@ func _physics_process(_delta: float) -> void:
 			click_move_controller.cancel_movement()
 	elif click_move_controller != null:
 		input_direction = click_move_controller.get_movement_direction()
-	_apply_movement(input_direction, Input.is_action_pressed("run"))
+	_apply_movement(input_direction, Input.is_action_pressed("run"), delta)
 
 
 func set_movement_locked(value: bool) -> void:
@@ -73,26 +73,43 @@ func set_movement_locked(value: bool) -> void:
 			click_action_controller.cancel_action()
 		if click_move_controller != null:
 			click_move_controller.cancel_movement()
-		_apply_movement(Vector2.ZERO, false)
+		_apply_movement(Vector2.ZERO, false, 0.0)
 
 
 func get_move_speed(running: bool) -> float:
 	return run_speed if running else walk_speed
 
 
-func _apply_movement(direction: Vector2, wants_to_run: bool) -> void:
+func _apply_movement(direction: Vector2, wants_to_run: bool, delta: float = 1.0 / 60.0) -> void:
 	var normalized_direction := direction.limit_length(1.0)
-	var next_is_moving := not normalized_direction.is_zero_approx()
-	var next_is_running := next_is_moving and wants_to_run
-	velocity = normalized_direction * get_move_speed(next_is_running)
-	if next_is_moving:
+	var wants_to_move := not normalized_direction.is_zero_approx()
+	velocity = normalized_direction * get_move_speed(wants_to_run and wants_to_move)
+	if wants_to_move:
 		_set_facing(direction_to_facing(normalized_direction, facing))
+	var previous_position := global_position
+	var walk_path := _get_walk_path_network()
+	if walk_path != null and walk_path.has_paths():
+		global_position = walk_path.constrain_step(global_position, normalized_direction, velocity.length() * delta)
+	else:
+		move_and_slide()
+	var next_is_moving := global_position.distance_squared_to(previous_position) > 0.0001 \
+		if walk_path != null and walk_path.has_paths() else wants_to_move
+	var next_is_running := next_is_moving and wants_to_run
 	if next_is_moving != is_moving or next_is_running != is_running:
 		is_moving = next_is_moving
 		is_running = next_is_running
 		movement_changed.emit(is_moving, is_running)
-	move_and_slide()
 	refresh_depth_order()
+
+
+func snap_to_walk_path() -> void:
+	var walk_path := _get_walk_path_network()
+	if walk_path != null and walk_path.has_paths():
+		global_position = walk_path.get_closest_point(global_position).round()
+
+
+func _get_walk_path_network() -> Node:
+	return get_tree().get_first_node_in_group(&"walk_path_network")
 
 
 func refresh_depth_order() -> void:

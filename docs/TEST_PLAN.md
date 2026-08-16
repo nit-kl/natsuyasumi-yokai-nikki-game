@@ -1161,3 +1161,92 @@ Foundation、Map遷移、帰宅フロー、一日通し、別Location Save復元
 4. 祖母が家具を横切らず、ちゃぶ台周囲から台所入口へ到達することを確認する
 5. 寝室へ戻って再び居間へ入り、入口付近でPlayerと祖母が通路を塞がないことを確認する
 6. 河童目撃後に帰宅し、祖母との夕食、日記Review、一日終了まで進行することを確認する
+
+---
+
+## 54. Authored Stroll Path Movement
+
+自動Validation:
+
+- 散歩道外の座標が最寄り経路へ投影される
+- 分岐をまたぐクリック経路が共有接続点を通る
+- 経路に垂直なKeyboard入力で背景側へ侵入しない
+- 経路に沿うKeyboard入力では通常速度で前進する
+- 旧Saveの自由座標をLoadした場合、Save v1を維持したまま最寄り散歩道へ復元する
+- クリック移動、クリック行動、祖母の生活移動、一日通しを含む全Validationが成功する
+
+手動確認:
+
+1. 各Locationで背景の水面、畑、家具、植栽方向を押し続けても散歩道から外れないことを確認する
+2. 地面、NPC、虫、出入口をクリックし、背景オブジェクトを横切らず到達することを確認する
+3. 分岐でクリック先または入力方向に応じた道を選べることを確認する
+4. 常設Markerが細い線や目的地矢印にならず、控えめな足元記号として経路だけを示すことを確認する
+5. 河童の気配・目撃Eventが川岸の歩行中に従来どおり一度だけ発生することを確認する
+
+追加の分岐Validation:
+
+- 接続点で方向入力に一致する枝を選べる
+- 近接しているが未接続の経路へ垂直入力で飛び移らない
+- クリック移動が中間接続点を越えて往復せず、目的地まで到達する
+- 寝室、祖母宅、家周辺の折れ曲がった経路から出入口とInteraction地点へ到達できる
+
+---
+
+## 55. Persistent Walkable-area Markers
+
+自動Validation:
+
+- Vertical Sliceの全8 Locationで、カーソル位置に関係なく歩行可能Markerが有効である
+- 各Locationに経路を読める最低数のMarkerが生成される
+- 全Markerが散歩道上にあり、別の表示座標を二重管理していない
+- Marker位置の2px範囲がWorld Collisionと重ならない
+- 常時Markerテストを含む全18 Scene一括Validationが成功する
+
+手動確認:
+
+1. カーソルを画面外へ置いても淡い黄色のMarkerが見えることを確認する
+2. 寝室・祖母宅ではMarkerが畳と板間の通路上にあり、布団、机、家具へ重ならないことを確認する
+3. 屋外ではMarkerが土道、橋、川岸に沿い、水面、水田、畑、植栽へ重ならないことを確認する
+4. Markerが虫や河童の気配を示す特別Markerに見えず、歩行可能範囲だけを伝えることを確認する
+5. 目的地Markerと対象Hoverが常時Markerより明確に見分けられることを確認する
+
+---
+
+## 56. Marker-first Background Production
+
+自動Validation:
+
+- `LocationCatalog`に登録された全Production Locationが`WalkPathNetwork2D`を持つ
+- 全Locationで常時表示Markerが有効で、経路を読める最低数が生成される
+- MarkerがSceneの散歩道と同一データから生成され、World Collisionと重ならない
+- 全背景Sourceが1672x941、Production画像が640x360である
+- Production背景がNearest Filterで表示される
+
+手動確認:
+
+1. 背景制作前にMarker付きGreyboxを承認し、その後に背景を作成していることを確認する
+2. 8エリアのMarker付き実画面で、Marker列が畳、床、土道、橋、乾いた川岸の上に連続していることを確認する
+3. 家具、水面、水田、畑、岩、柵、植栽がMarker列へ割り込まないことを確認する
+4. Markerを非表示にしても道が不自然な誘導線に見えず、生活感のある背景として成立することを確認する
+5. 背景差し替え後にCollision、Foreground Occluder、出入口、NPC、虫、Event位置の足元が背景と一致することを確認する
+
+---
+
+## 57. Marker-first Background Geometry Finalization — Issue #071
+
+自動Validation:
+
+- 全Markerの2px表示範囲に加え、Player足元半径7pxがWorld Collisionと重ならない
+- 寝室右下に、背景から撤去済みの植物Collisionが残っていない
+- 家周辺の家基礎、石灯籠、郵便受け、樽Collisionが再制作背景の足元に一致する
+- 川右端の岩Collisionが土道へ張り出さず、新しい岩・植生位置を塞ぐ
+- 出入口、祖母生活地点、虫候補地点、河童Event地点が散歩道上またはInteraction距離内にある
+- 全18 Scene一括Validationが成功する
+
+手動確認:
+
+1. `tools/capture_marker_first_baselines.ps1`で全8 LocationのMarker画像とGeometry Overlay画像を更新する
+2. 寝室右下の空いた畳で、存在しない植物の赤いCollisionが表示されないことを確認する
+3. 家周辺の上側道路で、家基礎・石灯籠・郵便受け・樽のCollisionが土道へ浮いていないことを確認する
+4. 川右側のMarker列と岩Collisionの間にPlayer足元分の余白があることを確認する
+5. 祖母宅、家周辺、川のForeground Occluderが背景の机、植栽、柵の輪郭を切り抜いていることを確認する

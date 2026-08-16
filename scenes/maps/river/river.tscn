@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3]
+[gd_scene load_steps=22 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/location_scene.gd" id="1_location"]
 [ext_resource type="Script" path="res://scripts/maps/greybox_map_visual.gd" id="2_visual"]
@@ -12,6 +12,7 @@
 [ext_resource type="Script" path="res://scripts/maps/foreground_occluder_2d.gd" id="10_occluder"]
 [ext_resource type="Script" path="res://scripts/insects/insect_area_spawner.gd" id="11_insect_spawner"]
 [ext_resource type="Resource" path="res://resources/insects/spawn_profiles/river_aburazemi.tres" id="12_insect_profile"]
+[ext_resource type="Script" path="res://scripts/maps/walk_path_network_2d.gd" id="13_walk_path"]
 
 [sub_resource type="RectangleShape2D" id="BoundaryHorizontal"]
 size = Vector2(640, 16)
@@ -42,6 +43,13 @@ texture = ExtResource("8_background")
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = ExtResource("9_navigation")
+
+[node name="WalkPathNetwork" type="Node2D" parent="."]
+script = ExtResource("13_walk_path")
+
+[node name="RiverbankStroll" type="Line2D" parent="WalkPathNetwork"]
+visible = false
+points = PackedVector2Array(64, 264, 96, 264, 132, 277, 192, 264, 264, 248, 352, 280, 400, 240, 424, 248, 520, 264, 576, 264)
 
 [node name="NavigationBakeBounds" type="Polygon2D" parent="."]
 visible = false
@@ -88,7 +96,7 @@ polygon = PackedVector2Array(8, 230, 48, 234, 55, 252, 55, 310, 8, 320)
 polygon = PackedVector2Array(78, 284, 128, 284, 140, 318, 78, 320)
 
 [node name="RightRocks" type="CollisionPolygon2D" parent="WorldCollision"]
-polygon = PackedVector2Array(540, 270, 632, 270, 632, 306, 590, 300, 560, 312, 530, 304)
+polygon = PackedVector2Array(552, 296, 632, 290, 632, 330, 590, 322, 560, 330, 538, 318)
 
 [node name="BottomVegetation" type="CollisionPolygon2D" parent="WorldCollision"]
 polygon = PackedVector2Array(8, 312, 48, 312, 60, 304, 100, 304, 120, 310, 150, 300, 190, 300, 220, 296, 250, 302, 280, 298, 310, 302, 340, 298, 370, 302, 400, 298, 430, 302, 460, 292, 500, 298, 530, 288, 560, 296, 590, 286, 632, 292, 632, 352, 8, 352)

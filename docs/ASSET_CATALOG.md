@@ -549,3 +549,33 @@ Issue #070以降`grandma_house_living`を使用する。Production Sceneは`*_so
 
 旧`assets/maps/grandma_house/map_grandma_house.png`は既存制作履歴として保持するが、現行
 `grandma_house.tscn`からは参照しない。Source画像は引き続きProduction Sceneへ直接接続しない。
+
+---
+
+## 12. Marker-first Background Rebuild
+
+- [x] 現行8 Locationの`WalkPathNetwork2D`を背景制作前のレイアウト契約として固定
+- [x] 寝室、居間・台所、縁側・庭、田んぼ道、用水路の木陰、川入口、川、家周辺をMarker経路前提で再制作
+- [x] 生成原寸8枚を1672x941の`*_source.png`へ保存
+- [x] Nearestで640x360へ縮小した8枚をProduction Sceneへ反映
+- [x] 背景へMarker、矢印、UI、人物を焼き込まず、ゲーム側の常時Marker表示を維持
+- [x] 今後の背景制作順を`docs/MAP_ART_WORKFLOW.md`へ固定
+
+再制作は既存画像を編集対象とする画像生成の`precise-object-edit`で行い、出入口と基本構図を維持しながら、
+Marker列の下へ連続した畳、床、土道、橋、乾いた川岸を確保した。Production Sceneは従来どおり`map_*.png`のみを参照する。
+
+---
+
+## 13. Marker-first Geometry Visual Baselines — Issue #071
+
+- [x] 寝室の撤去済み植物Collisionを削除
+- [x] 家周辺の家基礎、石灯籠、郵便受け、樽Collisionを再制作背景へ同期
+- [x] 川右端の岩Collisionを新しい岩・植生位置へ同期
+- [x] Player足元半径を含むMarker Collision監査を追加
+- [x] 全8 LocationのMarker付き／Geometry Overlay付き基準画像を保存
+
+保存先:
+
+```text
+docs/art-reference/03_gameplay/marker_first_geometry/
+```

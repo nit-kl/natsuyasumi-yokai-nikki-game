@@ -1114,3 +1114,50 @@ Physics CollisionとNavigationは居間・台所背景の家具配置から再�
 祖母は新しいちゃぶ台左側を朝夕の定位置とし、ちゃぶ台南側・右側・台所入口を既存の
 `GrandmaIndoorRoutine`で巡回する。前景Occluderは新背景と同じTextureを参照し、ちゃぶ台、植木、
 食卓、左右障子の足元を境にPlayer・祖母との前後関係を切り替える。
+
+---
+
+## 63. Authored Stroll Path Movement
+
+各Locationは`WalkPathNetwork2D`を1つ持ち、非表示の`Line2D`子Nodeで歩行経路と分岐を定義する。
+線の共有端点を接続点として扱い、`WalkPathNetwork2D`がクリック地点の投影、最短経路、Keyboard移動の拘束を担当する。
+
+`ClickMoveController`は散歩道があるLocationではBake済みNavigationより散歩道を優先する。
+`Player`はPhysics Collisionで背景を押し返すのではなく、毎Physics frameの移動結果を散歩道上へ拘束する。
+`GrandmaIndoorRoutine`も同じ散歩道を使い、Player専用の抜け道を作らない。
+
+既存`NavigationRegion2D`と`WorldCollision`は移行期間中の比較・既存監査用として残すが、Playerの到達可能座標を決める正本は散歩道とする。
+出入口、虫候補地点、NPC生活地点、必須Event Triggerは散歩道上、または既存Interaction距離内へ配置する。
+
+Save v1の`player.position`は維持する。Load時には旧自由移動Saveを含め、復元座標を現在Locationの最寄り散歩道へ投影する。
+
+Keyboard移動は現在位置が属する線分と、その端点へ直接接続された線分だけを候補にする。
+画面上で近接していても接続点を共有しない別経路へは移らない。接続点へ到達したframeでは一度端点へ正確に停止し、
+次のPhysics frameの入力方向で出る経路を選ぶ。クリック移動も中間接続点を到達距離で読み飛ばさず、同じ規則に従う。
+
+`WalkPathNetwork2D`は各線分上へ一定間隔の常時表示Markerも生成する。Markerは経路探索と同じ線分データから生成し、
+表示用座標をSceneへ二重定義しない。描画は背景より手前、Player・NPC・前景より奥とし、入力判定を持たない。
+Marker生成位置はWorld Collisionとの非重複テストと640x360実画面キャプチャの両方で監査する。
+
+---
+
+## 64. Marker-first Environment Art Contract
+
+新規Locationの実装順は`WalkPathNetwork2D`、目的地点、Marker付きGreybox、背景画像、Collision / Occluder調整とする。
+背景画像を先に確定してから散歩道を当てはめない。経路座標の正本はScene内の`Line2D`で、背景生成用の座標表はそのレビュー用スナップショットとする。
+
+`walk_path_marker_smoke_test`は`LocationCatalog.SCENE_PATHS`からProduction Locationを列挙する。
+このため今後LocationCatalogへエリアを追加する場合、同じ変更単位で常時表示Markerを持つ`WalkPathNetwork2D`を実装しなければValidationを通過しない。
+
+背景制作と差し替えの詳細は`docs/MAP_ART_WORKFLOW.md`に従う。背景にはMarkerを焼き込まず、Scene実行時に経路データから描画する。
+
+---
+
+## 65. Marker-first Background Geometry Finalization — Issue #071
+
+再制作した背景へGeometryを同期する際は、全8 Locationの`*_markers.png`と`*_geometry.png`を同じ640x360条件で出力する。
+単純な通過エリアは四辺のWorld Collision、祖母宅・家周辺・川は背景オブジェクト足元のCollisionPolygonとForeground Occluderを重点監査する。
+
+Markerの点だけでなくPlayer足元半径7pxがWorld Collisionへ重ならないことを自動検証する。
+背景変更で撤去したオブジェクトのCollisionを残さず、移動したオブジェクトのCollisionは新しい足元へ合わせる。
+Visual Regression基準の更新には`tools/capture_marker_first_baselines.ps1`を使用する。

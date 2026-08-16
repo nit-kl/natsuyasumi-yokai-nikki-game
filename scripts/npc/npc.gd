@@ -63,6 +63,16 @@ func move_with_velocity(desired_velocity: Vector2) -> void:
 	refresh_depth_order()
 
 
+func move_toward_path_point(target_position: Vector2, speed: float, delta: float) -> void:
+	var direction := global_position.direction_to(target_position)
+	velocity = direction * speed
+	if not direction.is_zero_approx():
+		face_toward(target_position)
+	_set_is_moving(not direction.is_zero_approx())
+	global_position = global_position.move_toward(target_position, speed * delta)
+	refresh_depth_order()
+
+
 func stop_movement() -> void:
 	velocity = Vector2.ZERO
 	_set_is_moving(false)

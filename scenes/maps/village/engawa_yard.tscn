@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/location_scene.gd" id="1_location"]
 [ext_resource type="PackedScene" path="res://scenes/maps/common/location_runtime.tscn" id="2_runtime"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" path="res://assets/maps/engawa_yard/map_engawa_yard.png" id="5_background"]
 [ext_resource type="Script" path="res://scripts/insects/insect_area_spawner.gd" id="6_spawner"]
 [ext_resource type="Resource" path="res://resources/insects/spawn_profiles/home_outdoor_aburazemi.tres" id="7_profile"]
+[ext_resource type="Script" path="res://scripts/maps/walk_path_network_2d.gd" id="8_walk_path"]
 
 [sub_resource type="NavigationPolygon" id="Navigation"]
 vertices = PackedVector2Array(24, 136, 616, 136, 616, 336, 24, 336)
@@ -35,6 +36,17 @@ position = Vector2(320, 180)
 texture = ExtResource("5_background")
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("Navigation")
+[node name="WalkPathNetwork" type="Node2D" parent="."]
+script = ExtResource("8_walk_path")
+[node name="HouseToFields" type="Line2D" parent="WalkPathNetwork"]
+visible = false
+points = PackedVector2Array(320, 150, 320, 184, 320, 205, 420, 205, 520, 198, 576, 220, 576, 260, 608, 260)
+[node name="GardenStroll" type="Line2D" parent="WalkPathNetwork"]
+visible = false
+points = PackedVector2Array(320, 205, 270, 220, 220, 245, 176, 250, 140, 280, 96, 296)
+[node name="GardenFenceVisit" type="Line2D" parent="WalkPathNetwork"]
+visible = false
+points = PackedVector2Array(420, 205, 440, 225, 456, 240)
 [node name="Collision" type="TileMapLayer" parent="."]
 [node name="WorldCollision" type="StaticBody2D" parent="."]
 collision_layer = 2

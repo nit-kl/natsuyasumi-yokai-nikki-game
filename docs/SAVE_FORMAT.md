@@ -346,3 +346,12 @@ Vertical Slice実ゲームのLoadでは`player.scene_id`を`LocationCatalog`で�
 
 Issue #041では`world.flags`の`vertical_slice_complete`を一日通し体験の終端として使用する。
 終了SaveはDay 1と夕方の時刻を維持し、Schema fieldとsave_versionは変更しない。
+
+---
+
+## 21. Stroll Path Position Compatibility
+
+散歩道ベース移動後もSave v1の`player.position`を維持する。
+保存時のPlayerは散歩道上にいるため、従来どおりWorld座標を記録する。
+旧Saveまたは手動編集Saveから散歩道外の座標を読み込んだ場合は、Scene読込後に最寄り散歩道へ投影して復元する。
+`scene_id`、`position`、`facing`のfieldと`save_version = 1`は変更しない。
