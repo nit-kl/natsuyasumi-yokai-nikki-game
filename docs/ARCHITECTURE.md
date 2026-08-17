@@ -1002,7 +1002,7 @@ Dialogue、帰宅Flow、Save schemaは変更しない。川も同じProduction G
 
 ## 56. Three-map Gameplay Geometry Visual Tuning — Issue #064
 
-`tools/capture_2d_geometry.gd`は、Production背景へPhysics Collision、Bake済みNavigation、Spawn、Doorway、Event Triggerを重ねた640x360 PNGを出力する開発用監査ツールとする。赤はCollision、緑はNavigation、青はSpawn、黄はDoorway、紫はEvent Triggerを示す。描画可能なDisplay Driverが必要なため`--headless`では実行せず、出力画像は`.godot/`配下などVersion管理外へ置く。
+`tools/capture_2d_geometry.gd`は、Production背景へPhysics Collision、Bake済みNavigation、Spawn、Doorway、Event Triggerを重ねた640x360 PNGを出力する開発用監査ツールとする。赤はCollision、緑はNavigation、青はSpawn、黄はDoorway、紫はEvent Triggerを示す。描画可能なDisplay Driverが必要なため`--headless`では実行せず、一時確認は`.godot/`へ、現行のVisual Regression基準は`docs/art-reference/03_gameplay/marker_first_geometry/`へ保存する。
 
 実行例:
 
@@ -1172,3 +1172,13 @@ Visual Regression基準の更新には`tools/capture_marker_first_baselines.ps1`
 `paddy_road`、`irrigation_shade`、`river_entrance`、`engawa_yard`は外周Collisionだけでなく、水面・水田・木・岩・柵・家屋足元の`CollisionPolygon2D`を持つ。Markerテストは2px表示範囲とPlayer足元半径7pxの両方で、これらのCollisionと散歩道が重ならないことを検証する。
 
 出入口、Spawn、虫候補、河童Event、祖母の生活地点は散歩道上へ置く。画面端の植生や水面へ到達するための仮経路は作らない。
+
+---
+
+## 67. Marker-first Visual Baselines After Walkable Surface Alignment — Issue #072
+
+散歩道と屋外Collisionを歩行面へ合わせた後、Bake済みNavigationとVisual Regression基準を同じ変更単位で同期する。
+
+`grandma_house`、`home_outdoor`、`river`は`tools/bake_2d_navigation.gd`で`WorldCollision`から再Bakeする。Player到達座標の正本は散歩道のままとし、Bake結果はGeometry Overlayと移行期間中のNavigation比較用である。
+
+全8 Locationの`*_markers.png`と`*_geometry.png`は640x360で`docs/art-reference/03_gameplay/marker_first_geometry/`へ保存する。捕獲は描画可能なDisplay Driverが必要で、Linuxでは`tools/capture_marker_first_baselines.sh`、Windowsでは既存のPowerShell Scriptを使う。`walk_path_marker_smoke_test`は基準画像の存在と解像度も検証する。

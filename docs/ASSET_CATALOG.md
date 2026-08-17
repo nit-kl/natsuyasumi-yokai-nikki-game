@@ -579,3 +579,14 @@ Marker列の下へ連続した畳、床、土道、橋、乾いた川岸を確�
 ```text
 docs/art-reference/03_gameplay/marker_first_geometry/
 ```
+
+---
+
+## 14. Marker-first Visual Baselines After Walkable Surface Alignment — Issue #072
+
+- [x] `home_outdoor` / `river` のBake済みNavigationを新しいCollisionへ再Bake
+- [x] 全8 Locationの`*_markers.png`と`*_geometry.png`を現行散歩道・Collisionで再捕獲
+- [x] Linux向け捕獲Script `tools/capture_marker_first_baselines.sh` を追加
+- [x] `walk_path_marker_smoke_test`で基準画像の存在と640x360を検証
+
+Issue #071の保存先を維持し、歩行面合わせ後のMarker列とGeometry OverlayをVisual Regression基準とする。

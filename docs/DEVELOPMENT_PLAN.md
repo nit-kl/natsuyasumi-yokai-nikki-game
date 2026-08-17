@@ -380,6 +380,8 @@ Godot 2Dプロジェクトとして、安全に拡張できる基盤を作る。
 #068 Area-based deterministic insect spawning
 #069 Vertical Slice area subdivision and production backgrounds
 #070 Grandma house living-room Production integration
+#071 Marker-first background geometry finalization
+#072 Marker-first visual baselines after walkable surface alignment
 ```
 
 ---

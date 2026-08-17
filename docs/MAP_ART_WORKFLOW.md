@@ -23,6 +23,12 @@
 powershell -ExecutionPolicy Bypass -File tools/capture_marker_first_baselines.ps1 -GodotPath <Godot console executable>
 ```
 
+Linux / Cursor Cloudでは描画可能なDisplayを指定して実行する。
+
+```bash
+DISPLAY=:1 tools/capture_marker_first_baselines.sh
+```
+
 出力先は`docs/art-reference/03_gameplay/marker_first_geometry/`で、各Locationについて`*_markers.png`と`*_geometry.png`を保存する。
 
 背景生成・編集を先に行い、その絵の隙間へ後から経路を押し込む手順は禁止する。
