@@ -1,6 +1,9 @@
 extends Node
 
 const LocationCatalogData = preload("res://scripts/maps/location_catalog.gd")
+const BASELINE_DIRECTORY := "res://docs/art-reference/03_gameplay/marker_first_geometry"
+const BASELINE_SIZE := Vector2i(640, 360)
+const BASELINE_SUFFIXES := ["_markers.png", "_geometry.png"]
 
 
 func _ready() -> void:
@@ -13,6 +16,8 @@ class WalkPathMarkerMonitor extends Node:
 	func run() -> void:
 		GameState.set_paused(false)
 		GameClock.set_clock_paused(false)
+		if not _audit_visual_baselines():
+			return
 		var scene_paths: Array[String] = []
 		for area_id: StringName in LocationCatalogData.SCENE_PATHS:
 			if area_id == &"foundation_test":
@@ -44,6 +49,22 @@ class WalkPathMarkerMonitor extends Node:
 					_fail("The Player footprint should fit around every walk marker: %s at %s" % [scene_path, marker])
 					return
 		_quit_cleanly(0)
+
+
+	func _audit_visual_baselines() -> bool:
+		for area_id: StringName in LocationCatalogData.SCENE_PATHS:
+			if area_id == &"foundation_test":
+				continue
+			for suffix in BASELINE_SUFFIXES:
+				var path := "%s/%s%s" % [BASELINE_DIRECTORY, String(area_id), suffix]
+				if not FileAccess.file_exists(path):
+					_fail("Missing marker-first visual baseline: %s" % path)
+					return false
+				var image := Image.load_from_file(ProjectSettings.globalize_path(path))
+				if image == null or image.get_size() != BASELINE_SIZE:
+					_fail("Marker-first visual baseline must be 640x360: %s" % path)
+					return false
+		return true
 
 
 	func _overlaps_world_collision(position: Vector2, radius: float) -> bool:

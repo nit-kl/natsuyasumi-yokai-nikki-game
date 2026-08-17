@@ -302,12 +302,13 @@ godot --headless --editor --quit
 
 `tools/*.ps1` はWindows用でGodotのパスをハードコードしているため、VMでは使わず
 `godot` を直接呼ぶこと。各テストScene（`tests/*.tscn`）は成功でexit 0、失敗でexit 1を返す。
-`tools/run_vertical_slice_validation.ps1` に列挙された16 Sceneを順に実行する:
+`tools/run_vertical_slice_validation.ps1` に列挙された18 Sceneを順に実行する:
 
 ```bash
 for s in tests/foundation_validation.tscn tests/map_transition_smoke_test.tscn \
   tests/return_home_flow_smoke_test.tscn tests/vertical_slice_day_flow_smoke_test.tscn \
   tests/vertical_slice_production_audit.tscn tests/click_move_smoke_test.tscn \
+  tests/walk_path_network_smoke_test.tscn tests/walk_path_marker_smoke_test.tscn \
   tests/click_action_smoke_test.tscn tests/click_target_hover_smoke_test.tscn \
   tests/mouse_ui_smoke_test.tscn tests/grandma_house_geometry_smoke_test.tscn \
   tests/home_outdoor_geometry_smoke_test.tscn tests/river_geometry_smoke_test.tscn \
@@ -315,6 +316,12 @@ for s in tests/foundation_validation.tscn tests/map_transition_smoke_test.tscn \
   tests/save_location_restore_smoke_test.tscn tests/area_subdivision_smoke_test.tscn; do
     godot --headless --path /workspace "$s" || echo "FAILED: $s"
 done
+```
+
+Marker / Geometry Overlay基準画像の更新:
+
+```bash
+DISPLAY=:1 tools/capture_marker_first_baselines.sh
 ```
 
 ### ゲーム実行（開発モード）

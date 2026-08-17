@@ -1272,3 +1272,22 @@ Foundation、Map遷移、帰宅フロー、一日通し、別Location Save復元
 3. 用水路沿いと川入口で、木の根元と紫陽花の上を通らず土道だけを歩くことを確認する
 4. 家周辺の右端で流れの上ではなく乾いた土道から川へ出られることを確認する
 5. 祖母宅で中央植木と食器棚の上を歩かず、植木の南側から台所入口へ行けることを確認する
+
+---
+
+## 59. Marker-first Visual Baselines After Walkable Surface Alignment — Issue #072
+
+自動Validation:
+
+- `grandma_house`、`home_outdoor`、`river`のBake済みNavigationが現行`WorldCollision`から再生成されている
+- 全8 Locationの`*_markers.png`と`*_geometry.png`が`docs/art-reference/03_gameplay/marker_first_geometry/`に存在し、640x360である
+- Markerの2px範囲とPlayer足元半径7pxがWorld Collisionと重ならない
+- 全18 Scene一括Validationが成功する
+
+手動確認:
+
+1. Marker画像で、黄色Marker列が畳、板間、土道、橋、乾いた川岸の上に連続していることを確認する
+2. Geometry Overlayで、田んぼ道・用水路沿い・川入口・縁側庭の水面・水田・木・岩Collisionが赤い塗りとして見えることを確認する
+3. 家周辺の右側流れが赤いCollisionになり、緑のNavigationが水面へ張り出していないことを確認する
+4. 川のGeometry Overlayが再Bake後も河岸の土道を残していることを確認する
+5. キーボードとクリックの両方で、障害物方向へ入力しても散歩道から外れないことを確認する
