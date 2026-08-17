@@ -1291,3 +1291,21 @@ Foundation、Map遷移、帰宅フロー、一日通し、別Location Save復元
 3. 家周辺の右側流れが赤いCollisionになり、緑のNavigationが水面へ張り出していないことを確認する
 4. 川のGeometry Overlayが再Bake後も河岸の土道を残していることを確認する
 5. キーボードとクリックの両方で、障害物方向へ入力しても散歩道から外れないことを確認する
+
+---
+
+## 60. Vertical Slice Playtest Record — Issue #8
+
+2026-08-17 に、Godot 4.7.1 のデバッグ実行で寝室から日記 Review まで通しプレイした。
+
+詳細と10点評価は `docs/playtest/vertical_slice_2026-08-17.md`。
+
+要約:
+
+- 自動 18 Scene Validation はすべて成功。プログラム上の一日通しは通る
+- 人手では 7 Location と河童 TRACE/SEEN、夕食後の日記 Review まで到達した
+- 平均 **6.9 / 10**（Milestone 2 移行基準の 7 点未満）
+- Issue #1 の成功条件は 6 問中 YES 4
+- 先に直す改善: #159（GameClock の実時間比）、#160（Day1 虫が本道の外）
+- Blocker（起動不能・Save破損・進行不能）はなし
+
