@@ -1296,16 +1296,20 @@ Foundation、Map遷移、帰宅フロー、一日通し、別Location Save復元
 
 ## 60. Vertical Slice Playtest Record — Issue #8
 
-2026-08-17 に、Godot 4.7.1 のデバッグ実行で寝室から日記 Review まで通しプレイした。
+2026-08-17 に初回通し、2026-08-18 に #159 / #160 適用後の再採点を行った。
 
-詳細と10点評価は `docs/playtest/vertical_slice_2026-08-17.md`。
+詳細:
+
+- 初回: `docs/playtest/vertical_slice_2026-08-17.md`（平均 6.9）
+- 再プレイ: `docs/playtest/vertical_slice_2026-08-18.md`（平均 7.3）
 
 要約:
 
-- 自動 18 Scene Validation はすべて成功。プログラム上の一日通しは通る
-- 人手では 7 Location と河童 TRACE/SEEN、夕食後の日記 Review まで到達した
-- 平均 **6.9 / 10**（Milestone 2 移行基準の 7 点未満）
-- Issue #1 の成功条件は 6 問中 YES 4
-- 先に直す改善: #159（GameClock の実時間比）、#160（Day1 虫が本道の外）
+- 自動 18 Scene Validation と一日通し Smoke は成功する
+- 初回人手通しは 7 Location と河童まで到達したが、虫を逃し、日記時点で 02:49 だった
+- #159 で既定時計を 0.375 分/秒、#160 で Day1 セミを本道 `(380, 205)` へ優先配置した
+- 再採点の平均は **7.3 / 10**（Milestone 2 移行基準を満たす）
+- Issue #1 の成功条件は 6 問中 YES 6
 - Blocker（起動不能・Save破損・進行不能）はなし
+- 次は #10（Day 2 ループ）
 
