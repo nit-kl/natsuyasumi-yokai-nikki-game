@@ -1291,3 +1291,25 @@ Foundation、Map遷移、帰宅フロー、一日通し、別Location Save復元
 3. 家周辺の右側流れが赤いCollisionになり、緑のNavigationが水面へ張り出していないことを確認する
 4. 川のGeometry Overlayが再Bake後も河岸の土道を残していることを確認する
 5. キーボードとクリックの両方で、障害物方向へ入力しても散歩道から外れないことを確認する
+
+---
+
+## 60. Vertical Slice Playtest Record — Issue #8
+
+2026-08-17 に初回通し、2026-08-18 に #159 / #160 適用後の再採点を行った。
+
+詳細:
+
+- 初回: `docs/playtest/vertical_slice_2026-08-17.md`（平均 6.9）
+- 再プレイ: `docs/playtest/vertical_slice_2026-08-18.md`（平均 7.3）
+
+要約:
+
+- 自動 18 Scene Validation と一日通し Smoke は成功する
+- 初回人手通しは 7 Location と河童まで到達したが、虫を逃し、日記時点で 02:49 だった
+- #159 で既定時計を 0.375 分/秒、#160 で Day1 セミを本道 `(380, 205)` へ優先配置した
+- 再採点の平均は **7.3 / 10**（Milestone 2 移行基準を満たす）
+- Issue #1 の成功条件は 6 問中 YES 6
+- Blocker（起動不能・Save破損・進行不能）はなし
+- 次は #10（Day 2 ループ）
+

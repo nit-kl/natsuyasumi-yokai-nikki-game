@@ -25,6 +25,7 @@ func spawn_for_current_day() -> Array[Insect]:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = _make_daily_seed(_resolve_area_id(), CalendarManager.day_index)
 	_shuffle_points(points, rng)
+	points = _prioritize_day_one_points(points)
 	var count := mini(profile.get_spawn_count(rng, CalendarManager.day_index), points.size())
 	for index in range(count):
 		var insect := profile.insect_scene.instantiate() as Insect
@@ -75,6 +76,24 @@ func _shuffle_points(points: Array[Node2D], rng: RandomNumberGenerator) -> void:
 		var value := points[index]
 		points[index] = points[swap_index]
 		points[swap_index] = value
+
+
+func _prioritize_day_one_points(points: Array[Node2D]) -> Array[Node2D]:
+	if CalendarManager.day_index != CalendarManager.FIRST_DAY:
+		return points
+	if profile.preferred_day_one_spawn_point_names.is_empty():
+		return points
+	var prioritized: Array[Node2D] = []
+	var remaining: Array[Node2D] = points.duplicate()
+	for point_name in profile.preferred_day_one_spawn_point_names:
+		for index in range(remaining.size()):
+			var point: Node2D = remaining[index]
+			if point.name == String(point_name):
+				prioritized.append(point)
+				remaining.remove_at(index)
+				break
+	prioritized.append_array(remaining)
+	return prioritized
 
 
 func _make_insect_name(index: int) -> String:

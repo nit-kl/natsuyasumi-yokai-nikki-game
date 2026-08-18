@@ -94,6 +94,7 @@ func _test_clock_periods() -> void:
 
 
 func _test_clock_controls() -> void:
+	_expect(is_equal_approx(GameClock.minutes_per_real_second, 0.375), "Default clock speed should target a 30-45 minute day")
 	GameClock.debug_set_time(16, 30)
 	_expect(GameClock.time_minutes == 990, "Debug time API should set minute-of-day")
 	GameClock.set_clock_paused(true)
@@ -558,6 +559,7 @@ func _test_insect_spawn_profiles() -> void:
 		var rng := RandomNumberGenerator.new()
 		rng.seed = 1
 		_expect(home_profile.get_spawn_count(rng, 1) >= 1, "Day 1 should guarantee at least one tutorial insect")
+		_expect(home_profile.preferred_day_one_spawn_point_names == [&"HousePathMid", &"HousePathEast"], "Day 1 tutorial insect should prioritize the house-to-fields route")
 		_expect(home_profile.suppress_after_daily_catch, "Caught species should not respawn on same-day area re-entry")
 	var outdoor: Node = load("res://scenes/maps/village/home_outdoor.tscn").instantiate()
 	var river: Node = load("res://scenes/maps/river/river.tscn").instantiate()
@@ -583,6 +585,7 @@ func _test_insect_spawn_profiles() -> void:
 		second_positions.append(insect.position)
 	_expect(not first_spawn.is_empty(), "Day 1 area spawning should produce the guaranteed tutorial insect")
 	_expect(first_positions == second_positions, "Same day and area should reproduce stable insect placement")
+	_expect(first_positions[0] == Vector2(32.0, 64.0), "Day 1 guaranteed insect should use the first prioritized spawn point")
 	DiaryManager.record_insect(&"aburazemi")
 	var caught_location := _make_insect_spawn_test_location(home_profile)
 	var caught_spawner := caught_location.get_node("Objects/InsectSpawner") as InsectAreaSpawner

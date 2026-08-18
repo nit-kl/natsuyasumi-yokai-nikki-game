@@ -6,6 +6,7 @@ extends Resource
 @export_range(0, 8, 1) var minimum_count: int = 0
 @export_range(0, 8, 1) var maximum_count: int = 1
 @export var guarantee_on_day_one: bool = false
+@export var preferred_day_one_spawn_point_names: Array[StringName] = []
 @export var starts_moving: bool = false
 @export var suppress_after_daily_catch: bool = true
 

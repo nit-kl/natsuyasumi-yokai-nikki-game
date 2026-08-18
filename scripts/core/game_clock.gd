@@ -7,7 +7,7 @@ signal pause_changed(is_paused: bool)
 
 const MINUTES_PER_DAY := 1440
 const DEFAULT_START_MINUTES := 420
-const DEFAULT_MINUTES_PER_REAL_SECOND := 1.0
+const DEFAULT_MINUTES_PER_REAL_SECOND := 0.375
 const PERIOD_MORNING: StringName = &"morning"
 const PERIOD_DAYTIME: StringName = &"daytime"
 const PERIOD_EVENING: StringName = &"evening"
