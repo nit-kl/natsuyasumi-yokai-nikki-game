@@ -107,9 +107,9 @@ shape = SubResource("DoorArea")
 script = ExtResource("6_spawner")
 profile = ExtResource("7_profile")
 [node name="SpawnPoints" type="Node2D" parent="Objects/InsectSpawner"]
-[node name="Hydrangea" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
-position = Vector2(176, 250)
-[node name="GardenFence" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
+[node name="HousePathMid" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
+position = Vector2(380, 205)
+[node name="HousePathEast" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
 position = Vector2(432, 218)
 [node name="TreeShade" type="Marker2D" parent="Objects/InsectSpawner/SpawnPoints"]
 position = Vector2(98, 295)

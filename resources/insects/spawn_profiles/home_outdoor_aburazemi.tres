@@ -11,5 +11,6 @@ insect_data = ExtResource("3_data")
 minimum_count = 0
 maximum_count = 2
 guarantee_on_day_one = true
+preferred_day_one_spawn_point_names = Array[StringName]([&"HousePathMid", &"HousePathEast"])
 starts_moving = false
 suppress_after_daily_catch = true
