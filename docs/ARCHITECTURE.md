@@ -776,9 +776,12 @@ Save v1 Schemaは変更しない。
 `EventTriggerArea`はLocation固有の小さなArea2Dとして、Player接近時に指定Eventを
 通常条件付きで発火する。川の順路上でTRACEとSEENを空間的に分け、同時発火を避ける。
 
-祖母の家の`ReturnHomeFlow`はVertical Slice終了モードを持ち、夕食後の日記を閉じた時に
-Day 2へ進めず`vertical_slice_complete` flagを保存する。完了Panelを表示し、Playerと時計を
-停止する。CalendarManagerとSave v1 SchemaにはVertical Slice固有条件を追加しない。
+祖母の家の`ReturnHomeFlow`はopt-inのVertical Slice終了モードを持つ。本編では
+`end_vertical_slice_after_review`をfalseのままにし、夕食後の日記を閉じると翌日07:00の
+寝室Spawnへ進む。Vertical Sliceの一日通しSmokeだけがexportをtrueにし、
+`vertical_slice_complete` flag・完了Panel・入力停止・時計停止でDay 1を終える。
+本編進行は`vertical_slice_complete`を必須条件にしない。CalendarManagerとSave v1 Schemaには
+Vertical Slice固有条件を追加しない。
 
 ---
 

@@ -459,6 +459,8 @@ func _test_location_maps() -> void:
 	_expect(house.get_node_or_null("Ground") is TileMapLayer, "House should expose the production Ground layer")
 	_expect(house.get_node_or_null("Collision") is TileMapLayer, "House should expose the production Collision layer")
 	_expect(house.get_node_or_null("NPCs/Grandma") != null, "Grandma should be placed in the house NPC layer")
+	var return_home := house.get_node_or_null("ReturnHomeFlow") as ReturnHomeFlow
+	_expect(return_home != null and not return_home.end_vertical_slice_after_review, "Production grandma house should continue to the next morning after diary review")
 	var house_background := house.get_node_or_null("ProductionBackground") as Sprite2D
 	_expect(house_background != null and house_background.texture != null, "Grandma house should use its production interior background")
 	_expect(house_background.texture.get_size() == Vector2(640, 360), "Grandma house production background should match the base viewport")

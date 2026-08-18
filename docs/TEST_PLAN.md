@@ -588,7 +588,8 @@ Foundation、Map遷移、帰宅フロー、一日通し、別Location Save復元
 - 川の2つの接近TriggerでTRACEからSEENへ進み、夕方へ変化する
 - 帰宅後の夕食、日記Reviewまで進行する
 - 日記に祖母、虫、3 Location、河童、2 Eventが記録される
-- 日記を閉じてもDay 2へ進まず、完了Panel、入力停止、時計停止になる
+- Smokeは`end_vertical_slice_after_review = true`でDay 2へ進めず、完了Panel、入力停止、時計停止になる
+- 本編の祖母の家は同exportをfalseにし、日記クローズで翌朝へ進む
 
 一括Validationは上記E2Eを含む5 Sceneを順に実行する。
 
@@ -1312,4 +1313,25 @@ Foundation、Map遷移、帰宅フロー、一日通し、別Location Save復元
 - Issue #1 の成功条件は 6 問中 YES 6
 - Blocker（起動不能・Save破損・進行不能）はなし
 - 次は #10（Day 2 ループ）
+
+---
+
+## 61. Day 2 Wake-Sleep Loop — Issue #10
+
+自動Validation:
+
+- 本編の`grandma_house`は`end_vertical_slice_after_review = false`
+- `tests/return_home_flow_smoke_test.tscn`で日記クローズ後に翌日07:00・寝室Spawnへ進む
+- 翌朝は祖母の通常会話と外出ができる
+- Day 30のReview後は31日目へ進まない
+- `tests/vertical_slice_day_flow_smoke_test.tscn`はexportをtrueにし、完了Panel契約を維持する
+- 本編進行は`vertical_slice_complete`を必須にしない
+
+手動確認:
+
+1. 寝室07:00からVertical Sliceの一日を進める
+2. 夕食後の日記を閉じ、Day 2の07:00で寝室Spawnにいることを確認する
+3. 祖母と朝会話してから外へ出られることを確認する
+4. 完了Panelが出ないことを確認する
+5. DebugMenuでDay 30夕方にして夕食〜日記を閉じ、日付が30のままであることを確認する
 

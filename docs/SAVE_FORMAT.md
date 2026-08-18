@@ -344,8 +344,9 @@ Vertical Slice実ゲームのLoadでは`player.scene_id`を`LocationCatalog`で�
 未知のscene IDは黙って現在Sceneへ適用しない。
 `validate_data()`の段階でCatalog未登録の`player.scene_id`を拒否する。
 
-Issue #041では`world.flags`の`vertical_slice_complete`を一日通し体験の終端として使用する。
-終了SaveはDay 1と夕方の時刻を維持し、Schema fieldとsave_versionは変更しない。
+Issue #041の`world.flags.vertical_slice_complete`はVertical Slice一日通しのopt-in終端に使う。
+本編のDay 2以降進行ではこのflagを必須条件にしない。Schema fieldとsave_versionは変更しない。
+Day 30のReview完了は既存の`vertical_slice_final_day_reviewed` flagで記録する。
 
 ---
 
