@@ -88,6 +88,7 @@ class VerticalSliceDayMonitor extends Node:
 		house = get_tree().current_scene
 		var flow := house.get_node("ReturnHomeFlow") as ReturnHomeFlow
 		flow.autosave_enabled = false
+		flow.end_vertical_slice_after_review = true
 		grandma = house.get_node("NPCs/Grandma") as NPC
 		house_dialogue = house.get_node("LocationRuntime/DialogueController") as DialogueController
 		var diary := house.get_node("LocationRuntime/DiaryUI") as DiaryUI

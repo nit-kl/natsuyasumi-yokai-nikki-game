@@ -16,6 +16,8 @@ const COMPLETION_FRAGMENT: StringName = &"evening_diary_written"
 @export var bedroom_spawn_path: NodePath
 @export var completion_panel_path: NodePath
 @export var autosave_enabled := true
+## When true, diary review ends the current day without advancing the calendar.
+## Production leaves this false so Day 2 morning begins; Vertical Slice tests opt in.
 @export var end_vertical_slice_after_review := false
 
 var _grandma: NPC

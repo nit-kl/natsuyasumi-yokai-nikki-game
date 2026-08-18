@@ -292,7 +292,6 @@ dialogue_controller_path = NodePath("../LocationRuntime/DialogueController")
 diary_ui_path = NodePath("../LocationRuntime/DiaryUI")
 bedroom_spawn_path = NodePath("../SpawnPoints/Bedroom")
 completion_panel_path = NodePath("../VerticalSliceCompletion/Panel")
-end_vertical_slice_after_review = true
 
 [node name="GrandmaIndoorRoutine" type="Node" parent="."]
 script = ExtResource("12_grandma_routine")
