@@ -22,6 +22,7 @@ const EventActionResource = preload("res://scripts/events/event_action.gd")
 const EventDefinitionResource = preload("res://scripts/events/event_definition.gd")
 const YokaiDataResource = preload("res://scripts/yokai/yokai_data.gd")
 const DayRecordResource = preload("res://scripts/diary/day_record.gd")
+const WeatherForecastResource = preload("res://scripts/core/weather_forecast.gd")
 const DiaryUIComponent = preload("res://scripts/ui/diary_ui.gd")
 const GameplayHUDComponent = preload("res://scripts/ui/foundation_hud.gd")
 const PlaytestPresetResource = preload("res://scripts/debug/playtest_preset.gd")
@@ -45,6 +46,7 @@ func _run() -> void:
 	_test_clock_periods()
 	_test_clock_controls()
 	_test_calendar()
+	_test_weather_manager()
 	_test_input_map()
 	_test_gameplay_hud()
 	_test_player_directions()
@@ -111,6 +113,54 @@ func _test_calendar() -> void:
 	_expect(not CalendarManager.next_day(), "Calendar should not advance beyond day 30")
 	CalendarManager.debug_set_day(0)
 	_expect(CalendarManager.day_index == 1, "Calendar should clamp to day 1")
+
+
+func _test_weather_manager() -> void:
+	DiaryManager.reset_state()
+	WeatherManager.reset_state()
+	CalendarManager.debug_set_day(1)
+	_expect(WeatherManager.get_weather() == &"sunny", "Day 1 should start sunny")
+	_expect(WeatherManager.weather_id_from_enum(WeatherManager.Weather.THUNDERSTORM) == &"thunderstorm", "Weather enum should map to save IDs")
+	_expect(not WeatherManager.set_weather(&"snow"), "Unknown weather IDs should be rejected")
+	_expect(WeatherManager.get_weather() == &"sunny", "Rejected weather should leave the current value")
+	_expect(WeatherManager.debug_set_weather(&"rain"), "Debug weather API should accept rain")
+	_expect(WeatherManager.get_weather() == &"rain", "WeatherManager should keep the current day's weather")
+	_expect(DiaryManager.get_or_create_record(1).weather == &"rain", "Current DayRecord weather should follow WeatherManager")
+	var forecast := WeatherForecastResource.new()
+	forecast.first_day_weather = &"sunny"
+	forecast.sunny_weight = 0.0
+	forecast.cloudy_weight = 0.0
+	forecast.rain_weight = 1.0
+	forecast.thunderstorm_weight = 0.0
+	forecast.override_day_indexes = [5]
+	forecast.override_weathers = [&"thunderstorm"]
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 7
+	_expect(forecast.choose(1, &"rain", rng) == &"sunny", "Forecast table should keep day 1 on first_day_weather")
+	_expect(forecast.choose(5, &"sunny", rng) == &"thunderstorm", "Forecast table should honor day overrides")
+	_expect(forecast.choose(2, &"sunny", rng) == &"rain", "Forecast table should pick from resource weights")
+	var previous_forecast := WeatherManager.forecast
+	WeatherManager.forecast = forecast
+	CalendarManager.debug_set_day(2)
+	WeatherManager.debug_set_weather(&"sunny")
+	_expect(CalendarManager.next_day(), "Calendar should advance from day 2")
+	_expect(CalendarManager.day_index == 3, "next_day should move to day 3")
+	_expect(WeatherManager.get_weather() == &"rain", "Advancing the calendar should roll tomorrow's weather from the table")
+	_expect(DiaryManager.get_or_create_record(3).weather == &"rain", "Rolled weather should stamp the new DayRecord")
+	WeatherManager.debug_set_weather(&"cloudy")
+	CalendarManager.debug_set_day(2)
+	_expect(WeatherManager.get_weather() == &"sunny", "Debug day changes should restore a previous DayRecord weather")
+	WeatherManager.debug_set_weather(&"rain")
+	var condition := EventConditionResource.new()
+	condition.weathers = [&"rain"]
+	_expect(bool(condition.evaluate().matches), "Event conditions should match the current weather")
+	WeatherManager.debug_set_weather(&"sunny")
+	_expect(not bool(condition.evaluate().matches), "Event conditions should reject a disallowed weather")
+	WeatherManager.forecast = previous_forecast
+	DiaryManager.reset_state()
+	WeatherManager.reset_state()
+	CalendarManager.debug_set_day(1)
+	_expect(WeatherManager.get_weather() == &"sunny", "Reset should restore the first-day weather")
 
 
 func _test_input_map() -> void:
@@ -844,7 +894,9 @@ func _test_save_validation() -> void:
 	var missing_optional := valid_data.duplicate(true)
 	missing_optional.erase("player")
 	missing_optional.erase("diary")
+	missing_optional.erase("weather")
 	_expect(SaveManager.deserialize(missing_optional), "Missing optional fields should be tolerated")
+	_expect(WeatherManager.get_weather() == &"sunny", "Missing weather should restore sunny")
 	var unknown_location := valid_data.duplicate(true)
 	unknown_location["player"]["scene_id"] = "unknown_location"
 	_expect(not SaveManager.deserialize(unknown_location), "Unknown save location IDs should be rejected")
@@ -855,6 +907,7 @@ func _test_save_round_trip() -> void:
 	add_child(save_player)
 	CalendarManager.debug_set_day(7)
 	GameClock.debug_set_time(18, 45)
+	WeatherManager.debug_set_weather(&"rain")
 	WorldState.set_flag(&"save_round_trip_flag")
 	YokaiManager.set_stage(&"kappa", &"SEEN", true)
 	EventManager.deserialize_history(["save_round_trip_event"])
@@ -864,6 +917,7 @@ func _test_save_round_trip() -> void:
 	_expect(SaveManager.save_game(TEST_SAVE_PATH), "Save should write a valid file")
 	CalendarManager.debug_set_day(1)
 	GameClock.debug_set_time(7, 0)
+	WeatherManager.reset_state()
 	WorldState.reset_state()
 	YokaiManager.reset_state()
 	EventManager.deserialize_history([])
@@ -871,6 +925,8 @@ func _test_save_round_trip() -> void:
 	_expect(SaveManager.load_game(TEST_SAVE_PATH), "Load should read a valid file")
 	_expect(CalendarManager.day_index == 7, "Save round trip should preserve day")
 	_expect(GameClock.time_minutes == 1125, "Save round trip should preserve time")
+	_expect(WeatherManager.get_weather() == &"rain", "Save round trip should preserve weather")
+	_expect(DiaryManager.get_or_create_record(7).weather == &"rain", "Save round trip should preserve DayRecord weather")
 	_expect(WorldState.has_flag(&"save_round_trip_flag"), "Save round trip should preserve world flags")
 	_expect(YokaiManager.get_stage(&"kappa") == &"SEEN", "Save round trip should preserve yokai stage")
 	_expect(EventManager.has_seen(&"save_round_trip_event"), "Save round trip should preserve event history")

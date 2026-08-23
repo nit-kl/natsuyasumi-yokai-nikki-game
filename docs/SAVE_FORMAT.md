@@ -335,6 +335,11 @@ Save v1の既存fieldへ以下を接続する。
 - `event_history`: EventManagerのone-shot履歴
 - `diary.days`: DiaryManagerのDayRecord
 - `player.facing`: Playerの8方向facing
+- `weather`: WeatherManagerの当日天気（`sunny` / `cloudy` / `rain` / `thunderstorm`）
+
+`weather` は既存のSave v1 fieldであり、`save_version` は変更しない。
+欠落時は `sunny` を既定復元する。未知の天気IDは `sunny` へsanitizeする。
+当日の `DayRecord.weather` はWeatherManagerと同期する。
 
 未知field許容とmissing optional fieldの既定値復元は維持する。
 Schema fieldとsave_versionは変更しない。

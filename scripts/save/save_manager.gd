@@ -29,7 +29,7 @@ func serialize() -> Dictionary:
 			"day_index": CalendarManager.day_index,
 			"time_minutes": GameClock.time_minutes,
 		},
-		"weather": "sunny",
+		"weather": WeatherManager.serialize(),
 		"player": {
 			"scene_id": String(GameState.current_area_id),
 			"position": [player_position.x, player_position.y],
@@ -51,8 +51,10 @@ func deserialize(data: Dictionary) -> bool:
 		_set_error(validation_error)
 		return false
 	var calendar_data: Dictionary = data["calendar"]
+	WeatherManager.begin_restore()
 	CalendarManager.deserialize(calendar_data)
 	GameClock.deserialize(calendar_data)
+	WeatherManager.deserialize(data.get("weather", "sunny"))
 	var player_data: Dictionary = data.get("player", {})
 	GameState.set_area(StringName(player_data.get("scene_id", GameState.DEFAULT_AREA)))
 	var saved_position: Variant = player_data.get("position", [])
@@ -67,6 +69,7 @@ func deserialize(data: Dictionary) -> bool:
 	var history: Variant = data.get("event_history", [])
 	EventManager.deserialize_history(history if history is Array else [])
 	DiaryManager.deserialize(data.get("diary", {}))
+	WeatherManager.end_restore()
 	last_error_message = ""
 	return true
 

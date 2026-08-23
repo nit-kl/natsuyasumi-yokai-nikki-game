@@ -1,6 +1,7 @@
 extends Node
 
 signal day_changed(day_index: int)
+signal day_advanced(day_index: int)
 signal final_day_reached()
 
 const FIRST_DAY := 1
@@ -14,6 +15,7 @@ func next_day() -> bool:
 		final_day_reached.emit()
 		return false
 	set_day(day_index + 1)
+	day_advanced.emit(day_index)
 	return true
 
 
