@@ -1,31 +1,28 @@
-class_name NpcStateBook
-extends Object
+extends Node
 
 const DEFAULT_STATE: StringName = &"normal"
 
-static var _states: Dictionary = {}
+var _states: Dictionary = {}
 
 
-static func get_state(npc_id: StringName) -> StringName:
+func get_state(npc_id: StringName) -> StringName:
 	if npc_id.is_empty():
 		return &""
 	return StringName(_states.get(npc_id, DEFAULT_STATE))
 
 
-static func set_state(npc_id: StringName, state: StringName) -> bool:
+func set_state(npc_id: StringName, state: StringName) -> bool:
 	if npc_id.is_empty() or state.is_empty():
 		return false
-	if get_state(npc_id) == state and _states.has(npc_id):
-		return true
 	_states[npc_id] = state
 	return true
 
 
-static func reset_state() -> void:
+func reset_state() -> void:
 	_states.clear()
 
 
-static func serialize() -> Dictionary:
+func serialize() -> Dictionary:
 	var data := {}
 	var keys := _states.keys()
 	keys.sort()
@@ -36,7 +33,7 @@ static func serialize() -> Dictionary:
 	return data
 
 
-static func deserialize(data: Variant) -> void:
+func deserialize(data: Variant) -> void:
 	_states.clear()
 	if not data is Dictionary:
 		return

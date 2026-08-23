@@ -94,6 +94,7 @@ GameClock
 CalendarManager
 WeatherManager
 InventoryManager
+NpcStateBook
 WorldState
 EventManager
 NPCManager
@@ -1269,5 +1270,5 @@ DebugMenu Candidates はこの理由を表示する。新しいEvent本文は追
 - `random_chance`（既定 1.0。抽選しない。値はResourceのみ）
 
 天気と所持は既存fieldを維持する。既存の河童 TRACE/SEEN Resourceは新しい制限を持たないため従来どおり成立する。
-`NpcStateBook` は状態lookupだけを持ち、NPCSchedule / NPCManager は後続Issueとする。
+`NpcStateBook` は Autoload の状態lookupだけを持ち、NPCSchedule / NPCManager は後続Issueとする。class_nameは付けない。
 Save v1 の `npc_states` は `{ "grandma": { "state": "cooking" } }` 形式で読み書きし、`save_version` は変えない。
