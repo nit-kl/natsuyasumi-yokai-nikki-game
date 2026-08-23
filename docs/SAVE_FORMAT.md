@@ -337,6 +337,7 @@ Save v1の既存fieldへ以下を接続する。
 - `player.facing`: Playerの8方向facing
 - `weather`: WeatherManagerの当日天気（`sunny` / `cloudy` / `rain` / `thunderstorm`）
 - `inventory.items` / `inventory.money`: InventoryManagerの所持と所持金
+- `npc_states`: `NpcStateBook` の NPC 状態（`{ "grandma": { "state": "cooking" } }`）
 
 `weather` は既存のSave v1 fieldであり、`save_version` は変更しない。
 欠落時は `sunny` を既定復元する。未知の天気IDは `sunny` へsanitizeする。
@@ -346,6 +347,10 @@ Save v1の既存fieldへ以下を接続する。
 欠落時は初期所持（`bug_net` x1、所持金 0）へ戻す。
 明示された空の `{items: {}, money: 0}` はそのまま空として復元する。
 Item IDは後から変更しない。
+
+`npc_states` も既存のSave v1 fieldであり、`save_version` は変更しない。
+欠落時は空として復元し、未設定NPCは `normal` とする。
+`state` 以外の将来値（relationship等）は保持せず、Event条件は `state` だけを見る。
 
 未知field許容とmissing optional fieldの既定値復元は維持する。
 Schema fieldとsave_versionは変更しない。

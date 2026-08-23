@@ -32,7 +32,7 @@ func explain_event(event: EventDefinition) -> Dictionary:
 		return {"matches": false, "reasons": ["invalid event"]}
 	if event.one_shot and has_seen(event.event_id):
 		return {"matches": false, "reasons": ["one-shot event already completed"]}
-	return event.condition.evaluate()
+	return event.condition.evaluate(_rng_for_event(event.event_id))
 
 
 func get_candidates() -> Array[EventDefinition]:
@@ -105,3 +105,9 @@ func deserialize_history(history: Array) -> void:
 func reset_runtime() -> void:
 	_events.clear()
 	_event_history.clear()
+
+
+func _rng_for_event(event_id: StringName) -> RandomNumberGenerator:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash("%d:%s:%s" % [CalendarManager.day_index, GameClock.get_period(), String(event_id)])
+	return rng

@@ -70,22 +70,20 @@ Godot Resource実装時も同等の概念を保持する。
 最低限対応:
 
 - day
-- min_day
-- max_day
-- time
-- time range
-- time period
-- weather（`EventCondition.weathers`。空なら全天気）
-- location
-- required flags
-- forbidden flags
-- NPC state
+- min_day / max_day
+- time range（`min_time_minutes` / `max_time_minutes`。両方 `-1` なら制限なし。開始>終了なら日付をまたぐ）
+- time period（`time_periods`。空なら全時間帯）
+- weather（`weathers`。空なら全天気）
+- location（`locations`。空なら全地点）
+- required flags / forbidden flags
+- NPC state（`required_npc_id` + `required_npc_state`。空なら制限なし。未設定NPCは `normal`）
 - Yokai state
-- inventory（`EventCondition.required_items`。空なら所持制限なし）
-- event history
-- random chance
+- inventory（`required_items`。空なら所持制限なし）
+- event history（`required_seen_events` / `forbidden_seen_events`）
+- random chance（`random_chance` 0.0〜1.0。既定 `1.0` は抽選しない）
 
-Randomは乱用しない。
+Randomは乱用しない。確率はResource値だけを使い、コードにパーセントを散らさない。
+同じ日・時間帯・Event IDではDebug Candidatesの成否が揺れない。
 
 ---
 

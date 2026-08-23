@@ -1430,3 +1430,27 @@ Foundation、Map遷移、帰宅フロー、一日通し、別Location Save復元
 5. 「閉じる」または紙の外クリックで閉じ、移動が戻ることを確認する
 6. 日記や会話中は「かばん」が開かないことを確認する
 
+---
+
+## 66. EventCondition Guide Coverage — Issue #15
+
+自動Validation:
+
+- 時刻範囲が inclusive で判定される
+- 開始>終了の時刻範囲が日付をまたぐ
+- 未設定の時刻範囲は制限にならない
+- `required_seen_events` / `forbidden_seen_events` が Event history を見る
+- NPC state 未設定は `normal`、指定stateと一致するときだけ通る
+- `random_chance` 1.0 は抽選せず、0.0 は不成立、同じseedでは安定する
+- Debug Candidates の乱数成否が同じ日・時間帯・Eventで揺れない
+- 既存の河童 TRACE/SEEN Resource が従来条件で成立する
+- Save v1 `npc_states` が round trip する
+- 既存18 Scene一括Validationが成功する
+
+手動確認:
+
+1. 寝室07:00から開始し、F3 の Candidates が河童Eventの不成立理由を出すことを確認する
+2. 川へ行き、TRACE が従来どおり成立することを確認する
+3. Debug で時刻を夜へ変え、時間帯理由で SEEN が落ちることを確認する
+4. 新しいEvent本文が増えていないことを確認する
+

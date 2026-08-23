@@ -64,6 +64,7 @@ func reset_runtime_state(emit_signal: bool = true) -> void:
 	DiaryManager.reset_state()
 	WeatherManager.reset_state()
 	InventoryManager.reset_state()
+	NpcStateBook.reset_state()
 	_set_player_transform(DEFAULT_POSITION, &"down")
 	if emit_signal:
 		runtime_reset.emit()

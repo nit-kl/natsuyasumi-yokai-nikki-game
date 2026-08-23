@@ -76,6 +76,7 @@ func _run() -> void:
 	_test_inventory_manager()
 	_test_inventory_ui()
 	_test_event_manager()
+	_test_event_condition_guide()
 	_test_kappa_events()
 	_test_day_record_and_diary()
 	_test_playtest_tools()
@@ -915,6 +916,77 @@ func _test_event_manager() -> void:
 	_expect(not EventManager.trigger_event(&"low_event"), "Completed one-shot event should not trigger again")
 
 
+func _test_event_condition_guide() -> void:
+	EventManager.reset_runtime()
+	WorldState.reset_state()
+	YokaiManager.reset_state()
+	NpcStateBook.reset_state()
+	InventoryManager.reset_state()
+	CalendarManager.debug_set_day(1)
+	GameClock.debug_set_time(12, 0)
+	GameState.set_area(&"river")
+	WeatherManager.debug_set_weather(&"sunny")
+
+	var time_range := EventConditionResource.new()
+	time_range.min_time_minutes = 11 * 60
+	time_range.max_time_minutes = 13 * 60
+	_expect(bool(time_range.evaluate().matches), "A midday time range should match 12:00")
+	GameClock.debug_set_time(16, 0)
+	_expect(not bool(time_range.evaluate().matches), "A midday time range should reject 16:00")
+	_expect(str(time_range.evaluate().reasons).contains("time"), "A failed time range should explain the current time")
+	var overnight := EventConditionResource.new()
+	overnight.min_time_minutes = 22 * 60
+	overnight.max_time_minutes = 5 * 60
+	GameClock.debug_set_time(23, 30)
+	_expect(bool(overnight.evaluate().matches), "An overnight time range should wrap past midnight")
+	GameClock.debug_set_time(6, 0)
+	_expect(not bool(overnight.evaluate().matches), "An overnight time range should reject the morning after it ends")
+	_expect(EventConditionResource.is_within_time_range(420, -1, -1), "Unset time bounds should not restrict events")
+	GameClock.debug_set_time(12, 0)
+
+	EventManager.deserialize_history(["kappa_first_trace"])
+	var seen_gate := EventConditionResource.new()
+	seen_gate.required_seen_events = [&"kappa_first_trace"]
+	_expect(bool(seen_gate.evaluate().matches), "An event that requires history should pass after that event is seen")
+	seen_gate.forbidden_seen_events = [&"kappa_first_trace"]
+	_expect(not bool(seen_gate.evaluate().matches), "An event that forbids history should fail after that event is seen")
+	EventManager.deserialize_history([])
+
+	var npc_gate := EventConditionResource.new()
+	npc_gate.required_npc_id = &"grandma"
+	npc_gate.required_npc_state = &"cooking"
+	_expect(NpcStateBook.get_state(&"grandma") == &"normal", "Unknown NPC state should default to normal")
+	_expect(not bool(npc_gate.evaluate().matches), "An NPC state gate should fail while the NPC is in the default state")
+	NpcStateBook.set_state(&"grandma", &"cooking")
+	_expect(bool(npc_gate.evaluate().matches), "An NPC state gate should pass after the required state is set")
+
+	var always := EventConditionResource.new()
+	always.random_chance = 1.0
+	_expect(bool(always.evaluate().matches), "random_chance 1.0 should not roll")
+	var never := EventConditionResource.new()
+	never.random_chance = 0.0
+	_expect(not bool(never.evaluate().matches), "random_chance 0.0 should never match")
+	var half := EventConditionResource.new()
+	half.random_chance = 0.5
+	var first := RandomNumberGenerator.new()
+	first.seed = 7
+	var second := RandomNumberGenerator.new()
+	second.seed = 7
+	_expect(bool(half.evaluate(first).matches) == bool(half.evaluate(second).matches), "The same Resource chance and seed should stay stable")
+
+	var chance_event := EventDefinitionResource.new()
+	chance_event.event_id = &"ambient_cicada"
+	chance_event.condition = half
+	EventManager.register_event(chance_event)
+	var first_report := EventManager.explain_event(chance_event)
+	var second_report := EventManager.explain_event(chance_event)
+	_expect(bool(first_report.matches) == bool(second_report.matches), "Debug candidate rolls should stay stable for the same day and event")
+
+	NpcStateBook.reset_state()
+	EventManager.reset_runtime()
+	WeatherManager.reset_state()
+
+
 func _test_kappa_events() -> void:
 	EventManager.reset_runtime()
 	WorldState.reset_state()
@@ -1011,6 +1083,7 @@ func _test_playtest_tools() -> void:
 	_expect(player.global_position == Vector2(280, 180), "Teleport should move player")
 	InventoryManager.add(&"cucumber", 1)
 	InventoryManager.set_money(50)
+	NpcStateBook.set_state(&"grandma", &"cooking")
 	var snapshot := controller.get_snapshot()
 	_expect(snapshot.kappa_stage == &"TRACE", "Snapshot should expose yokai stage")
 	_expect(int(snapshot.money) == 50, "Snapshot should expose current money")
@@ -1022,6 +1095,7 @@ func _test_playtest_tools() -> void:
 	_expect(InventoryManager.has(&"bug_net"), "Runtime reset should restore the starting bug net")
 	_expect(not InventoryManager.has(&"cucumber"), "Runtime reset should clear extra items")
 	_expect(InventoryManager.get_money() == 0, "Runtime reset should restore 0 yen")
+	_expect(NpcStateBook.get_state(&"grandma") == &"normal", "Runtime reset should restore default NPC state")
 	controller.queue_free()
 	player.queue_free()
 
@@ -1041,10 +1115,12 @@ func _test_save_validation() -> void:
 	missing_optional.erase("diary")
 	missing_optional.erase("weather")
 	missing_optional.erase("inventory")
+	missing_optional.erase("npc_states")
 	_expect(SaveManager.deserialize(missing_optional), "Missing optional fields should be tolerated")
 	_expect(WeatherManager.get_weather() == &"sunny", "Missing weather should restore sunny")
 	_expect(InventoryManager.has(&"bug_net"), "Missing inventory should restore the starting bug net")
 	_expect(InventoryManager.get_money() == 0, "Missing inventory should restore 0 yen")
+	_expect(NpcStateBook.get_state(&"grandma") == &"normal", "Missing NPC states should restore the default state")
 	var unknown_location := valid_data.duplicate(true)
 	unknown_location["player"]["scene_id"] = "unknown_location"
 	_expect(not SaveManager.deserialize(unknown_location), "Unknown save location IDs should be rejected")
@@ -1064,6 +1140,7 @@ func _test_save_round_trip() -> void:
 	InventoryManager.reset_state()
 	InventoryManager.add(&"cucumber", 2)
 	InventoryManager.set_money(300)
+	NpcStateBook.set_state(&"grandma", &"cooking")
 	save_player.set_facing(&"up_left")
 	_expect(SaveManager.save_game(TEST_SAVE_PATH), "Save should write a valid file")
 	CalendarManager.debug_set_day(1)
@@ -1074,6 +1151,7 @@ func _test_save_round_trip() -> void:
 	EventManager.deserialize_history([])
 	DiaryManager.reset_state()
 	InventoryManager.reset_state()
+	NpcStateBook.reset_state()
 	_expect(SaveManager.load_game(TEST_SAVE_PATH), "Load should read a valid file")
 	_expect(CalendarManager.day_index == 7, "Save round trip should preserve day")
 	_expect(GameClock.time_minutes == 1125, "Save round trip should preserve time")
@@ -1087,6 +1165,7 @@ func _test_save_round_trip() -> void:
 	_expect(InventoryManager.count(&"cucumber") == 2, "Save round trip should preserve cucumber count")
 	_expect(InventoryManager.has(&"bug_net"), "Save round trip should preserve the starting bug net")
 	_expect(InventoryManager.get_money() == 300, "Save round trip should preserve money")
+	_expect(NpcStateBook.get_state(&"grandma") == &"cooking", "Save round trip should preserve NPC state")
 	save_player.queue_free()
 
 
