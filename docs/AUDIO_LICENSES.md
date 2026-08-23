@@ -60,6 +60,18 @@
 - 制作: FFmpeg `anoisesrc`のbrown noiseを帯域制限し、紙の擦れに合わせたfadeを適用
 - 長さ: 約0.40秒、mono / 48kHz / Ogg Vorbis
 
+### `amb_outdoor_rain.ogg`
+
+- 原音: プロジェクト内で制作したオリジナル波形（外部素材なし）
+- 制作: FFmpeg `anoisesrc`のpink noiseをhigh-pass / low-passし、屋外の控えめな雨Loopへ整形
+- 長さ: 10秒、mono / 48kHz / Ogg Vorbis
+
+### `amb_outdoor_thunderstorm.ogg`
+
+- 原音: プロジェクト内で制作したオリジナル波形（外部素材なし）
+- 制作: FFmpeg `anoisesrc`のbrown noise（低域）とpink noiseを混ぜ、画面フラッシュのない雷雨の遠雷感だけを足す
+- 長さ: 10秒、mono / 48kHz / Ogg Vorbis
+
 ### `sfx_ui_confirm.ogg` / `sfx_ui_cancel.ogg`
 
 - 原音: プロジェクト内で制作したオリジナル波形（外部素材なし）

@@ -8,9 +8,7 @@ const PERIOD_NAMES := {
 	&"night": "夜",
 }
 
-const WEATHER_NAMES := {
-	&"sunny": "晴れ",
-}
+const WEATHER_NAMES := WeatherPresentation.WEATHER_NAMES
 
 const INSECT_NAMES := {
 	&"aburazemi": "アブラゼミ",
@@ -36,6 +34,7 @@ func _ready() -> void:
 	CalendarManager.day_changed.connect(_refresh)
 	GameClock.minute_changed.connect(_refresh)
 	GameClock.period_changed.connect(_refresh)
+	WeatherManager.weather_changed.connect(_refresh)
 	DiaryManager.record_changed.connect(_on_record_changed)
 	notice_timer.timeout.connect(_on_notice_timeout)
 	diary_button.pressed.connect(_on_diary_button_pressed)
@@ -56,9 +55,11 @@ func _refresh(_unused: Variant = null) -> void:
 	day_label.text = "夏休み %d日目" % CalendarManager.day_index
 	time_label.text = GameClock.get_time_text()
 	period_label.text = display_name(GameClock.get_period(), PERIOD_NAMES)
-	var weather := DiaryManager.get_or_create_record().weather
+	var weather := WeatherManager.get_weather()
 	weather_label.text = display_name(weather, WEATHER_NAMES)
-	weather_icon.visible = weather == &"sunny"
+	var icon := WeatherPresentation.icon_texture(weather)
+	weather_icon.texture = icon
+	weather_icon.visible = icon != null
 
 
 static func display_name(value: StringName, names: Dictionary) -> String:

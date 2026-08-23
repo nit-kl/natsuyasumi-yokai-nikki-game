@@ -413,7 +413,7 @@ Production:
 - [ ] photo frame
 - [x] tape（日別ページ背景に統合）
 - [ ] pencil icons
-- [x] weather icons（Vertical Slice用sunny）
+- [x] weather icons（sunny / cloudy / rain / thunderstorm）
 - [x] date stamp（当日を動的表示）
 - [x] yokai stamp（Vertical Slice用kappa）
 - [ ] page arrow
@@ -423,7 +423,7 @@ Vertical Slice必須:
 
 - [x] diary cover
 - [x] daily page
-- [x] weather icons（sunny）
+- [x] weather icons（sunny / cloudy / rain / thunderstorm）
 - [x] kappa note
 - [x] insect record（aburazemi）
 
@@ -432,7 +432,7 @@ Vertical Slice必須:
 ## HUD
 
 - [x] date/time（夏休みの日数・時刻・時間帯）
-- [x] weather（sunny icon + 文字表示）
+- [x] weather（sunny / cloudy / rain / thunderstorm の icon + 文字表示）
 - [x] interaction prompt（状況依存時のみ表示）
 - [x] tool indicator（Vertical Slice用虫取り網）
 
@@ -456,6 +456,7 @@ Vertical Slice:
 - [x] cicada loop
 - [x] river loop
 - [x] evening higurashi
+- [x] outdoor rain / thunderstorm ambience
 - [x] grandma house interior
 - [x] bug catch SFX（swing / success）
 - [x] water ripple

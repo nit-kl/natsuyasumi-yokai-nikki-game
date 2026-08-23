@@ -13,6 +13,15 @@ const SCENE_PATHS := {
 	&"foundation_test": "res://scenes/bootstrap/bootstrap.tscn",
 }
 
+const OUTDOOR_AREA_IDS: Array[StringName] = [
+	&"home_outdoor",
+	&"engawa_yard",
+	&"paddy_road",
+	&"irrigation_shade",
+	&"river_entrance",
+	&"river",
+]
+
 
 static func get_scene_path(area_id: StringName) -> String:
 	return String(SCENE_PATHS.get(area_id, ""))
@@ -20,3 +29,7 @@ static func get_scene_path(area_id: StringName) -> String:
 
 static func has_area(area_id: StringName) -> bool:
 	return SCENE_PATHS.has(area_id)
+
+
+static func is_outdoor(area_id: StringName) -> bool:
+	return OUTDOOR_AREA_IDS.has(area_id)

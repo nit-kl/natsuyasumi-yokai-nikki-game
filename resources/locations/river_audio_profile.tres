@@ -1,10 +1,15 @@
-[gd_resource type="Resource" script_class="EnvironmentAudioProfile" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="EnvironmentAudioProfile" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/audio/environment_audio_profile.gd" id="1_profile"]
 [ext_resource type="AudioStream" path="res://assets/audio/ambience/amb_river_flow.ogg" id="2_river"]
+[ext_resource type="AudioStream" path="res://assets/audio/ambience/amb_outdoor_rain.ogg" id="3_rain"]
+[ext_resource type="AudioStream" path="res://assets/audio/ambience/amb_outdoor_thunderstorm.ogg" id="4_storm"]
 
 [resource]
 script = ExtResource("1_profile")
 area_id = &"river"
 default_stream = ExtResource("2_river")
+apply_weather_streams = true
+rain_stream = ExtResource("3_rain")
+thunderstorm_stream = ExtResource("4_storm")
 volume_db = -8.0

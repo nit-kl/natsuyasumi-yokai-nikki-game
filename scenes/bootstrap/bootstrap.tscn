@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3]
+[gd_scene load_steps=30 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/debug/debug_menu.tscn" id="2_debug"]
@@ -25,6 +25,8 @@
 [ext_resource type="Script" path="res://scripts/debug/playtest_preset.gd" id="23_preset"]
 [ext_resource type="PackedScene" path="res://scenes/audio/environment_audio.tscn" id="24_audio"]
 [ext_resource type="Resource" path="res://resources/locations/foundation_audio_profile.tres" id="25_audio_profile"]
+[ext_resource type="Resource" path="res://resources/weather/default_weather_visual_palette.tres" id="26_weather_palette"]
+[ext_resource type="PackedScene" path="res://scenes/vfx/weather_rain_overlay.tscn" id="27_rain"]
 
 [sub_resource type="CircleShape2D" id="Circle_marker"]
 radius = 10.0
@@ -42,6 +44,9 @@ color = Color(0.447, 0.655, 0.553, 1)
 [node name="DayPeriodVisualController" type="CanvasModulate" parent="."]
 script = ExtResource("8_period_visual")
 palette = ExtResource("9_palette")
+weather_palette = ExtResource("26_weather_palette")
+
+[node name="WeatherRainOverlay" parent="." instance=ExtResource("27_rain")]
 
 [node name="EnvironmentAudio" parent="." instance=ExtResource("24_audio")]
 profiles = Array[ExtResource("25_audio_profile")]([ExtResource("25_audio_profile")])

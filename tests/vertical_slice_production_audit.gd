@@ -22,10 +22,18 @@ const REQUIRED_TEXTURES := {
 	"res://assets/ui/dialogue/ui_dialogue_choice.png": Vector2(240, 42),
 	"res://assets/ui/diary/ui_diary_cover.png": Vector2(224, 280),
 	"res://assets/ui/diary/ui_diary_daily_page.png": Vector2(512, 320),
+	"res://assets/ui/diary/icon_weather_cloudy.png": Vector2(48, 48),
+	"res://assets/ui/diary/icon_weather_rain.png": Vector2(48, 48),
+	"res://assets/ui/diary/icon_weather_thunderstorm.png": Vector2(48, 48),
 }
 
 const REQUIRED_FILES := [
 	"res://assets/ui/diary/icon_weather_sunny.png",
+	"res://assets/ui/diary/icon_weather_cloudy.png",
+	"res://assets/ui/diary/icon_weather_rain.png",
+	"res://assets/ui/diary/icon_weather_thunderstorm.png",
+	"res://assets/audio/ambience/amb_outdoor_rain.ogg",
+	"res://assets/audio/ambience/amb_outdoor_thunderstorm.ogg",
 	"res://assets/ui/diary/stamp_kappa.png",
 	"res://assets/ui/diary/stamp_aburazemi.png",
 	"res://assets/audio/ambience/amb_grandma_house_interior.ogg",
