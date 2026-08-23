@@ -37,7 +37,7 @@ func serialize() -> Dictionary:
 		},
 		"inventory": InventoryManager.serialize(),
 		"world": WorldState.serialize(),
-		"npc_states": {},
+		"npc_states": NpcStateBook.serialize(),
 		"yokai_states": YokaiManager.serialize(),
 		"event_history": EventManager.serialize_history(),
 		"diary": DiaryManager.serialize(),
@@ -69,6 +69,10 @@ func deserialize(data: Dictionary) -> bool:
 	else:
 		InventoryManager.reset_state()
 	WorldState.deserialize(data.get("world", {}))
+	if data.has("npc_states"):
+		NpcStateBook.deserialize(data.get("npc_states", {}))
+	else:
+		NpcStateBook.reset_state()
 	YokaiManager.deserialize(data.get("yokai_states", {}))
 	var history: Variant = data.get("event_history", [])
 	EventManager.deserialize_history(history if history is Array else [])

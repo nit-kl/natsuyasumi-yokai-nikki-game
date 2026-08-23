@@ -672,7 +672,7 @@ Player配下の`BugCatcher` Area2Dが向いている方向へ追従し、`use_to
 
 - `WorldState`: 永続Flagと発見Location
 - `YokaiManager`: `UNKNOWN → TRACE → SEEN → CONTACTED → FRIENDLY → CLOSE`
-- `EventCondition`: day / location / time period / flag / Yokai stage
+- `EventCondition`: day / location / time period / time range / weather / flag / inventory / event history / NPC state / Yokai stage / random chance
 - `EventDefinition`: priority / one-shot / exclusive group / actions
 - `EventManager`: 登録、候補評価、理由表示、開始、history
 
@@ -1253,3 +1253,21 @@ Quest log、装備、合成、Event条件の評価は行わない。状態は `I
 - キュウリアイコン `icon_item_cucumber.png` は24x24のオリジナルPixel。Reference Sheetからの切り出しではない
 
 Save schema と `save_version` は変更しない。
+
+---
+
+## 69. EventCondition Guide Coverage — Issue #15
+
+`EventCondition.evaluate()` は EVENT_GUIDE の最低限条件を理由文字列付きで返す。
+DebugMenu Candidates はこの理由を表示する。新しいEvent本文は追加しない。
+
+追加field:
+
+- `min_time_minutes` / `max_time_minutes`（両方 `-1` なら制限なし。開始>終了なら日付またぎ）
+- `required_seen_events` / `forbidden_seen_events`
+- `required_npc_id` / `required_npc_state`（未設定NPCは `NpcStateBook` の `normal`）
+- `random_chance`（既定 1.0。抽選しない。値はResourceのみ）
+
+天気と所持は既存fieldを維持する。既存の河童 TRACE/SEEN Resourceは新しい制限を持たないため従来どおり成立する。
+`NpcStateBook` は状態lookupだけを持ち、NPCSchedule / NPCManager は後続Issueとする。
+Save v1 の `npc_states` は `{ "grandma": { "state": "cooking" } }` 形式で読み書きし、`save_version` は変えない。
