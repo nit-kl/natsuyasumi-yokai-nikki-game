@@ -1383,3 +1383,26 @@ Foundation、Map遷移、帰宅フロー、一日通し、別Location Save復元
 5. 19:00の雷雨でも道が見える明るさを保つことを確認する
 6. Weatherを曇りに戻すと雨粒が消え、セミ/ヒグラシの時間帯音源に戻ることを確認する
 
+---
+
+## 64. InventoryManager — Issue #13
+
+自動Validation:
+
+- 新規プレイは `bug_net` x1、所持金 0 から始まる
+- catalog外のItem IDは加算できない
+- 所持以上の消費と負の所持金は拒否する
+- `EventCondition.required_items` が現在の所持を判定する
+- Save v1 field `inventory.items` / `inventory.money` がround tripする
+- 欠落した `inventory` は初期所持へ戻す
+- Playtest resetが初期所持へ戻す
+- 既存18 Scene一括Validationが成功する
+
+手動確認:
+
+1. 寝室07:00から開始し、Vertical Sliceの虫取りが従来どおり使えることを確認する
+2. F3のDebugMenuでキュウリをGiveし、Snapshotに `cucumber` が増えることを確認する
+3. Moneyを300にしてSaveし、Moneyを0へ戻してからLoadで300が復元されることを確認する
+4. Runtime Resetでキュウリが消え、虫取り網だけが残ることを確認する
+5. 所持品画面は Issue #14
+

@@ -336,10 +336,16 @@ Save v1の既存fieldへ以下を接続する。
 - `diary.days`: DiaryManagerのDayRecord
 - `player.facing`: Playerの8方向facing
 - `weather`: WeatherManagerの当日天気（`sunny` / `cloudy` / `rain` / `thunderstorm`）
+- `inventory.items` / `inventory.money`: InventoryManagerの所持と所持金
 
 `weather` は既存のSave v1 fieldであり、`save_version` は変更しない。
 欠落時は `sunny` を既定復元する。未知の天気IDは `sunny` へsanitizeする。
 当日の `DayRecord.weather` はWeatherManagerと同期する。
+
+`inventory` も既存のSave v1 fieldであり、`save_version` は変更しない。
+欠落時は初期所持（`bug_net` x1、所持金 0）へ戻す。
+明示された空の `{items: {}, money: 0}` はそのまま空として復元する。
+Item IDは後から変更しない。
 
 未知field許容とmissing optional fieldの既定値復元は維持する。
 Schema fieldとsave_versionは変更しない。

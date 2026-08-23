@@ -35,6 +35,7 @@ const LocationCatalogData = preload("res://scripts/maps/location_catalog.gd")
 const WeatherVisualPaletteResource = preload("res://scripts/core/weather_visual_palette.gd")
 const WeatherPresentationData = preload("res://scripts/ui/weather_presentation.gd")
 const WeatherRainOverlayComponent = preload("res://scripts/vfx/weather_rain_overlay.gd")
+const ItemDataResource = preload("res://scripts/inventory/item_data.gd")
 const TEST_SAVE_PATH := "user://foundation_validation_save.json"
 const CORRUPT_SAVE_PATH := "user://foundation_validation_corrupt.json"
 
@@ -71,6 +72,7 @@ func _run() -> void:
 	_test_insect_spawn_profiles()
 	_test_bug_catching()
 	_test_world_and_yokai_state()
+	_test_inventory_manager()
 	_test_event_manager()
 	_test_kappa_events()
 	_test_day_record_and_diary()
@@ -772,6 +774,52 @@ func _test_bug_catching() -> void:
 	far_insect.queue_free()
 
 
+func _test_inventory_manager() -> void:
+	InventoryManager.reset_state()
+	_expect(InventoryManager.has(&"bug_net"), "A new playthrough should start with the bug net")
+	_expect(InventoryManager.count(&"bug_net") == 1, "The starting bug net count should be 1")
+	_expect(InventoryManager.get_money() == 0, "A new playthrough should start with 0 yen")
+	_expect(not InventoryManager.has(&"cucumber"), "A new playthrough should not start with extra items")
+
+	var bug_net := InventoryManager.get_item_data(&"bug_net")
+	_expect(bug_net != null, "The item catalog should include bug_net")
+	_expect(bug_net != null and bug_net.display_name == "虫取り網", "bug_net should keep its Japanese display name")
+	_expect(bug_net != null and bug_net.kind == ItemDataResource.Kind.TOOL, "bug_net should be a tool")
+	var cucumber := InventoryManager.get_item_data(&"cucumber")
+	_expect(cucumber != null and cucumber.kind == ItemDataResource.Kind.CONSUMABLE, "cucumber should be a consumable")
+
+	_expect(InventoryManager.add(&"cucumber", 2), "Known items should be addable")
+	_expect(InventoryManager.count(&"cucumber") == 2, "Added cucumber count should be 2")
+	_expect(not InventoryManager.add(&"cucumber", 0), "Zero-count adds should fail")
+	_expect(not InventoryManager.add(&"unknown_item", 1), "Unknown catalog items should be rejected")
+	_expect(InventoryManager.remove(&"cucumber", 1), "Known items should be removable")
+	_expect(InventoryManager.count(&"cucumber") == 1, "Removing one cucumber should leave 1")
+	_expect(not InventoryManager.remove(&"cucumber", 2), "Removing more than owned should fail")
+	_expect(InventoryManager.count(&"cucumber") == 1, "A failed remove should leave the count unchanged")
+
+	_expect(InventoryManager.add_money(120), "Positive money additions should succeed")
+	_expect(InventoryManager.get_money() == 120, "Money should increase by the added amount")
+	_expect(InventoryManager.add_money(-40), "Spending money should succeed when funds remain")
+	_expect(InventoryManager.get_money() == 80, "Spending 40 yen should leave 80")
+	_expect(not InventoryManager.add_money(0), "Zero yen changes should fail")
+	_expect(not InventoryManager.add_money(-200), "Spending more than owned should fail")
+	_expect(InventoryManager.get_money() == 80, "A failed spend should leave money unchanged")
+	_expect(not InventoryManager.set_money(-1), "Negative money should be rejected")
+
+	var item_gate := EventConditionResource.new()
+	item_gate.required_items = [&"cucumber"]
+	_expect(bool(item_gate.evaluate().matches), "An event that requires a cucumber should pass after adding one")
+	item_gate.required_items = [&"unknown_item"]
+	_expect(not bool(item_gate.evaluate().matches), "An event that requires a missing item should fail")
+	item_gate.required_items = []
+	_expect(bool(item_gate.evaluate().matches), "An empty required_items list should not block events")
+
+	InventoryManager.reset_state()
+	_expect(not InventoryManager.has(&"cucumber"), "Reset should clear extra items")
+	_expect(InventoryManager.has(&"bug_net"), "Reset should restore the starting bug net")
+	_expect(InventoryManager.get_money() == 0, "Reset should restore 0 yen")
+
+
 func _test_world_and_yokai_state() -> void:
 	WorldState.reset_state()
 	YokaiManager.reset_state()
@@ -914,12 +962,19 @@ func _test_playtest_tools() -> void:
 	_expect(player.global_position == Vector2(400, 240), "Preset should position player")
 	_expect(controller.teleport(&"home"), "Known teleport point should work")
 	_expect(player.global_position == Vector2(280, 180), "Teleport should move player")
+	InventoryManager.add(&"cucumber", 1)
+	InventoryManager.set_money(50)
 	var snapshot := controller.get_snapshot()
 	_expect(snapshot.kappa_stage == &"TRACE", "Snapshot should expose yokai stage")
+	_expect(int(snapshot.money) == 50, "Snapshot should expose current money")
+	_expect(int(snapshot.items.get("cucumber", 0)) == 1, "Snapshot should expose current items")
 	controller.reset_runtime_state()
 	_expect(CalendarManager.day_index == 1, "Runtime reset should restore day 1")
 	_expect(GameState.current_area_id == &"foundation_test", "Runtime reset should restore foundation area")
 	_expect(YokaiManager.get_stage(&"kappa") == &"UNKNOWN", "Runtime reset should clear yokai state")
+	_expect(InventoryManager.has(&"bug_net"), "Runtime reset should restore the starting bug net")
+	_expect(not InventoryManager.has(&"cucumber"), "Runtime reset should clear extra items")
+	_expect(InventoryManager.get_money() == 0, "Runtime reset should restore 0 yen")
 	controller.queue_free()
 	player.queue_free()
 
@@ -938,8 +993,11 @@ func _test_save_validation() -> void:
 	missing_optional.erase("player")
 	missing_optional.erase("diary")
 	missing_optional.erase("weather")
+	missing_optional.erase("inventory")
 	_expect(SaveManager.deserialize(missing_optional), "Missing optional fields should be tolerated")
 	_expect(WeatherManager.get_weather() == &"sunny", "Missing weather should restore sunny")
+	_expect(InventoryManager.has(&"bug_net"), "Missing inventory should restore the starting bug net")
+	_expect(InventoryManager.get_money() == 0, "Missing inventory should restore 0 yen")
 	var unknown_location := valid_data.duplicate(true)
 	unknown_location["player"]["scene_id"] = "unknown_location"
 	_expect(not SaveManager.deserialize(unknown_location), "Unknown save location IDs should be rejected")
@@ -956,6 +1014,9 @@ func _test_save_round_trip() -> void:
 	EventManager.deserialize_history(["save_round_trip_event"])
 	DiaryManager.reset_state()
 	DiaryManager.record_insect(&"aburazemi")
+	InventoryManager.reset_state()
+	InventoryManager.add(&"cucumber", 2)
+	InventoryManager.set_money(300)
 	save_player.set_facing(&"up_left")
 	_expect(SaveManager.save_game(TEST_SAVE_PATH), "Save should write a valid file")
 	CalendarManager.debug_set_day(1)
@@ -965,6 +1026,7 @@ func _test_save_round_trip() -> void:
 	YokaiManager.reset_state()
 	EventManager.deserialize_history([])
 	DiaryManager.reset_state()
+	InventoryManager.reset_state()
 	_expect(SaveManager.load_game(TEST_SAVE_PATH), "Load should read a valid file")
 	_expect(CalendarManager.day_index == 7, "Save round trip should preserve day")
 	_expect(GameClock.time_minutes == 1125, "Save round trip should preserve time")
@@ -975,6 +1037,9 @@ func _test_save_round_trip() -> void:
 	_expect(EventManager.has_seen(&"save_round_trip_event"), "Save round trip should preserve event history")
 	_expect(DiaryManager.get_or_create_record(7).caught_insects.has(&"aburazemi"), "Save round trip should preserve DayRecord")
 	_expect(save_player.facing == &"up_left", "Save round trip should preserve player facing")
+	_expect(InventoryManager.count(&"cucumber") == 2, "Save round trip should preserve cucumber count")
+	_expect(InventoryManager.has(&"bug_net"), "Save round trip should preserve the starting bug net")
+	_expect(InventoryManager.get_money() == 300, "Save round trip should preserve money")
 	save_player.queue_free()
 
 

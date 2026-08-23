@@ -53,6 +53,7 @@
 │  ├─ events/
 │  ├─ npc/
 │  ├─ yokai/
+│  ├─ inventory/
 │  ├─ diary/
 │  ├─ save/
 │  ├─ minigames/
@@ -92,6 +93,7 @@ GameState
 GameClock
 CalendarManager
 WeatherManager
+InventoryManager
 WorldState
 EventManager
 NPCManager
@@ -205,6 +207,34 @@ THUNDERSTORM  thunderstorm
 - Save field `weather` と接続する。欠落時は sunny
 
 雨粒・環境音・HUDアイコン展開は後続Issueとする。
+
+---
+
+## 7.1 InventoryManager
+
+責務:
+
+- ItemData catalogの読込（`resources/items/*.tres`）
+- 所持数の add / remove / count / has
+- 所持金の加減算
+- Save v1 `inventory.items` / `inventory.money` の読み書き
+
+実装:
+
+- Autoload。class_nameは付けない
+- 初期所持は `bug_net` x1、所持金 0
+- 未知のcatalog IDは加算しない
+- 所持以上の消費と負の所持金は拒否する
+- Signal `inventory_changed(item_id, count)` / `money_changed(money)`
+- 捕獲虫は当面 `DayRecord.caught_insects` のまま残し、このManagerへ自動加算しない
+- 所持品画面・店UI・装備・重量・スタミナは扱わない
+
+Item IDはSave永続値のため変更しない。初期ID:
+
+```text
+bug_net
+cucumber
+```
 
 ---
 
