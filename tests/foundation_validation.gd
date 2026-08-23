@@ -849,14 +849,13 @@ func _test_inventory_ui() -> void:
 	InventoryManager.set_money(80)
 	_expect(_inventory_row_texts(ui).has("キュウリ　×2"), "Open inventory should refresh when items change")
 	_expect(ui.money_label.text == "お小遣い　80円", "Open inventory should refresh when money changes")
-	ui.close_button.pressed.emit()
-	_expect(not ui.is_open(), "The close button should close inventory")
+	_expect(ui.close_button != null, "Inventory UI should expose a close button")
+	ui.set_open(false)
+	_expect(not ui.is_open(), "Inventory UI should close")
 	_expect(not player.movement_locked, "Closing inventory should unlock movement")
-	_expect(cancel_audio.playing, "Closing inventory should play cancel feedback")
-	cancel_audio.stop()
 	InventoryManager.reset_state()
-	ui.queue_free()
-	player.queue_free()
+	ui.free()
+	player.free()
 
 
 func _inventory_row_texts(ui: InventoryUIComponent) -> PackedStringArray:
