@@ -81,7 +81,7 @@ Godot Resource実装時も同等の概念を保持する。
 - forbidden flags
 - NPC state
 - Yokai state
-- inventory
+- inventory（`EventCondition.required_items`。空なら所持制限なし）
 - event history
 - random chance
 

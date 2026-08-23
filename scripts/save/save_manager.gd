@@ -35,7 +35,7 @@ func serialize() -> Dictionary:
 			"position": [player_position.x, player_position.y],
 			"facing": player_facing,
 		},
-		"inventory": {"items": {}, "money": 0},
+		"inventory": InventoryManager.serialize(),
 		"world": WorldState.serialize(),
 		"npc_states": {},
 		"yokai_states": YokaiManager.serialize(),
@@ -64,6 +64,10 @@ func deserialize(data: Dictionary) -> bool:
 			GameState.player.snap_to_walk_path()
 	if is_instance_valid(GameState.player) and GameState.player.has_method("set_facing"):
 		GameState.player.set_facing(StringName(player_data.get("facing", "down")))
+	if data.has("inventory"):
+		InventoryManager.deserialize(data.get("inventory", {}))
+	else:
+		InventoryManager.reset_state()
 	WorldState.deserialize(data.get("world", {}))
 	YokaiManager.deserialize(data.get("yokai_states", {}))
 	var history: Variant = data.get("event_history", [])

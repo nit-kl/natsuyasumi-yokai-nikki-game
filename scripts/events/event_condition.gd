@@ -8,6 +8,7 @@ extends Resource
 @export var weathers: Array[StringName] = []
 @export var required_flags: Array[StringName] = []
 @export var forbidden_flags: Array[StringName] = []
+@export var required_items: Array[StringName] = []
 @export var required_yokai_id: StringName
 @export var minimum_yokai_stage: StringName = &"UNKNOWN"
 
@@ -22,6 +23,9 @@ func evaluate() -> Dictionary:
 		reasons.append("period %s is not allowed" % GameClock.get_period())
 	if not weathers.is_empty() and not weathers.has(WeatherManager.get_weather()):
 		reasons.append("weather %s is not allowed" % WeatherManager.get_weather())
+	for item_id in required_items:
+		if not InventoryManager.has(item_id):
+			reasons.append("required item %s is missing" % item_id)
 	for flag_id in required_flags:
 		if not WorldState.has_flag(flag_id):
 			reasons.append("required flag %s is missing" % flag_id)

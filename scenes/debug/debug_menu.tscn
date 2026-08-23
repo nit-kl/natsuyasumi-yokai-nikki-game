@@ -76,6 +76,32 @@ size_flags_horizontal = 3
 [node name="ApplyWeather" type="Button" parent="Panel/Margin/Columns/Left/WeatherRow"]
 text = "Apply"
 
+[node name="ItemRow" type="HBoxContainer" parent="Panel/Margin/Columns/Left"]
+
+[node name="Label" type="Label" parent="Panel/Margin/Columns/Left/ItemRow"]
+text = "Item"
+
+[node name="ItemOption" type="OptionButton" parent="Panel/Margin/Columns/Left/ItemRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(140, 0)
+size_flags_horizontal = 3
+
+[node name="GiveItem" type="Button" parent="Panel/Margin/Columns/Left/ItemRow"]
+text = "Give"
+
+[node name="MoneyRow" type="HBoxContainer" parent="Panel/Margin/Columns/Left"]
+
+[node name="Label" type="Label" parent="Panel/Margin/Columns/Left/MoneyRow"]
+text = "Money"
+
+[node name="MoneySpinBox" type="SpinBox" parent="Panel/Margin/Columns/Left/MoneyRow"]
+unique_name_in_owner = true
+max_value = 9999.0
+rounded = true
+
+[node name="ApplyMoney" type="Button" parent="Panel/Margin/Columns/Left/MoneyRow"]
+text = "Apply"
+
 [node name="SaveRow" type="HBoxContainer" parent="Panel/Margin/Columns/Left"]
 
 [node name="Save" type="Button" parent="Panel/Margin/Columns/Left/SaveRow"]
@@ -155,6 +181,8 @@ autowrap_mode = 2
 [connection signal="pressed" from="Panel/Margin/Columns/Left/DayRow/ApplyDay" to="." method="_on_apply_day_pressed"]
 [connection signal="pressed" from="Panel/Margin/Columns/Left/TimeRow/ApplyTime" to="." method="_on_apply_time_pressed"]
 [connection signal="pressed" from="Panel/Margin/Columns/Left/WeatherRow/ApplyWeather" to="." method="_on_apply_weather_pressed"]
+[connection signal="pressed" from="Panel/Margin/Columns/Left/ItemRow/GiveItem" to="." method="_on_give_item_pressed"]
+[connection signal="pressed" from="Panel/Margin/Columns/Left/MoneyRow/ApplyMoney" to="." method="_on_apply_money_pressed"]
 [connection signal="pressed" from="Panel/Margin/Columns/Left/SaveRow/Save" to="." method="_on_save_pressed"]
 [connection signal="pressed" from="Panel/Margin/Columns/Left/SaveRow/Load" to="." method="_on_load_pressed"]
 [connection signal="pressed" from="Panel/Margin/Columns/Left/EventRow/ShowEvents" to="." method="_on_show_events_pressed"]

@@ -5,6 +5,8 @@ extends CanvasLayer
 @onready var hour_spin_box: SpinBox = %HourSpinBox
 @onready var minute_spin_box: SpinBox = %MinuteSpinBox
 @onready var weather_option: OptionButton = %WeatherOption
+@onready var item_option: OptionButton = %ItemOption
+@onready var money_spin_box: SpinBox = %MoneySpinBox
 @onready var status_label: Label = %StatusLabel
 @onready var event_report_label: Label = %EventReportLabel
 @onready var preset_option: OptionButton = %PresetOption
@@ -32,7 +34,10 @@ func _ready() -> void:
 	CalendarManager.day_changed.connect(_sync_values)
 	GameClock.minute_changed.connect(_sync_values)
 	WeatherManager.weather_changed.connect(_sync_values)
+	InventoryManager.inventory_changed.connect(_sync_values)
+	InventoryManager.money_changed.connect(_sync_values)
 	_populate_weather_options()
+	_populate_item_options()
 	SaveManager.save_completed.connect(_on_save_completed)
 	SaveManager.load_completed.connect(_on_load_completed)
 	SaveManager.operation_failed.connect(_on_operation_failed)
@@ -76,6 +81,26 @@ func _on_apply_weather_pressed() -> void:
 		_set_status("Weather set to %s." % WEATHER_LABELS.get(weather, String(weather)))
 	else:
 		_set_status("Weather change failed.")
+
+
+func _on_give_item_pressed() -> void:
+	if item_option.selected < 0:
+		_set_status("Item selection is unavailable.")
+		return
+	var item_id := StringName(item_option.get_item_metadata(item_option.selected))
+	var data := InventoryManager.get_item_data(item_id)
+	var label := data.display_name if data != null else String(item_id)
+	if InventoryManager.debug_give_item(item_id):
+		_set_status("Gave %s. Now %d." % [label, InventoryManager.count(item_id)])
+	else:
+		_set_status("Give item failed.")
+
+
+func _on_apply_money_pressed() -> void:
+	if InventoryManager.debug_set_money(int(money_spin_box.value)):
+		_set_status("Money set to %d." % InventoryManager.get_money())
+	else:
+		_set_status("Money change failed.")
 
 
 func _on_save_pressed() -> void:
@@ -150,13 +175,14 @@ func _on_reset_runtime_pressed() -> void:
 	_on_show_events_pressed()
 
 
-func _sync_values(_unused: Variant = null) -> void:
+func _sync_values(_unused: Variant = null, _unused_extra: Variant = null) -> void:
 	day_spin_box.value = CalendarManager.day_index
 	hour_spin_box.value = GameClock.time_minutes / 60
 	minute_spin_box.value = GameClock.time_minutes % 60
 	var weather_index := WeatherManager.WEATHER_IDS.find(WeatherManager.get_weather())
 	if weather_index >= 0:
 		weather_option.select(weather_index)
+	money_spin_box.value = InventoryManager.get_money()
 
 
 func _on_save_completed(_path: String) -> void:
@@ -180,6 +206,15 @@ func _populate_weather_options() -> void:
 	weather_option.clear()
 	for weather in WeatherManager.WEATHER_IDS:
 		weather_option.add_item(String(WEATHER_LABELS.get(weather, String(weather))))
+
+
+func _populate_item_options() -> void:
+	item_option.clear()
+	for item_id in InventoryManager.get_known_item_ids():
+		var data := InventoryManager.get_item_data(item_id)
+		var label := data.display_name if data != null else String(item_id)
+		item_option.add_item(label)
+		item_option.set_item_metadata(item_option.item_count - 1, String(item_id))
 
 
 func _populate_playtest_controls() -> void:

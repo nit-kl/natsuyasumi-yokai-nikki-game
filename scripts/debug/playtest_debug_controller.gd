@@ -63,6 +63,7 @@ func reset_runtime_state(emit_signal: bool = true) -> void:
 	EventManager.deserialize_history([])
 	DiaryManager.reset_state()
 	WeatherManager.reset_state()
+	InventoryManager.reset_state()
 	_set_player_transform(DEFAULT_POSITION, &"down")
 	if emit_signal:
 		runtime_reset.emit()
@@ -82,6 +83,8 @@ func get_snapshot() -> Dictionary:
 		"position": player_position,
 		"facing": player_facing,
 		"kappa_stage": YokaiManager.get_stage(&"kappa"),
+		"money": InventoryManager.get_money(),
+		"items": InventoryManager.serialize().get("items", {}),
 		"flags": WorldState.serialize().get("flags", []),
 		"event_history": EventManager.serialize_history(),
 		"save_exists": SaveManager.save_exists(),
@@ -90,7 +93,7 @@ func get_snapshot() -> Dictionary:
 
 func get_snapshot_text() -> String:
 	var snapshot := get_snapshot()
-	return "Day %d  %s  %s\nArea: %s  Pos: %s\nFacing: %s  Kappa: %s\nFlags: %s\nEvents: %s\nSave file: %s" % [
+	return "Day %d  %s  %s\nArea: %s  Pos: %s\nFacing: %s  Kappa: %s\nMoney: %s  Items: %s\nFlags: %s\nEvents: %s\nSave file: %s" % [
 		snapshot.day,
 		snapshot.time,
 		snapshot.weather,
@@ -98,6 +101,8 @@ func get_snapshot_text() -> String:
 		snapshot.position,
 		snapshot.facing,
 		snapshot.kappa_stage,
+		snapshot.money,
+		JSON.stringify(snapshot.items),
 		_json_array_text(snapshot.flags),
 		_json_array_text(snapshot.event_history),
 		"yes" if snapshot.save_exists else "no",
