@@ -62,6 +62,7 @@ func reset_runtime_state(emit_signal: bool = true) -> void:
 	YokaiManager.reset_state()
 	EventManager.deserialize_history([])
 	DiaryManager.reset_state()
+	WeatherManager.reset_state()
 	_set_player_transform(DEFAULT_POSITION, &"down")
 	if emit_signal:
 		runtime_reset.emit()
@@ -76,6 +77,7 @@ func get_snapshot() -> Dictionary:
 	return {
 		"day": CalendarManager.day_index,
 		"time": GameClock.get_time_text(),
+		"weather": WeatherManager.get_weather(),
 		"area": GameState.current_area_id,
 		"position": player_position,
 		"facing": player_facing,
@@ -88,9 +90,10 @@ func get_snapshot() -> Dictionary:
 
 func get_snapshot_text() -> String:
 	var snapshot := get_snapshot()
-	return "Day %d  %s\nArea: %s  Pos: %s\nFacing: %s  Kappa: %s\nFlags: %s\nEvents: %s\nSave file: %s" % [
+	return "Day %d  %s  %s\nArea: %s  Pos: %s\nFacing: %s  Kappa: %s\nFlags: %s\nEvents: %s\nSave file: %s" % [
 		snapshot.day,
 		snapshot.time,
+		snapshot.weather,
 		snapshot.area,
 		snapshot.position,
 		snapshot.facing,

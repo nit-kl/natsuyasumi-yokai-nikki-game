@@ -4,10 +4,18 @@ extends CanvasLayer
 @onready var day_spin_box: SpinBox = %DaySpinBox
 @onready var hour_spin_box: SpinBox = %HourSpinBox
 @onready var minute_spin_box: SpinBox = %MinuteSpinBox
+@onready var weather_option: OptionButton = %WeatherOption
 @onready var status_label: Label = %StatusLabel
 @onready var event_report_label: Label = %EventReportLabel
 @onready var preset_option: OptionButton = %PresetOption
 @onready var teleport_option: OptionButton = %TeleportOption
+
+const WEATHER_LABELS := {
+	&"sunny": "晴れ",
+	&"cloudy": "曇り",
+	&"rain": "雨",
+	&"thunderstorm": "雷雨",
+}
 
 var _playtest_controller: PlaytestDebugController
 var _preset_ids: Array[StringName] = []
@@ -23,6 +31,8 @@ func _ready() -> void:
 	panel.visible = false
 	CalendarManager.day_changed.connect(_sync_values)
 	GameClock.minute_changed.connect(_sync_values)
+	WeatherManager.weather_changed.connect(_sync_values)
+	_populate_weather_options()
 	SaveManager.save_completed.connect(_on_save_completed)
 	SaveManager.load_completed.connect(_on_load_completed)
 	SaveManager.operation_failed.connect(_on_operation_failed)
@@ -55,6 +65,17 @@ func _on_apply_day_pressed() -> void:
 func _on_apply_time_pressed() -> void:
 	GameClock.debug_set_time(int(hour_spin_box.value), int(minute_spin_box.value))
 	_set_status("Time set to %s." % GameClock.get_time_text())
+
+
+func _on_apply_weather_pressed() -> void:
+	if weather_option.selected < 0 or weather_option.selected >= WeatherManager.WEATHER_IDS.size():
+		_set_status("Weather selection is unavailable.")
+		return
+	var weather := WeatherManager.WEATHER_IDS[weather_option.selected]
+	if WeatherManager.debug_set_weather(weather):
+		_set_status("Weather set to %s." % WEATHER_LABELS.get(weather, String(weather)))
+	else:
+		_set_status("Weather change failed.")
 
 
 func _on_save_pressed() -> void:
@@ -133,6 +154,9 @@ func _sync_values(_unused: Variant = null) -> void:
 	day_spin_box.value = CalendarManager.day_index
 	hour_spin_box.value = GameClock.time_minutes / 60
 	minute_spin_box.value = GameClock.time_minutes % 60
+	var weather_index := WeatherManager.WEATHER_IDS.find(WeatherManager.get_weather())
+	if weather_index >= 0:
+		weather_option.select(weather_index)
 
 
 func _on_save_completed(_path: String) -> void:
@@ -150,6 +174,12 @@ func _on_operation_failed(message: String) -> void:
 
 func _set_status(message: String) -> void:
 	status_label.text = message
+
+
+func _populate_weather_options() -> void:
+	weather_option.clear()
+	for weather in WeatherManager.WEATHER_IDS:
+		weather_option.add_item(String(WEATHER_LABELS.get(weather, String(weather))))
 
 
 func _populate_playtest_controls() -> void:

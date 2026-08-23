@@ -75,7 +75,7 @@ Godot Resource実装時も同等の概念を保持する。
 - time
 - time range
 - time period
-- weather
+- weather（`EventCondition.weathers`。空なら全天気）
 - location
 - required flags
 - forbidden flags

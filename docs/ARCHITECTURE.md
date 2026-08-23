@@ -65,6 +65,7 @@
 │  ├─ items/
 │  ├─ insects/
 │  ├─ fish/
+│  ├─ weather/
 │  └─ locations/
 │
 ├─ assets/
@@ -167,26 +168,43 @@ signal day_end_requested()
 実ゲーム上の「7月/8月」表記は後から調整可能とし、
 内部では `day_index` を基準にする。
 
+`next_day()` は `day_changed` に加えて `day_advanced` を出す。
+翌日天気の決定はこのSignalを購読する。Debugの日付ジャンプでは出さない。
+
 ---
 
 ## 7. WeatherManager
 
-初期Enum:
+初期Enum / Save ID:
 
-```gdscript
-SUNNY
-CLOUDY
-RAIN
-THUNDERSTORM
+```text
+SUNNY         sunny
+CLOUDY        cloudy
+RAIN          rain
+THUNDERSTORM  thunderstorm
 ```
 
 責務:
 
 - 当日の天気
 - 天候変更
+- 日付進行時の翌日天気決定
 - マップへの通知
 - NPC/Yokai/Event条件への情報提供
 - Audio/VFX切替要求
+
+実装:
+
+- Autoload。天気IDはSave v1の文字列 `sunny` / `cloudy` / `rain` / `thunderstorm`
+- Signal `weather_changed(weather: StringName)`
+- 翌日の決定は `WeatherForecast` Resource（既定: `resources/weather/default_weather_forecast.tres`）
+- Managerにイベント本文やScene演出を書かない
+- Day 1 は Resourceの `first_day_weather`（既定 sunny）
+- `CalendarManager.day_advanced` で翌日を抽選し、当日の `DayRecord.weather` へ同期する
+- Debugの日付変更は抽選せず、その日のDayRecordがあれば復元する
+- Save field `weather` と接続する。欠落時は sunny
+
+雨粒・環境音・HUDアイコン展開は後続Issueとする。
 
 ---
 

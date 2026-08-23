@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="WeatherForecast" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/weather_forecast.gd" id="1_forecast"]
+
+[resource]
+script = ExtResource("1_forecast")
+first_day_weather = &"sunny"
+sunny_weight = 50.0
+cloudy_weight = 27.0
+rain_weight = 18.0
+thunderstorm_weight = 5.0
+override_day_indexes = Array[int]([])
+override_weathers = Array[StringName]([])

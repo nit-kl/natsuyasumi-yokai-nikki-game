@@ -11,8 +11,22 @@ func get_or_create_record(day_index: int = CalendarManager.day_index) -> DayReco
 		var record := DayRecord.new()
 		record.day_index = valid_day
 		record.wake_time = GameClock.time_minutes
+		if valid_day == CalendarManager.day_index:
+			record.weather = WeatherManager.get_weather()
 		_records[valid_day] = record
 	return _records[valid_day]
+
+
+func has_record(day_index: int) -> bool:
+	return _records.has(clampi(day_index, 1, 30))
+
+
+func apply_weather(weather: StringName, day_index: int = CalendarManager.day_index) -> void:
+	var record := get_or_create_record(day_index)
+	if record.weather == weather:
+		return
+	record.weather = weather
+	record_changed.emit(record.day_index)
 
 
 func record_location(location_id: StringName) -> void:

@@ -63,6 +63,19 @@ max_value = 59.0
 [node name="ApplyTime" type="Button" parent="Panel/Margin/Columns/Left/TimeRow"]
 text = "Apply"
 
+[node name="WeatherRow" type="HBoxContainer" parent="Panel/Margin/Columns/Left"]
+
+[node name="Label" type="Label" parent="Panel/Margin/Columns/Left/WeatherRow"]
+text = "Weather"
+
+[node name="WeatherOption" type="OptionButton" parent="Panel/Margin/Columns/Left/WeatherRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(140, 0)
+size_flags_horizontal = 3
+
+[node name="ApplyWeather" type="Button" parent="Panel/Margin/Columns/Left/WeatherRow"]
+text = "Apply"
+
 [node name="SaveRow" type="HBoxContainer" parent="Panel/Margin/Columns/Left"]
 
 [node name="Save" type="Button" parent="Panel/Margin/Columns/Left/SaveRow"]
@@ -141,6 +154,7 @@ autowrap_mode = 2
 
 [connection signal="pressed" from="Panel/Margin/Columns/Left/DayRow/ApplyDay" to="." method="_on_apply_day_pressed"]
 [connection signal="pressed" from="Panel/Margin/Columns/Left/TimeRow/ApplyTime" to="." method="_on_apply_time_pressed"]
+[connection signal="pressed" from="Panel/Margin/Columns/Left/WeatherRow/ApplyWeather" to="." method="_on_apply_weather_pressed"]
 [connection signal="pressed" from="Panel/Margin/Columns/Left/SaveRow/Save" to="." method="_on_save_pressed"]
 [connection signal="pressed" from="Panel/Margin/Columns/Left/SaveRow/Load" to="." method="_on_load_pressed"]
 [connection signal="pressed" from="Panel/Margin/Columns/Left/EventRow/ShowEvents" to="." method="_on_show_events_pressed"]

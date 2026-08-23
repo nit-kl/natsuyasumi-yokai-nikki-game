@@ -1335,3 +1335,27 @@ Foundation、Map遷移、帰宅フロー、一日通し、別Location Save復元
 4. 完了Panelが出ないことを確認する
 5. DebugMenuでDay 30夕方にして夕食〜日記を閉じ、日付が30のままであることを確認する
 
+---
+
+## 62. WeatherManager — Issue #11
+
+自動Validation:
+
+- 天気IDは `sunny` / `cloudy` / `rain` / `thunderstorm`
+- Day 1 の既定は `sunny`
+- `WeatherForecast` の重みと日付overrideで翌日天気を決める
+- `CalendarManager.next_day()` だけが翌日を抽選する
+- Debugの日付変更は抽選せず、既存DayRecordの天気を復元する
+- Save v1 field `weather` と `DayRecord.weather` がround tripする
+- 欠落した `weather` は `sunny` へ戻す
+- EventConditionの `weathers` が現在天気を判定する
+- 既存18 Scene一括Validationが成功する
+
+手動確認:
+
+1. 寝室07:00から開始し、HUD/日記の当日天気が晴れであることを確認する
+2. F3のDebugMenuでWeatherを雨へApplyし、日記の `DayRecord` が雨になることを確認する
+3. SaveしてWeatherを晴れへ戻し、Loadで雨が復元されることを確認する
+4. 夕食後の日記を閉じてDay 2へ進み、翌日天気が `WeatherForecast` から決まることを確認する
+5. 雨粒・環境音・HUDアイコンはまだ変わらなくてよい（Issue #12）
+
