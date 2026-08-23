@@ -435,6 +435,7 @@ Vertical Slice必須:
 - [x] weather（sunny / cloudy / rain / thunderstorm の icon + 文字表示）
 - [x] interaction prompt（状況依存時のみ表示）
 - [x] tool indicator（Vertical Slice用虫取り網）
+- [x] inventory button（かばん）
 
 ---
 
@@ -444,6 +445,14 @@ Vertical Slice必須:
 - [x] speaker name tag（会話枠へ統合）
 - [x] choice button（240x42、focus / hover / pressed状態）
 - [ ] character portrait
+
+---
+
+## Inventory
+
+- [x] bug_net icon（既存 `prop_bug_net.png`）
+- [x] cucumber icon（24x24 オリジナルPixel。Reference Sheetからの切り出しではない）
+- [ ] additional item icons
 
 ---
 
@@ -511,6 +520,7 @@ Art direction benchmark:
 - [x] minimal HUD
 - [x] interaction（状況依存Prompt）
 - [x] diary（表紙・日別ページ・記録印）
+- [x] inventory memo（アイコン+名前+個数、お小遣い）
 
 ### Time
 - [x] morning palette（soft golden）

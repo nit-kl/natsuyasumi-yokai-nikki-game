@@ -36,6 +36,7 @@ const WeatherVisualPaletteResource = preload("res://scripts/core/weather_visual_
 const WeatherPresentationData = preload("res://scripts/ui/weather_presentation.gd")
 const WeatherRainOverlayComponent = preload("res://scripts/vfx/weather_rain_overlay.gd")
 const ItemDataResource = preload("res://scripts/inventory/item_data.gd")
+const InventoryUIComponent = preload("res://scripts/ui/inventory_ui.gd")
 const TEST_SAVE_PATH := "user://foundation_validation_save.json"
 const CORRUPT_SAVE_PATH := "user://foundation_validation_corrupt.json"
 
@@ -73,6 +74,7 @@ func _run() -> void:
 	_test_bug_catching()
 	_test_world_and_yokai_state()
 	_test_inventory_manager()
+	_test_inventory_ui()
 	_test_event_manager()
 	_test_kappa_events()
 	_test_day_record_and_diary()
@@ -203,6 +205,8 @@ func _test_gameplay_hud() -> void:
 	if prompt_panel != null and prompt_panel.texture != null:
 		_expect(prompt_panel.texture.get_size() == Vector2(300, 48), "HUD interaction panel should match its pixel-art canvas")
 	_expect(hud.get_node_or_null("Notice") == null, "Production HUD should not keep the foundation control legend")
+	var inventory_button := hud.get_node_or_null("InventoryButton") as Button
+	_expect(inventory_button != null and inventory_button.text == "かばん", "Gameplay HUD should provide a mouse-first inventory button")
 	hud.free()
 
 
@@ -818,6 +822,50 @@ func _test_inventory_manager() -> void:
 	_expect(not InventoryManager.has(&"cucumber"), "Reset should clear extra items")
 	_expect(InventoryManager.has(&"bug_net"), "Reset should restore the starting bug net")
 	_expect(InventoryManager.get_money() == 0, "Reset should restore 0 yen")
+
+
+func _test_inventory_ui() -> void:
+	InventoryManager.reset_state()
+	_expect(InventoryUIComponent.format_item_line("虫取り網", 1) == "虫取り網　×1", "Inventory UI should format an item name and count")
+	_expect(InventoryUIComponent.format_money(80) == "お小遣い　80円", "Inventory UI should format pocket money")
+	var player := PlayerController.new()
+	add_child(player)
+	var ui_scene: PackedScene = load("res://scenes/ui/inventory_ui.tscn")
+	var ui := ui_scene.instantiate()
+	add_child(ui)
+	var paper := ui.get_node_or_null("Panel/Paper") as Control
+	var cancel_audio := ui.get_node_or_null("CancelAudio") as AudioStreamPlayer
+	_expect(paper != null, "Inventory UI should use a paper memo panel")
+	_expect(cancel_audio != null and cancel_audio.stream != null, "Closing inventory should have a production cancel cue")
+	_expect(not ui.is_open(), "Inventory UI should start closed")
+	_expect(not player.movement_locked, "Inventory UI should not lock movement while closed")
+	ui.set_open(true)
+	_expect(ui.is_open(), "Inventory UI should open")
+	_expect(player.movement_locked, "Opening inventory should lock movement")
+	_expect(ui.money_label.text == "お小遣い　0円", "Open inventory should show current money")
+	_expect(_inventory_row_texts(ui).has("虫取り網　×1"), "Open inventory should list the starting bug net")
+	_expect(not _inventory_row_texts(ui).has("キュウリ　×2"), "Open inventory should not invent extra items")
+	InventoryManager.add(&"cucumber", 2)
+	InventoryManager.set_money(80)
+	_expect(_inventory_row_texts(ui).has("キュウリ　×2"), "Open inventory should refresh when items change")
+	_expect(ui.money_label.text == "お小遣い　80円", "Open inventory should refresh when money changes")
+	ui.close_button.pressed.emit()
+	_expect(not ui.is_open(), "The close button should close inventory")
+	_expect(not player.movement_locked, "Closing inventory should unlock movement")
+	_expect(cancel_audio.playing, "Closing inventory should play cancel feedback")
+	cancel_audio.stop()
+	InventoryManager.reset_state()
+	ui.queue_free()
+	player.queue_free()
+
+
+func _inventory_row_texts(ui: InventoryUIComponent) -> PackedStringArray:
+	var lines := PackedStringArray()
+	for child in ui.item_list.get_children():
+		for grandchild in child.get_children():
+			if grandchild is Label:
+				lines.append(grandchild.text)
+	return lines
 
 
 func _test_world_and_yokai_state() -> void:

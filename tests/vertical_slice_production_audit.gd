@@ -25,6 +25,7 @@ const REQUIRED_TEXTURES := {
 	"res://assets/ui/diary/icon_weather_cloudy.png": Vector2(48, 48),
 	"res://assets/ui/diary/icon_weather_rain.png": Vector2(48, 48),
 	"res://assets/ui/diary/icon_weather_thunderstorm.png": Vector2(48, 48),
+	"res://assets/ui/inventory/icon_item_cucumber.png": Vector2(24, 24),
 }
 
 const REQUIRED_FILES := [
@@ -69,6 +70,7 @@ const PRODUCTION_RESOURCES := [
 	"res://scenes/ui/gameplay_hud.tscn",
 	"res://scenes/ui/dialogue_ui.tscn",
 	"res://scenes/ui/diary_ui.tscn",
+	"res://scenes/ui/inventory_ui.tscn",
 ]
 
 const MAP_SCENES := [

@@ -1,0 +1,134 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/inventory_ui.gd" id="1_inventory"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/sfx_ui_cancel.ogg" id="2_cancel"]
+
+[sub_resource type="StyleBoxFlat" id="StylePaper"]
+bg_color = Color(0.91, 0.84, 0.68, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.55, 0.40, 0.22, 1)
+shadow_color = Color(0.18, 0.12, 0.07, 0.35)
+shadow_size = 2
+shadow_offset = Vector2(2, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleCloseNormal"]
+bg_color = Color(0.18, 0.28, 0.16, 0.94)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.74, 0.64, 0.38, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleCloseHover"]
+bg_color = Color(0.27, 0.39, 0.20, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.94, 0.79, 0.40, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleClosePressed"]
+bg_color = Color(0.12, 0.21, 0.11, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.62, 0.72, 0.39, 1)
+
+[node name="InventoryUI" type="CanvasLayer"]
+layer = 38
+script = ExtResource("1_inventory")
+
+[node name="CancelAudio" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("2_cancel")
+volume_db = -11.0
+
+[node name="Panel" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Dimmer" type="ColorRect" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.055, 0.071, 0.055, 0.72)
+
+[node name="Paper" type="Panel" parent="Panel"]
+layout_mode = 0
+offset_left = 192.0
+offset_top = 68.0
+offset_right = 448.0
+offset_bottom = 292.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StylePaper")
+
+[node name="TitleLabel" type="Label" parent="Panel/Paper"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 10.0
+offset_right = 176.0
+offset_bottom = 32.0
+theme_override_colors/font_color = Color(0.24, 0.18, 0.10, 1)
+theme_override_font_sizes/font_size = 14
+text = "かばん"
+
+[node name="HintLabel" type="Label" parent="Panel/Paper"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 30.0
+offset_right = 224.0
+offset_bottom = 48.0
+theme_override_colors/font_color = Color(0.42, 0.32, 0.18, 0.9)
+theme_override_font_sizes/font_size = 10
+text = "いま持っているもの"
+
+[node name="ItemList" type="VBoxContainer" parent="Panel/Paper"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 16.0
+offset_top = 52.0
+offset_right = 240.0
+offset_bottom = 176.0
+theme_override_constants/separation = 6
+
+[node name="MoneyLabel" type="Label" parent="Panel/Paper"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 16.0
+offset_top = 186.0
+offset_right = 240.0
+offset_bottom = 208.0
+theme_override_colors/font_color = Color(0.32, 0.22, 0.10, 1)
+theme_override_font_sizes/font_size = 11
+text = "お小遣い　0円"
+
+[node name="CloseButton" type="Button" parent="Panel"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 548.0
+offset_top = 10.0
+offset_right = 628.0
+offset_bottom = 40.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.94, 0.88, 0.68, 1)
+theme_override_colors/font_hover_color = Color(1, 0.93, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(0.82, 0.91, 0.62, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleCloseNormal")
+theme_override_styles/hover = SubResource("StyleCloseHover")
+theme_override_styles/pressed = SubResource("StyleClosePressed")
+text = "閉じる"

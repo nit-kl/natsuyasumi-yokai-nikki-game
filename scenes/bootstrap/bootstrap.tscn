@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3]
+[gd_scene load_steps=31 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/debug/debug_menu.tscn" id="2_debug"]
@@ -18,6 +18,7 @@
 [ext_resource type="Script" path="res://scripts/events/event_definition.gd" id="16_event_definition"]
 [ext_resource type="Script" path="res://scripts/diary/day_record_recorder.gd" id="17_recorder"]
 [ext_resource type="PackedScene" path="res://scenes/ui/diary_ui.tscn" id="18_diary_ui"]
+[ext_resource type="PackedScene" path="res://scenes/ui/inventory_ui.tscn" id="28_inventory"]
 [ext_resource type="Script" path="res://scripts/debug/playtest_debug_controller.gd" id="19_playtest"]
 [ext_resource type="Resource" path="res://resources/debug/foundation_morning.tres" id="20_morning"]
 [ext_resource type="Resource" path="res://resources/debug/kappa_trace_ready.tres" id="21_trace_ready"]
@@ -102,3 +103,5 @@ label_settings = SubResource("LabelSettings_marker")
 [node name="DialogueController" parent="." instance=ExtResource("6_dialogue_ui")]
 
 [node name="DiaryUI" parent="." instance=ExtResource("18_diary_ui")]
+
+[node name="InventoryUI" parent="." instance=ExtResource("28_inventory")]

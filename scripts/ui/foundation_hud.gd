@@ -24,6 +24,7 @@ const INSECT_NAMES := {
 @onready var interaction_label: Label = %InteractionLabel
 @onready var notice_timer: Timer = %NoticeTimer
 @onready var diary_button: Button = %DiaryButton
+@onready var inventory_button: Button = %InventoryButton
 
 var _candidate_target: Node
 var _candidate_prompt := ""
@@ -38,6 +39,7 @@ func _ready() -> void:
 	DiaryManager.record_changed.connect(_on_record_changed)
 	notice_timer.timeout.connect(_on_notice_timeout)
 	diary_button.pressed.connect(_on_diary_button_pressed)
+	inventory_button.pressed.connect(_on_inventory_button_pressed)
 	var player := GameState.player
 	if is_instance_valid(player):
 		player.interaction_candidate_changed.connect(_on_interaction_candidate_changed)
@@ -121,3 +123,14 @@ func _on_diary_button_pressed() -> void:
 	var diary := get_tree().get_first_node_in_group("diary_ui") as DiaryUI
 	if diary != null and not diary.is_open():
 		diary.set_open(true)
+
+
+func _on_inventory_button_pressed() -> void:
+	if GameState.is_paused:
+		return
+	var player := GameState.player
+	if is_instance_valid(player) and player.movement_locked:
+		return
+	var inventory := get_tree().get_first_node_in_group("inventory_ui") as InventoryUI
+	if inventory != null and not inventory.is_open():
+		inventory.set_open(true)

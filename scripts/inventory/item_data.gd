@@ -13,6 +13,7 @@ enum Kind {
 @export var item_id: StringName
 @export var display_name: String = ""
 @export var kind: Kind = Kind.OTHER
+@export var icon: Texture2D
 
 
 func is_valid_item() -> bool:
