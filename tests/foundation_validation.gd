@@ -150,15 +150,16 @@ func _test_weather_manager() -> void:
 	WeatherManager.debug_set_weather(&"cloudy")
 	CalendarManager.debug_set_day(2)
 	_expect(WeatherManager.get_weather() == &"sunny", "Debug day changes should restore a previous DayRecord weather")
+	WeatherManager.debug_set_weather(&"rain")
 	var condition := EventConditionResource.new()
 	condition.weathers = [&"rain"]
 	_expect(bool(condition.evaluate().matches), "Event conditions should match the current weather")
 	WeatherManager.debug_set_weather(&"sunny")
 	_expect(not bool(condition.evaluate().matches), "Event conditions should reject a disallowed weather")
 	WeatherManager.forecast = previous_forecast
+	DiaryManager.reset_state()
 	WeatherManager.reset_state()
 	CalendarManager.debug_set_day(1)
-	DiaryManager.reset_state()
 	_expect(WeatherManager.get_weather() == &"sunny", "Reset should restore the first-day weather")
 
 
