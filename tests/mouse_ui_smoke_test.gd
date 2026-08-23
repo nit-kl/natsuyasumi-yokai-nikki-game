@@ -42,6 +42,20 @@ class MouseUIMonitor extends Node:
 			return
 		diary.page_turn_audio.stop()
 		diary.cancel_audio.stop()
+		var inventory := house.get_node("LocationRuntime/InventoryUI") as InventoryUI
+		var inventory_button := hud.get_node("InventoryButton") as Button
+		inventory_button.pressed.emit()
+		if not inventory.is_open() or not player.movement_locked:
+			_fail("The HUD inventory button should open the bag and lock movement.")
+			return
+		if inventory.money_label.text != InventoryUI.format_money(InventoryManager.get_money()):
+			_fail("The inventory panel should display current pocket money.")
+			return
+		inventory.close_button.pressed.emit()
+		if inventory.is_open() or player.movement_locked or not inventory.cancel_audio.playing:
+			_fail("The inventory close button should close the UI, unlock movement, and play cancel feedback.")
+			return
+		inventory.cancel_audio.stop()
 		var grandma := house.get_node("NPCs/Grandma") as NPC
 		var grandma_interaction := grandma.get_node("InteractionArea") as NPCInteractionArea
 		var dialogue := house.get_node("LocationRuntime/DialogueController") as DialogueController
@@ -75,6 +89,7 @@ class MouseUIMonitor extends Node:
 		YokaiManager.reset_state()
 		EventManager.reset_runtime()
 		DiaryManager.reset_state()
+		InventoryManager.reset_state()
 
 
 	func _fail(message: String) -> void:

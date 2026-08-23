@@ -125,6 +125,22 @@ theme_override_styles/hover = SubResource("StyleDiaryHover")
 theme_override_styles/pressed = SubResource("StyleDiaryPressed")
 text = "日記"
 
+[node name="InventoryButton" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 298.0
+offset_top = 10.0
+offset_right = 366.0
+offset_bottom = 40.0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.94, 0.88, 0.68, 1)
+theme_override_colors/font_hover_color = Color(1, 0.93, 0.68, 1)
+theme_override_colors/font_pressed_color = Color(0.82, 0.91, 0.62, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleDiaryNormal")
+theme_override_styles/hover = SubResource("StyleDiaryHover")
+theme_override_styles/pressed = SubResource("StyleDiaryPressed")
+text = "かばん"
+
 [node name="ToolIcon" type="TextureRect" parent="ToolPanel"]
 texture_filter = 1
 offset_left = 7.0

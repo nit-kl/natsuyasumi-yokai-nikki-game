@@ -90,6 +90,15 @@ func get_known_item_ids() -> Array[StringName]:
 	return ids
 
 
+func get_owned_item_ids() -> Array[StringName]:
+	var ids: Array[StringName] = []
+	for item_id: Variant in _items.keys():
+		if int(_items[item_id]) > 0:
+			ids.append(StringName(item_id))
+	ids.sort_custom(func(a: StringName, b: StringName) -> bool: return String(a) < String(b))
+	return ids
+
+
 func serialize() -> Dictionary:
 	var items := {}
 	var keys := _items.keys()

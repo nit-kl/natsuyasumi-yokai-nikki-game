@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3]
+[gd_scene load_steps=30 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/core/day_period_visual_controller.gd" id="2_visual"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://scenes/debug/debug_menu.tscn" id="9_debug"]
 [ext_resource type="PackedScene" path="res://scenes/ui/dialogue_ui.tscn" id="10_dialogue"]
 [ext_resource type="PackedScene" path="res://scenes/ui/diary_ui.tscn" id="11_diary"]
+[ext_resource type="PackedScene" path="res://scenes/ui/inventory_ui.tscn" id="29_inventory"]
 [ext_resource type="Resource" path="res://resources/locations/river_audio_profile.tres" id="12_river_audio"]
 [ext_resource type="Script" path="res://scripts/events/event_registry.gd" id="13_registry"]
 [ext_resource type="Resource" path="res://resources/events/kappa_first_trace.tres" id="14_trace"]
@@ -61,3 +62,5 @@ presets = Array[ExtResource("21_preset")]([ExtResource("18_morning"), ExtResourc
 [node name="DialogueController" parent="." instance=ExtResource("10_dialogue")]
 
 [node name="DiaryUI" parent="." instance=ExtResource("11_diary")]
+
+[node name="InventoryUI" parent="." instance=ExtResource("29_inventory")]

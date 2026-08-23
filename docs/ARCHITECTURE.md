@@ -227,7 +227,7 @@ THUNDERSTORM  thunderstorm
 - 所持以上の消費と負の所持金は拒否する
 - Signal `inventory_changed(item_id, count)` / `money_changed(money)`
 - 捕獲虫は当面 `DayRecord.caught_insects` のまま残し、このManagerへ自動加算しない
-- 所持品画面・店UI・装備・重量・スタミナは扱わない
+- 所持品の表示は `InventoryUI` へ委譲する。店UI・装備・重量・スタミナは扱わない
 
 Item IDはSave永続値のため変更しない。初期ID:
 
@@ -879,6 +879,7 @@ import設定へ実行時仕様を依存させない。
 
 Vertical Sliceでは虫取り網だけが利用可能なためTool indicatorは`BugCatcher`の存在時だけ表示する。
 将来の複数道具切替はInventory / Tool Manager導入IssueでSignal接続し、このHUDへ所持品責務を加えない。
+所持品一覧は `InventoryUI` が担当し、HUDは日記と同じ紙面トーンの「かばん」Buttonで開くだけにする。
 
 ---
 
@@ -1238,3 +1239,17 @@ Visual Regression基準の更新には`tools/capture_marker_first_baselines.ps1`
 `grandma_house`、`home_outdoor`、`river`は`tools/bake_2d_navigation.gd`で`WorldCollision`から再Bakeする。Player到達座標の正本は散歩道のままとし、Bake結果はGeometry Overlayと移行期間中のNavigation比較用である。
 
 全8 Locationの`*_markers.png`と`*_geometry.png`は640x360で`docs/art-reference/03_gameplay/marker_first_geometry/`へ保存する。捕獲は描画可能なDisplay Driverが必要で、Linuxでは`tools/capture_marker_first_baselines.sh`、Windowsでは既存のPowerShell Scriptを使う。`walk_path_marker_smoke_test`は基準画像の存在と解像度も検証する。
+
+---
+
+## 68. Inventory UI — Issue #14
+
+`InventoryUI` は日記/会話と同じ紙面トーンのメモとして、所持アイコン・名前・個数とお小遣いだけを見せる。
+Quest log、装備、合成、Event条件の評価は行わない。状態は `InventoryManager` を表示するだけ。
+
+- HUDの「かばん」Button、または紙の外クリック / 「閉じる」で開閉する
+- 開いている間は Player の移動を lock し、GameClock を pause する
+- 日記や会話で lock 中は開かない
+- キュウリアイコン `icon_item_cucumber.png` は24x24のオリジナルPixel。Reference Sheetからの切り出しではない
+
+Save schema と `save_version` は変更しない。
