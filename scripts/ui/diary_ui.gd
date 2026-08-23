@@ -26,9 +26,7 @@ const DISPLAY_NAMES := {
 	&"evening_diary_written": "夕方に日記を書いた",
 }
 
-const WEATHER_NAMES := {
-	&"sunny": "晴れ",
-}
+const WEATHER_NAMES := WeatherPresentation.WEATHER_NAMES
 
 @onready var panel: Control = %Panel
 @onready var page_turn_audio: AudioStreamPlayer = %PageTurnAudio
@@ -134,7 +132,9 @@ func refresh(day_index: int = CalendarManager.day_index) -> void:
 	title_label.text = "夏休み %d日目" % record.day_index
 	body_label.text = format_record(record)
 	weather_label.text = "きょうの天気　%s" % _display_name(record.weather, WEATHER_NAMES)
-	weather_icon.visible = record.weather == &"sunny"
+	var icon := WeatherPresentation.icon_texture(record.weather)
+	weather_icon.texture = icon
+	weather_icon.visible = icon != null
 	kappa_stamp.visible = record.met_yokai.has(&"kappa")
 	kappa_label.text = "妖怪\n%s" % _join_names(record.met_yokai)
 	insect_stamp.visible = record.caught_insects.has(&"aburazemi")

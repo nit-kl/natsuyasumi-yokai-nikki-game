@@ -1357,5 +1357,29 @@ Foundation、Map遷移、帰宅フロー、一日通し、別Location Save復元
 2. F3のDebugMenuでWeatherを雨へApplyし、日記の `DayRecord` が雨になることを確認する
 3. SaveしてWeatherを晴れへ戻し、Loadで雨が復元されることを確認する
 4. 夕食後の日記を閉じてDay 2へ進み、翌日天気が `WeatherForecast` から決まることを確認する
-5. 雨粒・環境音・HUDアイコンはまだ変わらなくてよい（Issue #12）
+5. 雨粒・環境音・HUDアイコンの確認は Issue #12
+
+---
+
+## 63. Weather Presentation — Issue #12
+
+自動Validation:
+
+- HUD/日記が `cloudy` / `rain` / `thunderstorm` を日本語表示する
+- 天気アイコンが4種とも48x48で存在する
+- 屋外Profileは雨・雷雨で環境音を切り替える
+- 室内Profileは雨でもRoom Toneを維持する
+- 雨粒Overlayは屋外の雨/雷雨だけ表示する
+- 雷雨の夜でも`WeatherVisualPalette`の最低輝度を下回らない
+- 画面フラッシュを使わない
+- 既存18 Scene一括Validationが成功する
+
+手動確認:
+
+1. 寝室でF3からWeatherを雨にしても雨粒が出ず、室内の環境音が続くことを確認する
+2. 縁側または田んぼ道へ出て、控えめな雨粒と雨の環境音へ切り替わることを確認する
+3. HUDと日記のアイコン/文言が「雨」になることを確認する
+4. Weatherを雷雨にし、雨粒が増えても画面がフラッシュしないことを確認する
+5. 19:00の雷雨でも道が見える明るさを保つことを確認する
+6. Weatherを曇りに戻すと雨粒が消え、セミ/ヒグラシの時間帯音源に戻ることを確認する
 

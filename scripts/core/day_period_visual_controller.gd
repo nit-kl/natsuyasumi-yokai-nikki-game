@@ -2,6 +2,7 @@ class_name DayPeriodVisualController
 extends CanvasModulate
 
 @export var palette: DayPeriodPalette
+@export var weather_palette: WeatherVisualPalette
 @export_range(0.0, 10.0, 0.1) var transition_seconds: float = 3.0
 
 var _transition_tween: Tween
@@ -9,6 +10,7 @@ var _transition_tween: Tween
 
 func _ready() -> void:
 	GameClock.period_changed.connect(apply_period)
+	WeatherManager.weather_changed.connect(_on_weather_changed)
 	apply_period(GameClock.get_period(), true)
 
 
@@ -16,6 +18,8 @@ func apply_period(period: StringName, immediate: bool = false) -> void:
 	if palette == null:
 		return
 	var target_color := palette.get_color(period)
+	if weather_palette != null:
+		target_color = weather_palette.compose(target_color, WeatherManager.get_weather(), period)
 	if _transition_tween != null and _transition_tween.is_valid():
 		_transition_tween.kill()
 	_transition_tween = null
@@ -32,3 +36,7 @@ func apply_period(period: StringName, immediate: bool = false) -> void:
 
 func _on_transition_finished() -> void:
 	_transition_tween = null
+
+
+func _on_weather_changed(_weather: StringName) -> void:
+	apply_period(GameClock.get_period())

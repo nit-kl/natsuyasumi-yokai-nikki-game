@@ -32,6 +32,9 @@ const LocationSceneComponent = preload("res://scripts/maps/location_scene.gd")
 const MapSpawnPointComponent = preload("res://scripts/maps/map_spawn_point.gd")
 const ReturnHomeFlowComponent = preload("res://scripts/events/return_home_flow.gd")
 const LocationCatalogData = preload("res://scripts/maps/location_catalog.gd")
+const WeatherVisualPaletteResource = preload("res://scripts/core/weather_visual_palette.gd")
+const WeatherPresentationData = preload("res://scripts/ui/weather_presentation.gd")
+const WeatherRainOverlayComponent = preload("res://scripts/vfx/weather_rain_overlay.gd")
 const TEST_SAVE_PATH := "user://foundation_validation_save.json"
 const CORRUPT_SAVE_PATH := "user://foundation_validation_corrupt.json"
 
@@ -178,6 +181,10 @@ func _test_input_map() -> void:
 func _test_gameplay_hud() -> void:
 	_expect(GameplayHUDComponent.display_name(&"morning", GameplayHUDComponent.PERIOD_NAMES) == "朝", "Gameplay HUD should localize the day period")
 	_expect(GameplayHUDComponent.display_name(&"sunny", GameplayHUDComponent.WEATHER_NAMES) == "晴れ", "Gameplay HUD should localize the weather")
+	_expect(GameplayHUDComponent.display_name(&"cloudy", GameplayHUDComponent.WEATHER_NAMES) == "曇り", "Gameplay HUD should localize cloudy weather")
+	_expect(GameplayHUDComponent.display_name(&"rain", GameplayHUDComponent.WEATHER_NAMES) == "雨", "Gameplay HUD should localize rain")
+	_expect(GameplayHUDComponent.display_name(&"thunderstorm", GameplayHUDComponent.WEATHER_NAMES) == "雷雨", "Gameplay HUD should localize thunderstorms")
+	_expect(WeatherPresentationData.icon_texture(&"rain") != null, "Rain should have a weather icon")
 	_expect(GameplayHUDComponent.display_name(&"unknown", {}) == "unknown", "Gameplay HUD should preserve unknown stable IDs")
 	var hud_scene: PackedScene = load("res://scenes/ui/gameplay_hud.tscn")
 	var hud := hud_scene.instantiate()
@@ -438,9 +445,14 @@ func _test_day_period_palette() -> void:
 	_expect(production.evening.is_equal_approx(Color("f2ae7d")), "Production evening should use the nostalgic orange tint")
 	_expect(production.night.is_equal_approx(Color("7888ad")), "Production night should use the readable blue-gray tint")
 	_expect(production.night.r >= 0.45 and production.night.g >= 0.5, "Production night should remain bright enough for exploration")
+	var weather_palette: WeatherVisualPalette = load("res://resources/weather/default_weather_visual_palette.tres")
+	var storm_night := weather_palette.compose(production.night, &"thunderstorm", &"night")
+	_expect(storm_night.get_luminance() >= weather_palette.minimum_night_luminance, "Rainy nights should stay bright enough to walk")
+	_expect(weather_palette.compose(production.daytime, &"sunny", &"daytime") == production.daytime, "Sunny days should keep the period palette")
 
 
 func _test_day_period_visual_controller() -> void:
+	WeatherManager.reset_state()
 	var controller := DayPeriodVisualControllerComponent.new()
 	controller.palette = DayPeriodPaletteResource.new()
 	controller.transition_seconds = 0.0
@@ -454,6 +466,11 @@ func _test_day_period_visual_controller() -> void:
 	_expect(controller._transition_tween != null, "Visual controller should tween between different production periods")
 	controller.apply_period(&"morning", true)
 	_expect(controller._transition_tween == null and controller.color == controller.palette.morning, "Immediate period changes should cancel an active transition cleanly")
+	controller.weather_palette = WeatherVisualPaletteResource.new()
+	WeatherManager.debug_set_weather(&"rain")
+	controller.apply_period(&"daytime", true)
+	_expect(controller.color != controller.palette.daytime, "Rain should tint the period palette")
+	WeatherManager.reset_state()
 	controller.queue_free()
 
 
@@ -467,6 +484,11 @@ func _test_environment_audio() -> void:
 	_expect(profile.get_stream(&"morning") == morning_stream, "Audio profile should select the morning stream")
 	_expect(profile.get_stream(&"evening") == evening_stream, "Audio profile should select the evening stream")
 	_expect(profile.get_stream(&"night") == null, "Missing ambience assets should remain silent")
+	var rain_stream := AudioStreamGenerator.new()
+	profile.apply_weather_streams = true
+	profile.rain_stream = rain_stream
+	_expect(profile.get_stream(&"morning", &"rain") == rain_stream, "Outdoor profiles should switch to rain ambience")
+	_expect(profile.get_stream(&"morning", &"sunny") == morning_stream, "Sunny weather should keep the period ambience")
 	var house_profile: EnvironmentAudioProfile = load("res://resources/locations/grandma_house_audio_profile.tres")
 	var outdoor_profile: EnvironmentAudioProfile = load("res://resources/locations/home_outdoor_audio_profile.tres")
 	var river_profile: EnvironmentAudioProfile = load("res://resources/locations/river_audio_profile.tres")
@@ -474,6 +496,8 @@ func _test_environment_audio() -> void:
 	_expect(outdoor_profile.get_stream(&"daytime") != null, "Home outdoor should provide its daytime cicada ambience")
 	_expect(outdoor_profile.get_stream(&"evening") != null, "Home outdoor should provide its evening higurashi ambience")
 	_expect(outdoor_profile.get_stream(&"morning") == null, "Unproduced outdoor morning ambience should remain silent")
+	_expect(outdoor_profile.get_stream(&"daytime", &"rain") != outdoor_profile.get_stream(&"daytime"), "Home outdoor rain should replace cicadas")
+	_expect(house_profile.get_stream(&"morning", &"rain") == house_profile.get_stream(&"morning"), "Indoor rain should keep the room tone")
 	_expect(river_profile.get_stream(&"daytime") != null, "River should provide its production water ambience")
 	EnvironmentAudioController.configure_ambience_stream(river_profile.default_stream, true)
 	_expect((river_profile.default_stream as AudioStreamOggVorbis).loop, "Production ambience should be configured to loop")
@@ -576,6 +600,25 @@ func _test_location_catalog() -> void:
 	_expect(LocationCatalogData.get_scene_path(&"river_entrance").ends_with("river_entrance.tscn"), "Save location catalog should resolve the river entrance")
 	_expect(LocationCatalogData.get_scene_path(&"river").ends_with("river.tscn"), "Save location catalog should resolve river")
 	_expect(not LocationCatalogData.has_area(&"unknown_area"), "Unknown save locations should be rejected")
+	_expect(LocationCatalogData.is_outdoor(&"river"), "River should be treated as an outdoor location")
+	_expect(LocationCatalogData.is_outdoor(&"engawa_yard"), "The engawa yard should be treated as outdoor")
+	_expect(not LocationCatalogData.is_outdoor(&"grandma_house"), "Grandma house should stay indoor")
+	_expect(not LocationCatalogData.is_outdoor(&"bedroom"), "The bedroom should stay indoor")
+	var overlay := WeatherRainOverlayComponent.new()
+	add_child(overlay)
+	GameState.set_area(&"grandma_house")
+	WeatherManager.debug_set_weather(&"rain")
+	overlay.refresh()
+	_expect(not overlay.visible, "Indoor rain should not spawn raindrops")
+	GameState.set_area(&"home_outdoor")
+	overlay.refresh()
+	_expect(overlay.visible, "Outdoor rain should show a modest rain overlay")
+	WeatherManager.debug_set_weather(&"sunny")
+	overlay.refresh()
+	_expect(not overlay.visible, "Sunny outdoor weather should hide raindrops")
+	GameState.set_area(&"foundation_test")
+	WeatherManager.reset_state()
+	overlay.queue_free()
 
 
 func _test_insect_entity() -> void:

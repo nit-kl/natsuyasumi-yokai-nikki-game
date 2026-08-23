@@ -605,6 +605,9 @@ Reference SheetのCropは使用しない。
 色値はProduction Mapに合わせて調整し、夜を真っ暗にせず、夕方の郷愁を優先する
 ART_GUIDEの方針に従う。
 
+天気は`WeatherVisualPalette`で時間帯色へ乗算する。雷の画面フラッシュは使わない。
+雨粒は`WeatherRainOverlay`が屋外Locationだけへ控えめに描き、室内では色調だけを変える。
+
 ---
 
 ## 30. Bug Entity — Issue #030
@@ -717,6 +720,8 @@ Scene固有の音源を持ち込まない。`EnvironmentAudioProfile` Resource�
 morning / daytime / evening / nightのLoop音源、音量を保持する。
 
 Areaまたは時間帯の変更時は2つの`AudioStreamPlayer`間でcrossfadeする。
+屋外Profileは`apply_weather_streams`で雨 / 雷雨のLoopへ切り替え、曇りは時間帯音源を維持する。
+室内は天気が変わってもRoom Toneを維持する。
 Production音源が未設定の枠は無音とし、仮の生成音やReference由来音声で埋めない。
 音源追加後もProfileへの割り当てだけで切替可能な構造とする。
 
@@ -835,8 +840,8 @@ import設定へ実行時仕様を依存させない。
 ## 43. Minimal Production HUD — Issue #051
 
 `GameplayHUD`はLocation共通Runtimeに置き、日付・時刻・時間帯・当日の天気・現在の道具だけを
-常時表示する。目的地、Quest marker、Event候補は表示しない。天気は現在の`DayRecord.weather`を
-読み取るだけで、HUDから日記やSave状態を変更しない。
+常時表示する。目的地、Quest marker、Event候補は表示しない。天気は`WeatherManager`と
+`WeatherPresentation`のアイコン/文言を表示するだけで、HUDから日記やSave状態を変更しない。
 
 操作Promptは有効なInteraction候補がある間だけ画面下へ表示する。虫取りの成功・空振り通知は
 同じPrompt枠を1.6秒だけ借り、終了後に現在のInteraction候補へ戻す。Foundation専用の常設操作一覧は

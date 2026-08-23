@@ -7,10 +7,23 @@ extends Resource
 @export var daytime_stream: AudioStream
 @export var evening_stream: AudioStream
 @export var night_stream: AudioStream
+@export var apply_weather_streams := false
+@export var rain_stream: AudioStream
+@export var thunderstorm_stream: AudioStream
 @export_range(-40.0, 6.0, 0.5) var volume_db := -8.0
 
 
-func get_stream(period: StringName) -> AudioStream:
+func get_stream(period: StringName, weather: StringName = &"sunny") -> AudioStream:
+	if apply_weather_streams:
+		match weather:
+			&"rain":
+				if rain_stream != null:
+					return rain_stream
+			&"thunderstorm":
+				if thunderstorm_stream != null:
+					return thunderstorm_stream
+				if rain_stream != null:
+					return rain_stream
 	var period_stream: AudioStream
 	match period:
 		&"morning":

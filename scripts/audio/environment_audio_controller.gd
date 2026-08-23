@@ -20,6 +20,7 @@ func _ready() -> void:
 	_active_player = player_a
 	GameState.area_changed.connect(_on_area_changed)
 	GameClock.period_changed.connect(_on_period_changed)
+	WeatherManager.weather_changed.connect(_on_weather_changed)
 	SceneTransitionManager.transition_started.connect(_on_transition_started)
 	refresh(false)
 
@@ -42,7 +43,7 @@ func refresh(use_crossfade: bool = true) -> void:
 	var area_id := GameState.current_area_id
 	var period := GameClock.get_period()
 	var profile := get_profile(area_id)
-	var stream := profile.get_stream(period) if profile != null else null
+	var stream := profile.get_stream(period, WeatherManager.get_weather()) if profile != null else null
 	var volume_db := profile.volume_db if profile != null else 0.0
 	_switch_stream(stream, volume_db, use_crossfade)
 	ambience_changed.emit(area_id, period, stream != null)
@@ -113,6 +114,10 @@ func _on_area_changed(_area_id: StringName) -> void:
 
 
 func _on_period_changed(_period: StringName) -> void:
+	refresh()
+
+
+func _on_weather_changed(_weather: StringName) -> void:
 	refresh()
 
 

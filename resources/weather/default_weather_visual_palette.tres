@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="WeatherVisualPalette" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/weather_visual_palette.gd" id="1_palette"]
+
+[resource]
+script = ExtResource("1_palette")
+sunny_tint = Color(1, 1, 1, 1)
+cloudy_tint = Color(0.882353, 0.901961, 0.937255, 1)
+rain_tint = Color(0.8, 0.847059, 0.909804, 1)
+thunderstorm_tint = Color(0.741176, 0.8, 0.878431, 1)
+minimum_night_luminance = 0.38

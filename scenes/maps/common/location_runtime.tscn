@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3]
+[gd_scene load_steps=29 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/core/day_period_visual_controller.gd" id="2_visual"]
@@ -26,12 +26,17 @@
 [ext_resource type="Resource" path="res://resources/locations/paddy_road_audio_profile.tres" id="24_paddy_audio"]
 [ext_resource type="Resource" path="res://resources/locations/irrigation_shade_audio_profile.tres" id="25_irrigation_audio"]
 [ext_resource type="Resource" path="res://resources/locations/river_entrance_audio_profile.tres" id="26_river_entrance_audio"]
+[ext_resource type="Resource" path="res://resources/weather/default_weather_visual_palette.tres" id="27_weather_palette"]
+[ext_resource type="PackedScene" path="res://scenes/vfx/weather_rain_overlay.tscn" id="28_rain"]
 
 [node name="LocationRuntime" type="Node"]
 
 [node name="DayPeriodVisualController" type="CanvasModulate" parent="."]
 script = ExtResource("2_visual")
 palette = ExtResource("3_palette")
+weather_palette = ExtResource("27_weather_palette")
+
+[node name="WeatherRainOverlay" parent="." instance=ExtResource("28_rain")]
 
 [node name="EnvironmentAudio" parent="." instance=ExtResource("4_audio")]
 profiles = Array[EnvironmentAudioProfile]([ExtResource("5_house_audio"), ExtResource("6_outdoor_audio"), ExtResource("12_river_audio"), ExtResource("22_bedroom_audio"), ExtResource("23_engawa_audio"), ExtResource("24_paddy_audio"), ExtResource("25_irrigation_audio"), ExtResource("26_river_entrance_audio")])
